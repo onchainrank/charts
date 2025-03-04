@@ -1,0 +1,19 @@
+{
+    "manifest_version": 3,
+    "name": "BullX Website Injector",
+    "version": "1.0",
+    "description": "Injects a bullx website between specific divs on the terminal page.",
+    "permissions": [
+        "activeTab"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "*://neo.bullx.io/terminal*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ]
+}
