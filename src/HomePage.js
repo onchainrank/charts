@@ -10,7 +10,7 @@ function HomePage() {
 
   // Fetch initial data.
   useEffect(() => {
-    fetch("http://172.105.175.81:4000/startup")
+    fetch("https://api.onchainrank.com/startup")
       .then((response) => response.json())
       .then((initialData) => {
         // Sort charts by updatedAt (most recent first).
@@ -24,7 +24,7 @@ function HomePage() {
 
   // WebSocket subscription.
   useEffect(() => {
-    const socket = io("http://localhost:4000");
+    const socket = io("https://api.onchainrank.com");
     socket.on("connect", () => {
       console.log("Connected to WebSocket server");
     });

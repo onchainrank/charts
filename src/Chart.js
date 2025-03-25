@@ -23,6 +23,7 @@ function Chart({
   image,
   onRemove,
   hideHeader,
+  probaPrice,
 }) {
   const chartContainerRef = useRef(null);
   const chartRef = useRef(null);
@@ -33,6 +34,9 @@ function Chart({
   const realizedLossSeriesRef = useRef(null);
   const realizedProfitSeriesRef = useRef(null);
   const actorRankSeriesRef = useRef(null);
+
+  // Ref to store the probaPrice line once created.
+  const priceLineRef = useRef(null);
 
   // Create the chart and add series on mount.
   useEffect(() => {
@@ -47,7 +51,6 @@ function Chart({
         timeVisible: true,
         secondsVisible: true,
       },
-
       rightPriceScale: {
         visible: true,
       },
@@ -100,7 +103,6 @@ function Chart({
     });
     chartRef.current.priceScale("actor_rank").applyOptions({
       visible: true,
-
       scaleMargins: { top: 0.2, bottom: 0.2 },
     });
 
@@ -178,6 +180,22 @@ function Chart({
     }
   }, [candles]);
 
+  // Create a horizontal price line for probaPrice if provided as a nonzero value once.
+  useEffect(() => {
+    // If the price line is already created, do nothing.
+    if (priceLineRef.current !== null) return;
+    if (probaPrice && probaPrice !== 0 && candleSeriesRef.current) {
+      priceLineRef.current = candleSeriesRef.current.createPriceLine({
+        price: probaPrice,
+        color: "#ff0000", // color for the probaPrice line
+        lineWidth: 2,
+        lineStyle: 0, // solid
+        axisLabelVisible: true,
+      });
+    }
+    // Note: We do not remove the price line in the cleanup so that once created, it persists.
+  }, [probaPrice]);
+
   // Compute the most recent cSolVal (from the last candle).
   const recentCSolVal =
     candles && candles.length > 0
@@ -194,7 +212,7 @@ function Chart({
 
   // Delete the chart via API.
   const handleDelete = () => {
-    fetch(`http://172.105.175.81:4000delete/${chartId}`, { method: "DELETE" })
+    fetch(`http://localhost4000/delete/${chartId}`, { method: "DELETE" })
       .then((response) => {
         if (response.ok) {
           onRemove(chartId);

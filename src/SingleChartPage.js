@@ -10,10 +10,10 @@ const SingleChartPage = () => {
 
   // Fetch initial data for the selected chart.
   useEffect(() => {
-    fetch(`http://172.105.175.81:4000/startup/${id}`)
+    fetch(`https://api.onchainrank.com/startup/${id}`)
       .then((response) => response.json())
       .then((data) => {
-        // Assume data is a chart object with id, name, symbol, data, updatedAt, image, etc.
+        // Assume data is a chart object with properties: id, name, symbol, data, updatedAt, image, probaPrice, max_cactor_rank, volRatio, etc.
         setChartData(data);
       })
       .catch((err) => console.error("Error fetching chart data:", err));
@@ -21,7 +21,7 @@ const SingleChartPage = () => {
 
   // Subscribe to WebSocket updates for this chart on the 'single' event.
   useEffect(() => {
-    const socket = io("http://localhost:4000");
+    const socket = io("https://api.onchainrank.com");
     socket.on("connect", () => {
       console.log("Connected to WebSocket for single chart.");
     });
@@ -34,6 +34,14 @@ const SingleChartPage = () => {
               ...prevData,
               data: mergedData,
               updatedAt: incomingData.updatedAt || prevData.updatedAt,
+              max_cactor_rank:
+                incomingData.max_cactor_rank !== undefined
+                  ? incomingData.max_cactor_rank
+                  : prevData.max_cactor_rank,
+              volRatio:
+                incomingData.volRatio !== undefined
+                  ? incomingData.volRatio
+                  : prevData.volRatio,
             };
           }
           return prevData;
@@ -76,10 +84,20 @@ const SingleChartPage = () => {
     chartData.data && chartData.data.length > 0
       ? Number(chartData.data[chartData.data.length - 1].cSolVal).toFixed(2)
       : "";
+  // Compute the most recent actor_rank from the last candle.
+  const recentActorRank =
+    chartData.data && chartData.data.length > 0
+      ? chartData.data[chartData.data.length - 1].actor_rank
+      : "";
 
   return (
     <div className="container my-3">
-      <SingleHeader recentCSolVal={recentCSolVal} />
+      <SingleHeader
+        recentCSolVal={recentCSolVal}
+        max_cactor_rank={chartData.max_cactor_rank}
+        volRatio={chartData.volRatio}
+        recentActorRank={recentActorRank}
+      />
       <Chart
         chartId={chartData.id}
         name={chartData.name}
@@ -88,6 +106,7 @@ const SingleChartPage = () => {
         image={chartData.image}
         onRemove={() => {}}
         hideHeader={true}
+        probaPrice={chartData.probaPrice}
       />
     </div>
   );

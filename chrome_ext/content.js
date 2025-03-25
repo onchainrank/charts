@@ -10,38 +10,77 @@
   // Build the bullx website URL using the extracted address
   const bullxUrl = `http://localhost:3000/single/${address}`;
 
-  // Create an iframe element to load the bullx website
-  const iframe = document.createElement("iframe");
-  iframe.src = bullxUrl;
-  iframe.style.width = "100%";
-  iframe.style.height = "480px"; // Adjust the height as needed
-  iframe.style.border = "none";
-  iframe.style.display = "block";
+  let currentIframe = null;
+  let pollIntervalId = null;
 
-  // Function to check for target elements and inject the iframe
-  function tryInject() {
-    // Select the first target div (escape special characters)
+  // Create a new iframe element configured with the target URL
+  function createIframe() {
+    const iframe = document.createElement("iframe");
+    iframe.src = bullxUrl;
+    iframe.style.width = "100%";
+    iframe.style.height = "400px"; // Maximum height of 200px
+    iframe.style.border = "none";
+    iframe.style.display = "block";
+    return iframe;
+  }
+
+  // Inject the iframe between the two target divs if it is not already injected
+  function injectIframe() {
+    if (currentIframe !== null) {
+      return; // Already injected
+    }
     const firstDiv = document.querySelector(
       ".not-tv-chart.bg-grey-900.rounded-\\[2px\\].border-t.border-grey-500.relative"
     );
-    // Select the second target div (escape special characters)
     const secondDiv = document.querySelector(
       ".ant-tabs.ant-tabs-top.ant-tabs-middle.flex.flex-col.flex-1.terminal-tabs.bg-grey-900.overflow-hidden.md\\:h-full.md\\:max-h-full.pt-1.z-50"
     );
-
-    // If both elements are found, inject the iframe and return true
     if (firstDiv && secondDiv) {
-      firstDiv.parentNode.insertBefore(iframe, secondDiv);
-      console.log("Iframe successfully injected between target divs.");
-      return true;
+      currentIframe = createIframe();
+      firstDiv.parentNode.insertBefore(currentIframe, secondDiv);
+      console.log("Iframe injected.");
     }
-    return false;
   }
 
-  // Poll every 500ms to check if the elements have been rendered
-  const intervalId = setInterval(() => {
-    if (tryInject()) {
-      clearInterval(intervalId); // Stop polling once injected
+  // Remove the iframe from the DOM and set the reference to null
+  function removeIframe() {
+    if (currentIframe) {
+      currentIframe.remove();
+      currentIframe = null;
+      console.log("Iframe removed.");
     }
-  }, 500);
+  }
+
+  // Start polling to check for target elements if they are not yet available
+  function startPolling() {
+    pollIntervalId = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        injectIframe();
+        if (currentIframe) {
+          clearInterval(pollIntervalId);
+          pollIntervalId = null;
+        }
+      }
+    }, 500);
+  }
+
+  // Initial poll to inject the iframe on page load
+  startPolling();
+
+  // Listen for visibility changes (i.e., tab switching)
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "hidden") {
+      // When the tab is hidden, remove the iframe to close the websocket connection.
+      removeIframe();
+      console.log("Tab hidden: iframe removed.");
+    } else if (document.visibilityState === "visible") {
+      // When the tab becomes visible again, re-inject the iframe.
+      injectIframe();
+      // If the target containers are not yet available, restart polling.
+      if (!currentIframe) {
+        startPolling();
+      }
+      console.log("Tab visible: iframe injected if container available.");
+    }
+  });
 })();
