@@ -1,11 +1,28 @@
 {
     "manifest_version": 3,
-    "name": "BullX Website Injector",
+    "name": "OnChainRank Injector",
     "version": "1.0",
-    "description": "Injects a bullx website between specific divs on the terminal page.",
+    "description": "Injects the OnChainRank website iframe and provides a settings GUI for entering an API key.",
     "permissions": [
-        "activeTab"
+        "activeTab",
+        "storage",
+        "webRequest",
+        "webRequestBlocking"
     ],
+    "host_permissions": [
+        "http://localhost:3000/*"
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "16": "icon.svg",
+            "48": "icon.svg",
+            "128": "icon.svg"
+        }
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
     "content_scripts": [
         {
             "matches": [

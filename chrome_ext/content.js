@@ -7,8 +7,8 @@
     return;
   }
 
-  // Build the bullx website URL using the extracted address
-  const bullxUrl = `http://localhost:3000/single/${address}`;
+  // Build the OnChainRank website URL using the extracted address
+  const onChainRankUrl = `http://localhost:3000/single/${address}`;
 
   let currentIframe = null;
   let pollIntervalId = null;
@@ -16,7 +16,7 @@
   // Create a new iframe element configured with the target URL
   function createIframe() {
     const iframe = document.createElement("iframe");
-    iframe.src = bullxUrl;
+    iframe.src = onChainRankUrl;
     iframe.style.width = "100%";
     iframe.style.height = "400px"; // Maximum height of 200px
     iframe.style.border = "none";
