@@ -8,7 +8,7 @@
   }
 
   // Build the OnChainRank website URL using the extracted address
-  const onChainRankUrl = `http://localhost:3000/single/${address}`;
+  const onChainRankUrl = `https://app.onchainrank.com/single/${address}`;
 
   let currentIframe = null;
   let pollIntervalId = null;

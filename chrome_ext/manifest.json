@@ -10,7 +10,7 @@
         "webRequestBlocking"
     ],
     "host_permissions": [
-        "http://localhost:3000/*"
+        "app.onchainrank.com/*"
     ],
     "action": {
         "default_popup": "popup.html",
