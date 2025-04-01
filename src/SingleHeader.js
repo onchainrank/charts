@@ -54,7 +54,7 @@ const SingleHeader = ({
       <img
         src="/logo.png"
         alt="Logo"
-        style={{ height: "64px", width: "auto", marginRight: "10px" }}
+        style={{ height: "16px", width: "auto", marginRight: "10px" }}
       />
       <span style={{ color: volumeColor }}>Volume: {recentCSolVal}</span> |{" "}
       <span style={{ color: mcarColor }}>MCAR: {max_cactor_rank}</span> |{" "}
