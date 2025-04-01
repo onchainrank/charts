@@ -49,7 +49,13 @@ const SingleHeader = ({
   }
 
   return (
-    <div className="card-header">
+    <div className="card-header d-flex align-items-center">
+      {/* Display logo from public folder */}
+      <img
+        src="/logo.png"
+        alt="Logo"
+        style={{ height: "64px", width: "auto", marginRight: "10px" }}
+      />
       <span style={{ color: volumeColor }}>Volume: {recentCSolVal}</span> |{" "}
       <span style={{ color: mcarColor }}>MCAR: {max_cactor_rank}</span> |{" "}
       <span style={{ color: actorRankColor, ...actorRankStyle }}>
