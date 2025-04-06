@@ -5,6 +5,7 @@ const SingleHeader = ({
   max_cactor_rank,
   volRatio,
   recentActorRank,
+  dex_paid,
 }) => {
   // Determine volume color based on recentCSolVal (Volume)
   const volume = Number(recentCSolVal);
@@ -54,7 +55,7 @@ const SingleHeader = ({
       <img
         src="/logo.png"
         alt="Logo"
-        style={{ height: "16px", width: "auto", marginRight: "10px" }}
+        style={{ height: "24px", width: "auto", marginRight: "10px" }}
       />
       <span style={{ color: volumeColor }}>Volume: {recentCSolVal}</span> |{" "}
       <span style={{ color: mcarColor }}>MCAR: {max_cactor_rank}</span> |{" "}
@@ -62,6 +63,7 @@ const SingleHeader = ({
         AR: {actorRank}
       </span>{" "}
       | <span style={{ color: vrColor }}>VR: {volRatio}</span>
+      {dex_paid && <span className="badge bg-success ms-2">dex paid</span>}
     </div>
   );
 };

@@ -42,6 +42,10 @@ const SingleChartPage = () => {
                 incomingData.volRatio !== undefined
                   ? incomingData.volRatio
                   : prevData.volRatio,
+              dex_paid:
+                incomingData.dex_paid !== undefined
+                  ? incomingData.dex_paid
+                  : prevData.dex_paid,
             };
           }
           return prevData;
@@ -97,6 +101,7 @@ const SingleChartPage = () => {
         max_cactor_rank={chartData.max_cactor_rank}
         volRatio={chartData.volRatio}
         recentActorRank={recentActorRank}
+        dex_paid={chartData.dex_paid}
       />
       <Chart
         chartId={chartData.id}
