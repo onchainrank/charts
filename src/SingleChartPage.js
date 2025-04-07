@@ -10,7 +10,7 @@ const SingleChartPage = () => {
 
   // Fetch initial data for the selected chart.
   useEffect(() => {
-    fetch(`http://localhost:4000/startup/${id}`)
+    fetch(`http://api.onchainrank.com/startup/${id}`)
       .then((response) => response.json())
       .then((data) => {
         // data is assumed to contain properties:
@@ -23,7 +23,7 @@ const SingleChartPage = () => {
 
   // Subscribe to WebSocket updates for this chart on the 'single' event.
   useEffect(() => {
-    const socket = io("http://localhost:4000");
+    const socket = io("http://api.onchainrank.com/");
     socket.on("connect", () => {
       console.log("Connected to WebSocket for single chart.");
     });
