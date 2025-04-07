@@ -10,12 +10,12 @@ const SingleChartPage = () => {
 
   // Fetch initial data for the selected chart.
   useEffect(() => {
-    fetch(`https://api.onchainrank.com/startup/${id}`)
+    fetch(`http://localhost:4000/startup/${id}`)
       .then((response) => response.json())
       .then((data) => {
         // data is assumed to contain properties:
         // id, name, symbol, data (candles array), updatedAt, image, probaPrice,
-        // max_cactor_rank, volRatio, dex_paid, valid_socials, etc.
+        // max_cactor_rank, volRatio, dex_paid, valid_socials, valid_launch, etc.
         setChartData(data);
       })
       .catch((err) => console.error("Error fetching chart data:", err));
@@ -23,7 +23,7 @@ const SingleChartPage = () => {
 
   // Subscribe to WebSocket updates for this chart on the 'single' event.
   useEffect(() => {
-    const socket = io("https://api.onchainrank.com/");
+    const socket = io("http://localhost:4000");
     socket.on("connect", () => {
       console.log("Connected to WebSocket for single chart.");
     });
@@ -52,6 +52,10 @@ const SingleChartPage = () => {
                 incomingData.valid_socials !== undefined
                   ? incomingData.valid_socials
                   : prevData.valid_socials,
+              valid_launch:
+                incomingData.valid_launch !== undefined
+                  ? incomingData.valid_launch
+                  : prevData.valid_launch,
             };
           }
           return prevData;
@@ -89,11 +93,12 @@ const SingleChartPage = () => {
     return <div>Loading chart...</div>;
   }
 
-  // Compute the most recent cSolVal and actor_rank from the last candle.
+  // Compute the most recent cSolVal from the last candle.
   const recentCSolVal =
     chartData.data && chartData.data.length > 0
       ? Number(chartData.data[chartData.data.length - 1].cSolVal).toFixed(2)
       : "";
+  // Compute the most recent actor_rank from the last candle.
   const recentActorRank =
     chartData.data && chartData.data.length > 0
       ? chartData.data[chartData.data.length - 1].actor_rank
@@ -108,6 +113,7 @@ const SingleChartPage = () => {
         recentActorRank={recentActorRank}
         dex_paid={chartData.dex_paid}
         valid_socials={chartData.valid_socials}
+        valid_launch={chartData.valid_launch}
       />
       <Chart
         chartId={chartData.id}
