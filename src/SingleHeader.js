@@ -65,7 +65,7 @@ const SingleHeader = ({
       </span>{" "}
       | <span style={{ color: vrColor }}>VR: {volRatio}</span>
       {dex_paid && <span className="badge bg-success ms-2">dex paid</span>}
-      {!valid_socials && (
+      {!valid_socials === false && (
         <span className="ms-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
