@@ -68,7 +68,10 @@ const SingleHeader = ({
       {dex_paid && <span className="badge bg-success ms-2">dex paid</span>}
       {/* Display social icon if valid_socials is false */}
       {!valid_socials && (
-        <span className="ms-2">
+        <span
+          className="ms-2"
+          title="Social accounts incorrectly added or misleading: invalid links or duplicate pages detected (e.g., Twitter and website link to the same page)"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -83,7 +86,10 @@ const SingleHeader = ({
       )}
       {/* Display rocket icon if valid_launch is false */}
       {!valid_launch && (
-        <span className="ms-2">
+        <span
+          className="ms-2"
+          title="Suspicious coin launch detected: automated bot usage or patterns similar to known scam coins identified."
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
