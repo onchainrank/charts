@@ -56,6 +56,10 @@ const SingleChartPage = () => {
                 incomingData.valid_launch !== undefined
                   ? incomingData.valid_launch
                   : prevData.valid_launch,
+              social_used_before:
+                incomingData.social_used_before !== undefined
+                  ? incomingData.social_used_before
+                  : prevData.social_used_before,
             };
           }
           return prevData;
@@ -114,6 +118,7 @@ const SingleChartPage = () => {
         dex_paid={chartData.dex_paid}
         valid_socials={chartData.valid_socials}
         valid_launch={chartData.valid_launch}
+        social_used_before={chartData.social_used_before}
       />
       <Chart
         chartId={chartData.id}

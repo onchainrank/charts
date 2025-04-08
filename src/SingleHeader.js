@@ -7,7 +7,7 @@ const SingleHeader = ({
   recentActorRank,
   dex_paid,
   valid_socials,
-  valid_launch,
+  social_used_before,
 }) => {
   // Determine volume color based on recentCSolVal (Volume)
   const volume = Number(recentCSolVal);
@@ -66,11 +66,11 @@ const SingleHeader = ({
       </span>{" "}
       | <span style={{ color: vrColor }}>VR: {volRatio}</span>
       {dex_paid && <span className="badge bg-success ms-2">dex paid</span>}
-      {/* Display social icon if valid_socials is false */}
+      {/* Display social icon (Facebook) only if valid_socials is false */}
       {!valid_socials && (
         <span
           className="ms-2"
-          title="Social accounts incorrectly added or misleading: invalid links or duplicate pages detected (e.g., Twitter and website link to the same page)"
+          title="Social accounts incorrectly added or misleading: invalid links or duplicate pages detected (e.g., Twitter and website link to the same page)."
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -84,22 +84,21 @@ const SingleHeader = ({
           </svg>
         </span>
       )}
-      {/* Display rocket icon if valid_launch is false */}
-      {!valid_launch && (
+      {/* Display Twitter icon if social_used_before is true */}
+      {social_used_before && (
         <span
           className="ms-2"
-          title="Suspicious coin launch detected: automated bot usage or patterns similar to known scam coins identified."
+          title="Social account already used: duplicate pages detected."
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
             height="16"
             fill="red"
-            className="bi bi-rocket-fill"
+            className="bi bi-twitter"
             viewBox="0 0 16 16"
           >
-            <path d="M10.175 1.991c.81 1.312 1.583 3.43 1.778 6.819l1.5 1.83A2.5 2.5 0 0 1 14 12.202V15.5a.5.5 0 0 1-.9.3l-1.125-1.5c-.166-.222-.42-.4-.752-.57-.214-.108-.414-.192-.627-.282l-.196-.083C9.7 13.793 8.85 14 8 14s-1.7-.207-2.4-.635q-.101.044-.198.084c-.211.089-.411.173-.625.281-.332.17-.586.348-.752.57L2.9 15.8a.5.5 0 0 1-.9-.3v-3.298a2.5 2.5 0 0 1 .548-1.562l.004-.005L4.049 8.81c.197-3.323.969-5.434 1.774-6.756.466-.767.94-1.262 1.31-1.57a3.7 3.7 0 0 1 .601-.41A.55.55 0 0 1 8 0c.101 0 .17.027.25.064q.056.025.145.075c.118.066.277.167.463.315.373.297.85.779 1.317 1.537M9.5 6c0-1.105-.672-2-1.5-2s-1.5.895-1.5 2S7.172 8 8 8s1.5-.895 1.5-2" />
-            <path d="M8 14.5c.5 0 .999-.046 1.479-.139L8.4 15.8a.5.5 0 0 1-.8 0l-1.079-1.439c.48.093.98.139 1.479.139" />
+            <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334q.002-.211-.006-.422A6.7 6.7 0 0 0 16 3.542a6.7 6.7 0 0 1-1.889.518 3.3 3.3 0 0 0 1.447-1.817 6.5 6.5 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.32 9.32 0 0 1-6.767-3.429 3.29 3.29 0 0 0 1.018 4.382A3.3 3.3 0 0 1 .64 6.575v.045a3.29 3.29 0 0 0 2.632 3.218 3.2 3.2 0 0 1-.865.115 3 3 0 0 1-.614-.057 3.28 3.28 0 0 0 3.067 2.277A6.6 6.6 0 0 1 .78 13.58a6 6 0 0 1-.78-.045A9.34 9.34 0 0 0 5.026 15" />
           </svg>
         </span>
       )}
