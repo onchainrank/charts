@@ -7,7 +7,7 @@ const SingleHeader = ({
   recentActorRank,
   dex_paid,
   valid_socials,
-  social_used_before,
+  unique_socials,
 }) => {
   // Determine volume color based on recentCSolVal (Volume)
   const volume = Number(recentCSolVal);
@@ -84,8 +84,8 @@ const SingleHeader = ({
           </svg>
         </span>
       )}
-      {/* Display Twitter icon if social_used_before is true */}
-      {social_used_before && (
+      {/* Display Twitter icon if unique_socials is true */}
+      {unique_socials && (
         <span
           className="ms-2"
           title="Social account already used: duplicate pages detected."
