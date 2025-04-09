@@ -85,7 +85,7 @@ const SingleHeader = ({
         </span>
       )}
       {/* Display Twitter icon if unique_socials is true */}
-      {unique_socials && (
+      {!unique_socials && (
         <span
           className="ms-2"
           title="Social account already used: duplicate pages detected."
