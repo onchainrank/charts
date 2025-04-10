@@ -88,7 +88,7 @@ const SingleHeader = ({
       {!unique_socials && (
         <span
           className="ms-2"
-          title="Social account already used: duplicate pages detected."
+          title="Social account already used in previous projects"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
