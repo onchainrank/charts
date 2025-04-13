@@ -29,21 +29,36 @@ function Chart({
   const chartRef = useRef(null);
   const candleSeriesRef = useRef(null);
   const volumeSeriesRef = useRef(null);
-  // Series refs for indicator lines:
   const unrealizedProfitSeriesRef = useRef(null);
   const unrealizedLossSeriesRef = useRef(null);
   const realizedLossSeriesRef = useRef(null);
   const realizedProfitSeriesRef = useRef(null);
   const actorRankSeriesRef = useRef(null);
 
-  // --- Indicator Visibility State ---
-  const [showUnrealizedProfit, setShowUnrealizedProfit] = useState(true);
-  const [showUnrealizedLoss, setShowUnrealizedLoss] = useState(true);
-  const [showRealizedLoss, setShowRealizedLoss] = useState(true);
-  const [showRealizedProfit, setShowRealizedProfit] = useState(true);
-  const [showActorRank, setShowActorRank] = useState(true);
+  // Define default indicator visibility.
+  const defaultIndicatorVisibility = {
+    unrealizedProfit: true,
+    unrealizedLoss: true,
+    realizedLoss: true,
+    realizedProfit: true,
+    actorRank: true,
+  };
 
-  // --- Chart Creation ---
+  // Load saved indicator visibility from localStorage, or fallback to defaults.
+  const [indicatorVisibility, setIndicatorVisibility] = useState(() => {
+    const stored = localStorage.getItem("indicatorVisibility");
+    return stored ? JSON.parse(stored) : defaultIndicatorVisibility;
+  });
+
+  // Save indicator visibility to localStorage whenever it changes.
+  useEffect(() => {
+    localStorage.setItem(
+      "indicatorVisibility",
+      JSON.stringify(indicatorVisibility)
+    );
+  }, [indicatorVisibility]);
+
+  // Create the chart and add basic series on mount.
   useEffect(() => {
     chartRef.current = createChart(chartContainerRef.current, {
       width: chartContainerRef.current.clientWidth,
@@ -64,18 +79,17 @@ function Chart({
       },
     });
 
-    // Always add candlestick series.
+    // Add candlestick series.
     candleSeriesRef.current = chartRef.current.addCandlestickSeries();
 
-    // Always add volume histogram series (using solVal as volume).
+    // Add volume histogram series (using solVal as volume).
     volumeSeriesRef.current = chartRef.current.addHistogramSeries({
       color: "#26a69a",
       priceFormat: { type: "volume" },
       scaleMargins: { top: 0.8, bottom: 0 },
     });
 
-    // Actor Rank series will be conditionally added below.
-    // Set up resize listener.
+    // Set up a resize listener.
     const handleResize = () => {
       if (chartContainerRef.current && chartRef.current) {
         const newWidth = chartContainerRef.current.clientWidth;
@@ -84,13 +98,14 @@ function Chart({
     };
     window.addEventListener("resize", handleResize);
     handleResize();
+
     return () => {
       window.removeEventListener("resize", handleResize);
       chartRef.current.remove();
     };
   }, []);
 
-  // --- Update Basic Series Data (Candlestick & Volume) ---
+  // Update basic series data (candlestick & volume) when candles change.
   useEffect(() => {
     if (candles && candleSeriesRef.current) {
       const formattedCandles = candles.map((candle) => ({
@@ -111,10 +126,10 @@ function Chart({
     }
   }, [candles]);
 
-  // --- Indicator Series Effects ---
+  // For each indicator series, add/remove based on indicatorVisibility.
   // Unrealized Profit
   useEffect(() => {
-    if (showUnrealizedProfit) {
+    if (indicatorVisibility.unrealizedProfit) {
       if (!unrealizedProfitSeriesRef.current) {
         unrealizedProfitSeriesRef.current = chartRef.current.addLineSeries({
           color: "#0f4a6e",
@@ -122,20 +137,20 @@ function Chart({
           lineStyle: 0,
         });
       }
-      const formattedData = candles.map((candle) => ({
+      const data = candles.map((candle) => ({
         time: candle.time,
         value: candle.unrealized_profit,
       }));
-      unrealizedProfitSeriesRef.current.setData(formattedData);
+      unrealizedProfitSeriesRef.current.setData(data);
     } else if (unrealizedProfitSeriesRef.current) {
       chartRef.current.removeSeries(unrealizedProfitSeriesRef.current);
       unrealizedProfitSeriesRef.current = null;
     }
-  }, [showUnrealizedProfit, candles]);
+  }, [indicatorVisibility.unrealizedProfit, candles]);
 
   // Unrealized Loss
   useEffect(() => {
-    if (showUnrealizedLoss) {
+    if (indicatorVisibility.unrealizedLoss) {
       if (!unrealizedLossSeriesRef.current) {
         unrealizedLossSeriesRef.current = chartRef.current.addLineSeries({
           color: "#6e3d0f",
@@ -143,20 +158,20 @@ function Chart({
           lineStyle: 0,
         });
       }
-      const formattedData = candles.map((candle) => ({
+      const data = candles.map((candle) => ({
         time: candle.time,
         value: candle.unrealized_loss,
       }));
-      unrealizedLossSeriesRef.current.setData(formattedData);
+      unrealizedLossSeriesRef.current.setData(data);
     } else if (unrealizedLossSeriesRef.current) {
       chartRef.current.removeSeries(unrealizedLossSeriesRef.current);
       unrealizedLossSeriesRef.current = null;
     }
-  }, [showUnrealizedLoss, candles]);
+  }, [indicatorVisibility.unrealizedLoss, candles]);
 
   // Realized Loss
   useEffect(() => {
-    if (showRealizedLoss) {
+    if (indicatorVisibility.realizedLoss) {
       if (!realizedLossSeriesRef.current) {
         realizedLossSeriesRef.current = chartRef.current.addLineSeries({
           color: "#9d4e15",
@@ -164,20 +179,20 @@ function Chart({
           lineStyle: 2,
         });
       }
-      const formattedData = candles.map((candle) => ({
+      const data = candles.map((candle) => ({
         time: candle.time,
         value: candle.realized_loss,
       }));
-      realizedLossSeriesRef.current.setData(formattedData);
+      realizedLossSeriesRef.current.setData(data);
     } else if (realizedLossSeriesRef.current) {
       chartRef.current.removeSeries(realizedLossSeriesRef.current);
       realizedLossSeriesRef.current = null;
     }
-  }, [showRealizedLoss, candles]);
+  }, [indicatorVisibility.realizedLoss, candles]);
 
   // Realized Profit
   useEffect(() => {
-    if (showRealizedProfit) {
+    if (indicatorVisibility.realizedProfit) {
       if (!realizedProfitSeriesRef.current) {
         realizedProfitSeriesRef.current = chartRef.current.addLineSeries({
           color: "#156a9d",
@@ -185,20 +200,20 @@ function Chart({
           lineStyle: 2,
         });
       }
-      const formattedData = candles.map((candle) => ({
+      const data = candles.map((candle) => ({
         time: candle.time,
         value: candle.realized_profit,
       }));
-      realizedProfitSeriesRef.current.setData(formattedData);
+      realizedProfitSeriesRef.current.setData(data);
     } else if (realizedProfitSeriesRef.current) {
       chartRef.current.removeSeries(realizedProfitSeriesRef.current);
       realizedProfitSeriesRef.current = null;
     }
-  }, [showRealizedProfit, candles]);
+  }, [indicatorVisibility.realizedProfit, candles]);
 
   // Actor Rank
   useEffect(() => {
-    if (showActorRank) {
+    if (indicatorVisibility.actorRank) {
       if (!actorRankSeriesRef.current) {
         actorRankSeriesRef.current = chartRef.current.addLineSeries({
           priceScaleId: "actor_rank",
@@ -211,24 +226,24 @@ function Chart({
           scaleMargins: { top: 0.2, bottom: 0.2 },
         });
       }
-      const formattedData = candles.map((candle) => ({
+      const data = candles.map((candle) => ({
         time: candle.time,
         value: candle.actor_rank,
       }));
-      actorRankSeriesRef.current.setData(formattedData);
+      actorRankSeriesRef.current.setData(data);
     } else if (actorRankSeriesRef.current) {
       chartRef.current.removeSeries(actorRankSeriesRef.current);
       actorRankSeriesRef.current = null;
     }
-  }, [showActorRank, candles]);
+  }, [indicatorVisibility.actorRank, candles]);
 
-  // --- Horizontal Price Line for probaPrice ---
+  // Create horizontal price line for probaPrice if provided and nonzero.
   useEffect(() => {
     let priceLine = null;
     if (probaPrice && probaPrice !== 0 && candleSeriesRef.current) {
       priceLine = candleSeriesRef.current.createPriceLine({
         price: probaPrice,
-        color: "#ff0000", // red color for probaPrice line
+        color: "#ff0000",
         lineWidth: 2,
         lineStyle: 0,
         axisLabelVisible: true,
@@ -241,19 +256,20 @@ function Chart({
     };
   }, [probaPrice]);
 
-  // Compute the most recent cSolVal (last candle's cSolVal).
+  // Compute the most recent cSolVal.
   const recentCSolVal =
     candles && candles.length > 0
       ? Number(candles[candles.length - 1].cSolVal).toFixed(2)
       : "";
 
-  // Copy and delete handlers.
+  // Copy full Chart ID and Delete Chart handlers.
   const handleCopy = () => {
     navigator.clipboard
       .writeText(chartId)
       .then(() => console.log("Chart ID copied to clipboard"))
       .catch((err) => console.error("Failed to copy chart ID:", err));
   };
+
   const handleDelete = () => {
     fetch(`https://api.onchainrank.com/delete/${chartId}`, { method: "DELETE" })
       .then((response) => {
@@ -287,15 +303,20 @@ function Chart({
           </small>
         )}
         <ChartLegend />
-        {/* --- Checkbox Controls for Toggling Indicators --- */}
+        {/* Checkbox controls for each indicator */}
         <div className="mt-3">
           <div className="form-check">
             <input
               type="checkbox"
               className="form-check-input"
               id="unrealizedProfitCheckbox"
-              checked={showUnrealizedProfit}
-              onChange={() => setShowUnrealizedProfit(!showUnrealizedProfit)}
+              checked={indicatorVisibility.unrealizedProfit}
+              onChange={() =>
+                setIndicatorVisibility({
+                  ...indicatorVisibility,
+                  unrealizedProfit: !indicatorVisibility.unrealizedProfit,
+                })
+              }
             />
             <label
               className="form-check-label"
@@ -309,8 +330,13 @@ function Chart({
               type="checkbox"
               className="form-check-input"
               id="unrealizedLossCheckbox"
-              checked={showUnrealizedLoss}
-              onChange={() => setShowUnrealizedLoss(!showUnrealizedLoss)}
+              checked={indicatorVisibility.unrealizedLoss}
+              onChange={() =>
+                setIndicatorVisibility({
+                  ...indicatorVisibility,
+                  unrealizedLoss: !indicatorVisibility.unrealizedLoss,
+                })
+              }
             />
             <label
               className="form-check-label"
@@ -324,8 +350,13 @@ function Chart({
               type="checkbox"
               className="form-check-input"
               id="realizedLossCheckbox"
-              checked={showRealizedLoss}
-              onChange={() => setShowRealizedLoss(!showRealizedLoss)}
+              checked={indicatorVisibility.realizedLoss}
+              onChange={() =>
+                setIndicatorVisibility({
+                  ...indicatorVisibility,
+                  realizedLoss: !indicatorVisibility.realizedLoss,
+                })
+              }
             />
             <label className="form-check-label" htmlFor="realizedLossCheckbox">
               Realized Loss
@@ -336,8 +367,13 @@ function Chart({
               type="checkbox"
               className="form-check-input"
               id="realizedProfitCheckbox"
-              checked={showRealizedProfit}
-              onChange={() => setShowRealizedProfit(!showRealizedProfit)}
+              checked={indicatorVisibility.realizedProfit}
+              onChange={() =>
+                setIndicatorVisibility({
+                  ...indicatorVisibility,
+                  realizedProfit: !indicatorVisibility.realizedProfit,
+                })
+              }
             />
             <label
               className="form-check-label"
@@ -351,8 +387,13 @@ function Chart({
               type="checkbox"
               className="form-check-input"
               id="actorRankCheckbox"
-              checked={showActorRank}
-              onChange={() => setShowActorRank(!showActorRank)}
+              checked={indicatorVisibility.actorRank}
+              onChange={() =>
+                setIndicatorVisibility({
+                  ...indicatorVisibility,
+                  actorRank: !indicatorVisibility.actorRank,
+                })
+              }
             />
             <label className="form-check-label" htmlFor="actorRankCheckbox">
               Actor Rank
