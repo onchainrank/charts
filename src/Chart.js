@@ -396,7 +396,7 @@ function Chart({
               }
             />
             <label className="form-check-label" htmlFor="actorRankCheckbox">
-              Actor Rank
+              Onchain Score
             </label>
           </div>
         </div>
