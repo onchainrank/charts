@@ -32,21 +32,19 @@ const SingleHeader = ({
   // Determine MCAR color based on max_cactor_rank
   const mcar = Number(max_cactor_rank);
   let mcarColor = "orange";
-  if (mcar > 120) {
+  if (mcar > 420) {
     mcarColor = "green";
-  } else if (mcar < 70) {
-    mcarColor = "red";
-  }
+  } else mcarColor = "red";
 
   // Round actor rank to an integer and determine its color and style.
   const actorRank = Math.round(Number(recentActorRank));
   let actorRankColor = "green";
   let actorRankStyle = {};
-  if (actorRank < 60) {
+  if (actorRank < 300) {
     actorRankColor = "red";
-  } else if (actorRank < 80) {
+  } else if (actorRank < 400) {
     actorRankColor = "orange";
-  } else if (actorRank > 120) {
+  } else if (actorRank > 600) {
     actorRankColor = "green";
     actorRankStyle.fontWeight = "bold";
   }
@@ -60,7 +58,10 @@ const SingleHeader = ({
         style={{ height: "24px", width: "auto", marginRight: "10px" }}
       />
       <span style={{ color: volumeColor }}>Volume: {recentCSolVal}</span> |{" "}
-      <span style={{ color: mcarColor }}>MCAR: {max_cactor_rank}</span> |{" "}
+      <span style={{ color: mcarColor }}>
+        MCAR: {Math.round(max_cactor_rank, 0)}
+      </span>{" "}
+      |{" "}
       <span style={{ color: actorRankColor, ...actorRankStyle }}>
         AR: {actorRank}
       </span>{" "}
