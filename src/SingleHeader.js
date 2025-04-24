@@ -32,7 +32,7 @@ const SingleHeader = ({
   // Determine MCAR color based on max_cactor_rank
   const mcar = Number(max_cactor_rank);
   let mcarColor = "orange";
-  if (mcar > 420) {
+  if (mcar > 300) {
     mcarColor = "green";
   } else mcarColor = "red";
 
