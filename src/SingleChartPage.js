@@ -117,7 +117,7 @@ const SingleChartPage = () => {
         recentActorRank={recentActorRank}
         dex_paid={chartData.dex_paid}
         valid_socials={chartData.valid_socials}
-        social_used_before={chartData.social_used_before}
+        unique_socials={chartData.unique_socials}
         valid_launch={chartData.valid_launch}
         bullx={chartData.bullx}
         pf_updating={chartData.pf_updating}

@@ -7,7 +7,7 @@ const SingleHeader = ({
   dex_paid,
   valid_launch,
   valid_socials,
-  social_used_before,
+  unique_socials,
   bullx,
   pf_updating,
   pf_iter,
@@ -101,7 +101,7 @@ const SingleHeader = ({
               </svg>
             </span>
           )}
-          {social_used_before && (
+          {!unique_socials && (
             <span
               className="ms-2"
               title="Social account already used: duplicate pages detected."
