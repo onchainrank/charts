@@ -122,7 +122,9 @@ const SingleHeader = ({
         0.01 && (
           <>
             <span>bundle:</span>
-            <span class="badge text-bg-secondary">New</span>
+            <span class="badge text-bg-secondary">
+              {Math.round(bundle_ratio)}
+            </span>
           </>
         )
       }
