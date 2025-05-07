@@ -118,7 +118,14 @@ const SingleHeader = ({
           )}
         </>
       )}
-      {(bundle_ratio) => 0.01 && <></>}
+      {(bundle_ratio) =>
+        0.01 && (
+          <>
+            <span>bundle:</span>
+            <span class="badge text-bg-secondary">New</span>
+          </>
+        )
+      }
     </div>
   );
 };

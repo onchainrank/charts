@@ -11,3 +11,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+    /* define the blink animation */
+    @keyframes blink {
+      0%, 100% { fill: red; }
+      50%      { fill: yellow; }
+}
+
+/* apply it to your SVG (or specific paths) */
+.blinking-icon {
+      /* duration: 1s, infinite loop, ease-in-out timing */
+      animation: blink 0.3s infinite ease-in-out;
+}
