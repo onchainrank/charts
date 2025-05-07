@@ -37,7 +37,7 @@ const SingleHeader = ({
       />
 
       <span style={{ color: volumeColor, marginRight: 8 }}>
-        Volume: {recentCSolVal}
+        Vol: {recentCSolVal}
       </span>
       <span style={{ color: mcarColor, marginRight: 8 }}>
         MCAR: {max_cactor_rank}
