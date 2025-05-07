@@ -13,9 +13,6 @@ const SingleChartPage = () => {
     fetch(`https://api.onchainrank.com/startup/${id}`)
       .then((response) => response.json())
       .then((data) => {
-        // data is assumed to contain properties:
-        // id, name, symbol, data (candles array), updatedAt, image, probaPrice,
-        // max_cactor_rank, volRatio, dex_paid, valid_socials, valid_launch, etc.
         setChartData(data);
       })
       .catch((err) => console.error("Error fetching chart data:", err));
@@ -117,13 +114,9 @@ const SingleChartPage = () => {
         recentActorRank={recentActorRank}
         dex_paid={chartData.dex_paid}
         valid_socials={chartData.valid_socials}
-        unique_socials={chartData.unique_socials}
         valid_launch={chartData.valid_launch}
-        bullx={chartData.bullx}
-        pf_updating={chartData.pf_updating}
-        pf_iter={chartData.pf_iter}
-        pf_updated={chartData.pf_updated}
-        pf_next_update={chartData.pf_next_update}
+        unique_socials={chartData.unique_socials}
+        bundle_ratio={chartData.bundle_ratio}
       />
       <Chart
         chartId={chartData.id}
