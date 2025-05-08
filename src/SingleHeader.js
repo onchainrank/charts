@@ -64,19 +64,14 @@ const SingleHeader = ({
       {/* valid_launch logic */}
       {valid_launch === false && <ValidLaunchIcon />}
       {pump_dump_risk === true && <PumpDumpIcon />}
-      {valid_launch === true && (
-        <>
-          {!valid_socials && <ValidSocialsIcon />}
-          {!unique_socials && <UniqueSocialsIcon />}
-        </>
-      )}
+
+      {!valid_socials && <ValidSocialsIcon />}
+      {!unique_socials && <UniqueSocialsIcon />}
+
       {bundle_ratio > 0.01 && (
-        <>
-          <span>bundle:</span>
-          <span class="badge text-bg-secondary">
-            {Math.round(bundle_ratio)}
-          </span>
-        </>
+        <span class="badge text-bg-alert">
+          Bundle:{Math.round(bundle_ratio * 100)}%
+        </span>
       )}
     </div>
   );
