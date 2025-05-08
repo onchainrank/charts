@@ -2,6 +2,8 @@ import React from "react";
 import ValidLaunchIcon from "./components/ValidLaunchIcon";
 import ValidSocialsIcon from "./components/ValidSocialsIcon";
 import UniqueSocialsIcon from "./components/UniqueSocialsIcon";
+import PumpDumpIcon from "./components/PumpDumpIcon";
+
 const SingleHeader = ({
   recentCSolVal,
   max_cactor_rank,
@@ -12,6 +14,7 @@ const SingleHeader = ({
   unique_socials,
   bullx,
   bundle_ratio,
+  pump_dump_risk,
 }) => {
   const fmt = (ts) => new Date(ts * 1000).toLocaleString();
 
@@ -42,7 +45,7 @@ const SingleHeader = ({
         Vol: {recentCSolVal}
       </span>
       <span style={{ color: mcarColor, marginRight: 8 }}>
-        MCAR: {max_cactor_rank}
+        MCAR: {Math.round(max_cactor_rank)}
       </span>
       <span style={{ color: arColor, ...arStyle, marginRight: 8 }}>
         AR: {ar}
@@ -60,23 +63,21 @@ const SingleHeader = ({
 
       {/* valid_launch logic */}
       {valid_launch === false && <ValidLaunchIcon />}
-
+      {pump_dump_risk === false && <PumpDumpIcon />}
       {valid_launch === true && (
         <>
           {!valid_socials && <ValidSocialsIcon />}
           {!unique_socials && <UniqueSocialsIcon />}
         </>
       )}
-      {(bundle_ratio) =>
-        0.01 && (
-          <>
-            <span>bundle:</span>
-            <span class="badge text-bg-secondary">
-              {Math.round(bundle_ratio)}
-            </span>
-          </>
-        )
-      }
+      {bundle_ratio > 0.01 && (
+        <>
+          <span>bundle:</span>
+          <span class="badge text-bg-secondary">
+            {Math.round(bundle_ratio)}
+          </span>
+        </>
+      )}
     </div>
   );
 };
