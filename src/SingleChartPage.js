@@ -117,6 +117,7 @@ const SingleChartPage = () => {
         valid_launch={chartData.valid_launch}
         unique_socials={chartData.unique_socials}
         bundle_ratio={chartData.bundle_ratio}
+        pump_dump_risk={chartData.is_pump_dump_risk}
       />
       <Chart
         chartId={chartData.id}
