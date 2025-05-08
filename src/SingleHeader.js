@@ -63,7 +63,7 @@ const SingleHeader = ({
 
       {/* valid_launch logic */}
       {valid_launch === false && <ValidLaunchIcon />}
-      {pump_dump_risk === false && <PumpDumpIcon />}
+      {pump_dump_risk === true && <PumpDumpIcon />}
       {valid_launch === true && (
         <>
           {!valid_socials && <ValidSocialsIcon />}
