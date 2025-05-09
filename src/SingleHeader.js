@@ -26,12 +26,12 @@ const SingleHeader = ({
 
   // MCAR color
   const mcarN = Number(max_cactor_rank);
-  let mcarColor = mcarN > 120 ? "green" : mcarN < 70 ? "red" : "orange";
+  let mcarColor = mcarN > 400 ? "green" : mcarN < 200 ? "red" : "orange";
 
   // AR styling
   const ar = Math.round(Number(recentActorRank));
-  let arColor = ar < 60 ? "red" : ar < 80 ? "orange" : "green";
-  const arStyle = ar > 120 ? { fontWeight: "bold" } : {};
+  let arColor = ar > 400 ? "green" : ar < 200 ? "red" : "orange";
+  const arStyle = ar > 520 ? { fontWeight: "bold" } : {};
 
   return (
     <div className="card-header d-flex align-items-center flex-wrap">
@@ -69,7 +69,7 @@ const SingleHeader = ({
       {!unique_socials && <UniqueSocialsIcon />}
 
       {bundle_ratio > 0.01 && (
-        <span class="badge text-bg-alert">
+        <span class="badge text-bg-warning">
           Bundle:{Math.round(bundle_ratio * 100)}%
         </span>
       )}

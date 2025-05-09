@@ -6,7 +6,7 @@ const PumpDumpIcon = () => (
       @keyframes blink {
         0%,
         100% {
-          fill: red;
+          fill: blue;
         }
         50% {
           fill: orange;
@@ -27,7 +27,7 @@ const PumpDumpIcon = () => (
         width="16"
         height="16"
         fill="currentColor"
-        class="bi bi-arrow-down-up"
+        class="bi bi-arrow-down-up blinking-icon"
         viewBox="0 0 16 16"
       >
         <path
