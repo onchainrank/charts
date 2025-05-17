@@ -20,7 +20,7 @@ const SingleChartPage = () => {
 
   // Subscribe to WebSocket updates for this chart on the 'single' event.
   useEffect(() => {
-    const socket = io(`https://api.onchainrank.com?token=${token}`);
+    const socket = io(`https://api.onchainrank.com`, { query: { token } });
     socket.on("connect", () => {
       console.log("Connected to WebSocket for single chart.");
     });
