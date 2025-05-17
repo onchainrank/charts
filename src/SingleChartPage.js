@@ -5,12 +5,12 @@ import SingleHeader from "./SingleHeader";
 import io from "socket.io-client";
 
 const SingleChartPage = () => {
-  const { id } = useParams();
+  const { id, token } = useParams();
   const [chartData, setChartData] = useState(null);
 
   // Fetch initial data for the selected chart.
   useEffect(() => {
-    fetch(`https://api.onchainrank.com/startup/${id}`)
+    fetch(`https://api.onchainrank.com/startup/${id}/${token}`)
       .then((response) => response.json())
       .then((data) => {
         setChartData(data);
@@ -20,7 +20,7 @@ const SingleChartPage = () => {
 
   // Subscribe to WebSocket updates for this chart on the 'single' event.
   useEffect(() => {
-    const socket = io("https://api.onchainrank.com");
+    const socket = io(`https://api.onchainrank.com?token=${token}`);
     socket.on("connect", () => {
       console.log("Connected to WebSocket for single chart.");
     });

@@ -5,7 +5,7 @@ import SingleChartPage from "./SingleChartPage";
 function App() {
   return (
     <Routes>
-      <Route path="/single/:id" element={<SingleChartPage />} />
+      <Route path="/single/:id/:token" element={<SingleChartPage />} />
     </Routes>
   );
 }
