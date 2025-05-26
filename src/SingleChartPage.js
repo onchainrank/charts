@@ -57,6 +57,10 @@ const SingleChartPage = () => {
                 incomingData.unique_socials !== undefined
                   ? incomingData.unique_socials
                   : prevData.unique_socials,
+              bundle_ratio:
+                incomingData.bundle_ratio !== undefined
+                  ? incomingData.bundle_ratio
+                  : prevData.bundle_ratio,
             };
           }
           return prevData;
