@@ -57,10 +57,8 @@ const SingleChartPage = () => {
                 incomingData.unique_socials !== undefined
                   ? incomingData.unique_socials
                   : prevData.unique_socials,
-              bundle_ratio:
-                incomingData.bundle_ratio !== undefined
-                  ? incomingData.bundle_ratio
-                  : prevData.bundle_ratio,
+              bundle_ratio: incomingData.bundle_ratio,
+              total_comments: incomingData.total_comments,
             };
           }
           return prevData;
@@ -122,6 +120,7 @@ const SingleChartPage = () => {
         unique_socials={chartData.unique_socials}
         bundle_ratio={chartData.bundle_ratio}
         pump_dump_risk={chartData.is_pump_dump_risk}
+        total_comments={chartData.total_comments}
       />
       <Chart
         chartId={chartData.id}

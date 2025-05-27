@@ -15,6 +15,7 @@ const SingleHeader = ({
   bullx,
   bundle_ratio,
   pump_dump_risk,
+  total_comments,
 }) => {
   const fmt = (ts) => new Date(ts * 1000).toLocaleString();
 
@@ -71,6 +72,16 @@ const SingleHeader = ({
       {bundle_ratio > 0.01 && (
         <span class="badge text-bg-warning">
           Bundle:{Math.round(bundle_ratio * 100)}%
+        </span>
+      )}
+      {total_comments > 0 && (
+        <span className="badge bg-primary align-middle">
+          <img
+            src="/pflogo.png"
+            alt="pump.fun Logo"
+            style={{ height: "16px", width: "auto", marginRight: "10px" }}
+          />
+          {total_comments}
         </span>
       )}
     </div>
