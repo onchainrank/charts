@@ -4,7 +4,7 @@ import ValidSocialsIcon from "./components/ValidSocialsIcon";
 import UniqueSocialsIcon from "./components/UniqueSocialsIcon";
 import PumpDumpIcon from "./components/PumpDumpIcon";
 
-const SingleHeader = ({
+const DecorHeader = ({
   recentCSolVal,
   max_cactor_rank,
   recentActorRank,
@@ -36,12 +36,6 @@ const SingleHeader = ({
 
   return (
     <div className="card-header d-flex align-items-center flex-wrap">
-      <img
-        src="/logo.png"
-        alt="Logo"
-        style={{ height: "24px", width: "auto", marginRight: "10px" }}
-      />
-
       <span style={{ color: volumeColor, marginRight: 8 }}>
         Vol: {recentCSolVal}
       </span>
@@ -88,4 +82,4 @@ const SingleHeader = ({
   );
 };
 
-export default SingleHeader;
+export default DecorHeader;
