@@ -75,7 +75,7 @@ const SingleHeader = ({
         </span>
       )}
       {total_comments > 0 && (
-        <span className="badge bg-light align-middle">
+        <span className="badge text-bg-light align-middle">
           <img
             src="/pflogo.png"
             alt="pump.fun Logo"
