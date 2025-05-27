@@ -57,8 +57,14 @@ const SingleChartPage = () => {
                 incomingData.unique_socials !== undefined
                   ? incomingData.unique_socials
                   : prevData.unique_socials,
-              bundle_ratio: incomingData.bundle_ratio,
-              total_comments: incomingData.total_comments,
+              bundle_ratio:
+                incomingData.bundle_ratio !== undefined
+                  ? incomingData.bundle_ratio
+                  : prevData.bundle_ratio,
+              total_comments:
+                incomingData.total_comments !== undefined
+                  ? incomingData.total_comments
+                  : prevData.total_comments,
             };
           }
           return prevData;
