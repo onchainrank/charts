@@ -10,7 +10,10 @@ export const NotFound = () => (
   <div className="container text-center py-5">
     <div className="alert alert-warning" role="alert">
       <h4 className="display-1">Data Available on Dashboard</h4>
-      <a href="https://onchainrank.com/login" className="btn btn-primary mt-3">
+      <a
+        href="https://onchainrank.com/dashboard"
+        className="btn btn-primary mt-3"
+      >
         Dashboard
       </a>
     </div>
