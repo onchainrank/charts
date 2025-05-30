@@ -9,10 +9,9 @@ const TOKEN = "token123";
 export const NotFound = () => (
   <div className="container text-center py-5">
     <div className="alert alert-warning" role="alert">
-      <h1 className="display-1">Access Required</h1>
-      <p className="lead">To access this data, please log in.</p>
+      <h4 className="display-1">Data Available on Dashboard</h4>
       <a href="https://onchainrank.com/login" className="btn btn-primary mt-3">
-        Login
+        Dashboard
       </a>
     </div>
   </div>
