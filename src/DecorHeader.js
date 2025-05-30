@@ -35,16 +35,15 @@ const DecorHeader = ({
   const arStyle = ar > 520 ? { fontWeight: "bold" } : {};
 
   return (
-    <div className="card-header d-flex align-items-center flex-wrap">
-      <span style={{ color: volumeColor, marginRight: 8 }}>
-        Vol: {recentCSolVal}
-      </span>
-      <span style={{ color: mcarColor, marginRight: 8 }}>
-        MCAR: {Math.round(max_cactor_rank)}
-      </span>
-      <span style={{ color: arColor, ...arStyle, marginRight: 8 }}>
-        AR: {ar}
-      </span>
+    <div className="card-header align-items-center">
+      <p style={{ color: volumeColor }}>Total Volume: {recentCSolVal}</p>
+      <p>
+        Max Onchain Score:{" "}
+        <span style={{ color: mcarColor }}> {Math.round(max_cactor_rank)}</span>
+      </p>
+      <p style={{ color: arColor, ...arStyle, marginRight: 8 }}>
+        Onchain Score: {ar}
+      </p>
 
       {bullx !== undefined && (
         <span style={{ marginRight: 8 }}>BullX: {bullx}</span>

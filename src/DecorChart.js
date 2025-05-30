@@ -6,6 +6,18 @@ import DecorHeader from "./DecorHeader";
 
 const TOKEN = "token123";
 
+export const NotFound = () => (
+  <div className="container text-center py-5">
+    <div className="alert alert-warning" role="alert">
+      <h1 className="display-1">Access Required</h1>
+      <p className="lead">To access this data, please log in.</p>
+      <a href="/login" className="btn btn-primary mt-3">
+        Login
+      </a>
+    </div>
+  </div>
+);
+
 const DecorChart = () => {
   // Derive the 'addr' directly from the URL path
   const { pathname } = useLocation();
@@ -14,6 +26,7 @@ const DecorChart = () => {
   // Local state for the resolved ID and the fetched chart data
   const [id, setId] = useState(null);
   const [chartData, setChartData] = useState(null);
+  const [notFound, setNotFound] = useState(false);
 
   // 1) Fetch the on-chain ID for the given address, then load the chart data
   useEffect(() => {
@@ -23,6 +36,12 @@ const DecorChart = () => {
         const profileRes = await fetch(
           `https://profile.onchainrank.com/marketing-addr/${addr}`
         );
+
+        if (!profileRes.ok) {
+          setNotFound(true);
+          return;
+        }
+
         const profileJson = await profileRes.json();
         const fetchedId = profileJson.data.address;
         setId(fetchedId);
@@ -126,6 +145,9 @@ const DecorChart = () => {
     return merged;
   };
 
+  if (notFound) {
+    return <NotFound />;
+  }
   // Show a loading state until data is ready
   if (!chartData) {
     return <div>Loading chart...</div>;
