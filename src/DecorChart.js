@@ -11,7 +11,7 @@ export const NotFound = () => (
     <div className="alert alert-warning" role="alert">
       <h1 className="display-1">Access Required</h1>
       <p className="lead">To access this data, please log in.</p>
-      <a href="/login" className="btn btn-primary mt-3">
+      <a href="https://onchainrank.com/login" className="btn btn-primary mt-3">
         Login
       </a>
     </div>
