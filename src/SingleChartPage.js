@@ -65,6 +65,10 @@ const SingleChartPage = () => {
                 incomingData.total_comments !== undefined
                   ? incomingData.total_comments
                   : prevData.total_comments,
+              role:
+                incomingData.role !== undefined
+                  ? incomingData.role
+                  : prevData.role,
             };
           }
           return prevData;
@@ -127,6 +131,7 @@ const SingleChartPage = () => {
         bundle_ratio={chartData.bundle_ratio}
         pump_dump_risk={chartData.is_pump_dump_risk}
         total_comments={chartData.total_comments}
+        role={chartData.role}
       />
       <Chart
         chartId={chartData.id}

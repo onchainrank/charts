@@ -3,6 +3,7 @@ import ValidLaunchIcon from "./components/ValidLaunchIcon";
 import ValidSocialsIcon from "./components/ValidSocialsIcon";
 import UniqueSocialsIcon from "./components/UniqueSocialsIcon";
 import PumpDumpIcon from "./components/PumpDumpIcon";
+import AdminComponent from "./AdminComponent";
 
 const SingleHeader = ({
   recentCSolVal,
@@ -16,6 +17,7 @@ const SingleHeader = ({
   bundle_ratio,
   pump_dump_risk,
   total_comments,
+  role,
 }) => {
   const fmt = (ts) => new Date(ts * 1000).toLocaleString();
 
@@ -55,6 +57,7 @@ const SingleHeader = ({
       {bullx !== undefined && (
         <span style={{ marginRight: 8 }}>BullX: {bullx}</span>
       )}
+      {role === "admin" && <AdminComponent />}
 
       {dex_paid && (
         <span className="badge bg-success ms-2" style={{ marginRight: 8 }}>
