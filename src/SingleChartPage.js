@@ -132,6 +132,7 @@ const SingleChartPage = () => {
         pump_dump_risk={chartData.is_pump_dump_risk}
         total_comments={chartData.total_comments}
         role={chartData.role}
+        id={id}
       />
       <Chart
         chartId={chartData.id}

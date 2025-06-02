@@ -18,6 +18,7 @@ const SingleHeader = ({
   pump_dump_risk,
   total_comments,
   role,
+  id,
 }) => {
   const fmt = (ts) => new Date(ts * 1000).toLocaleString();
 
@@ -57,7 +58,7 @@ const SingleHeader = ({
       {bullx !== undefined && (
         <span style={{ marginRight: 8 }}>BullX: {bullx}</span>
       )}
-      {role === "admin" && <AdminComponent />}
+      {role === "admin" && <AdminComponent id={id} />}
 
       {dex_paid && (
         <span className="badge bg-success ms-2" style={{ marginRight: 8 }}>
