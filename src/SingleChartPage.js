@@ -133,6 +133,7 @@ const SingleChartPage = () => {
         total_comments={chartData.total_comments}
         role={chartData.role}
         id={id}
+        token={token}
       />
       <Chart
         chartId={chartData.id}

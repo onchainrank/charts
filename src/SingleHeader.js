@@ -4,6 +4,7 @@ import ValidSocialsIcon from "./components/ValidSocialsIcon";
 import UniqueSocialsIcon from "./components/UniqueSocialsIcon";
 import PumpDumpIcon from "./components/PumpDumpIcon";
 import AdminComponent from "./AdminComponent";
+import InfoIcon from "./components/InfoIcon";
 
 const SingleHeader = ({
   recentCSolVal,
@@ -19,6 +20,7 @@ const SingleHeader = ({
   total_comments,
   role,
   id,
+  token,
 }) => {
   const fmt = (ts) => new Date(ts * 1000).toLocaleString();
 
@@ -46,19 +48,25 @@ const SingleHeader = ({
       />
 
       <span style={{ color: volumeColor, marginRight: 8 }}>
-        Vol: {recentCSolVal}
+        <span style={{ color: "gray" }}>VOL:</span> {recentCSolVal}
       </span>
       <span style={{ color: mcarColor, marginRight: 8 }}>
-        MCAR: {Math.round(max_cactor_rank)}
-      </span>
-      <span style={{ color: arColor, ...arStyle, marginRight: 8 }}>
-        AR: {ar}
+        <div className="d-flex align-items-center">
+          <span style={{ marginRight: 4 }}>
+            <span style={{ color: "gray" }}>OS:</span>
+            <span style={{ color: arColor, marginRight: 1, marginLeft: 2 }}>
+              {ar}{" "}
+            </span>{" "}
+            ({Math.round(max_cactor_rank)})
+          </span>
+          <InfoIcon text="Token Onchain Score: Current (Max)" />
+        </div>
       </span>
 
       {bullx !== undefined && (
         <span style={{ marginRight: 8 }}>BullX: {bullx}</span>
       )}
-      {role === "admin" && <AdminComponent id={id} />}
+      {role === "admin" && <AdminComponent id={id} token={token} />}
 
       {dex_paid && (
         <span className="badge bg-success ms-2" style={{ marginRight: 8 }}>
