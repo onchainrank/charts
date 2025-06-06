@@ -1,8 +1,5 @@
 import React from "react";
-import ValidLaunchIcon from "./components/ValidLaunchIcon";
-import ValidSocialsIcon from "./components/ValidSocialsIcon";
-import UniqueSocialsIcon from "./components/UniqueSocialsIcon";
-import PumpDumpIcon from "./components/PumpDumpIcon";
+import InfoIcon from "./components/InfoIcon";
 
 const DecorHeader = ({
   recentCSolVal,
@@ -16,67 +13,234 @@ const DecorHeader = ({
   bundle_ratio,
   pump_dump_risk,
   total_comments,
+  migrated,
+  name,
+  symbol,
+  image,
+  id, // <-- make sure 'id' is passed in as a prop
 }) => {
-  const fmt = (ts) => new Date(ts * 1000).toLocaleString();
+  // If migrated is true, force all colors to gray
+  const isGray = Boolean(migrated);
 
-  // Volume color
-  const volume = Number(recentCSolVal);
-  let volumeColor = "green";
-  if (volume < 200) volumeColor = "red";
-  else if (volume < 400) volumeColor = "orange";
+  // Helper to pick "red/orange/green" based on thresholds;
+  // but override to gray if isGray===true
+  const getColor = (value, { low, high }) => {
+    if (isGray) return "gray";
+    if (value < low) return "red";
+    if (value < high) return "orange";
+    return "green";
+  };
 
-  // MCAR color
-  const mcarN = Number(max_cactor_rank);
-  let mcarColor = mcarN > 400 ? "green" : mcarN < 200 ? "red" : "orange";
+  // Convert to numbers (in case props arrive as strings)
+  const volumeNum = Number(recentCSolVal) || 0;
+  const mcarNum = Number(max_cactor_rank) || 0;
+  const actorRankNum = Math.round(Number(recentActorRank) || 0);
 
-  // AR styling
-  const ar = Math.round(Number(recentActorRank));
-  let arColor = ar > 400 ? "green" : ar < 200 ? "red" : "orange";
-  const arStyle = ar > 520 ? { fontWeight: "bold" } : {};
+  // Compute colors/styles, but override to gray if isGray
+  const volumeColor = getColor(volumeNum, { low: 200, high: 400 });
+  const mcarColor = getColor(mcarNum, { low: 200, high: 400 });
+  const arColor = getColor(actorRankNum, { low: 200, high: 400 });
+
+  // Actor‐rank gets bold only if not migrated and >520
+  const arStyle = isGray
+    ? {}
+    : actorRankNum > 520
+    ? { fontWeight: "bold" }
+    : {};
+
+  const XMark = () => (
+    <span
+      style={{
+        color: isGray ? "gray" : "red",
+        marginRight: "0.25rem",
+      }}
+    >
+      ✖
+    </span>
+  );
+
+  // A helper to apply gray to each <p> if migrated
+  const pStyle = {
+    margin: 0,
+    color: isGray ? "gray" : undefined,
+  };
+
+  // Determine if loading should be shown (any of name, symbol, or image missing)
+  const isLoading = !name || !symbol || !image;
+
+  // Shorten the id for display: first 4 chars + "..." + last 4 chars
+  const shortId = id ? `${id.slice(0, 4)}...${id.slice(id.length - 4)}` : "";
+
+  // Handler to copy the full id to the clipboard
+  const handleCopyId = () => {
+    if (id) {
+      navigator.clipboard.writeText(id);
+    }
+  };
 
   return (
-    <div className="card-header align-items-center">
-      <p style={{ color: volumeColor }}>Total Volume: {recentCSolVal}</p>
-      <p>
-        Max Onchain Score:{" "}
-        <span style={{ color: mcarColor }}> {Math.round(max_cactor_rank)}</span>
-      </p>
-      <p style={{ color: arColor, ...arStyle, marginRight: 8 }}>
-        Onchain Score: {ar}
-      </p>
+    <div className="row">
+      {/* LEFT COLUMN: list all <p> elements vertically */}
+      <div className="col-md-6">
+        {/* Show "token migrated" only when migrated is true */}
+        {isGray && (
+          <span className="badge bg-warning text-dark mb-2">
+            token migrated
+          </span>
+        )}
 
-      {bullx !== undefined && (
-        <span style={{ marginRight: 8 }}>BullX: {bullx}</span>
-      )}
+        <p style={pStyle}>
+          Total Volume: <span style={{ color: volumeColor }}>{volumeNum}</span>
+        </p>
 
-      {dex_paid && (
-        <span className="badge bg-success ms-2" style={{ marginRight: 8 }}>
-          dex paid
-        </span>
-      )}
+        <p style={pStyle}>
+          Onchain Score:{" "}
+          <span style={{ color: arColor, ...arStyle }}>{actorRankNum}</span> (
+          <span style={{ color: mcarColor }}>{Math.round(mcarNum)}</span>)
+        </p>
 
-      {/* valid_launch logic */}
-      {valid_launch === false && <ValidLaunchIcon />}
-      {pump_dump_risk === true && <PumpDumpIcon />}
+        {bullx !== undefined && <p style={pStyle}>BullX: {bullx}</p>}
 
-      {!valid_socials && <ValidSocialsIcon />}
-      {!unique_socials && <UniqueSocialsIcon />}
+        {dex_paid && (
+          <span className="badge bg-success ms-2" style={{ marginRight: 8 }}>
+            dex paid
+          </span>
+        )}
 
-      {bundle_ratio > 0.01 && (
-        <span class="badge text-bg-warning">
-          Bundle:{Math.round(bundle_ratio * 100)}%
-        </span>
-      )}
-      {total_comments > 0 && (
-        <span className="badge text-bg-light align-middle">
-          <img
-            src="/pflogo.png"
-            alt="pump.fun Logo"
-            style={{ height: "12px", width: "auto", marginRight: "0px" }}
-          />
-          {total_comments}
-        </span>
-      )}
+        {!valid_launch && (
+          <p style={pStyle}>
+            <XMark />
+            Detected invalid launch{" "}
+            <InfoIcon text="Invalid launch detected: on-chain data exhibit patterns commonly associated with scams." />
+          </p>
+        )}
+
+        {pump_dump_risk && (
+          <p style={pStyle}>
+            <XMark />
+            Detected high pump‐dump risk
+            <InfoIcon text="Detected volume patterns commonly associated with pump-dump scams." />
+          </p>
+        )}
+
+        {!valid_socials && (
+          <p style={pStyle}>
+            <XMark />
+            Metadata misconfigured
+            <InfoIcon text="This warning is shown when a social media account (e.g., Twitter/X or Telegram) is entered in the Website field. The Website field should contain a valid URL, and social media handles belong in their designated fields." />
+          </p>
+        )}
+
+        {!unique_socials && (
+          <p style={pStyle}>
+            <XMark />
+            Duplicate socials
+          </p>
+        )}
+
+        {bundle_ratio > 0.01 && (
+          <p style={pStyle}>Bundle: {Math.round(bundle_ratio * 100)}%</p>
+        )}
+
+        {total_comments > 0 && (
+          <p className="d-flex align-items-center" style={pStyle}>
+            # Comments on{" "}
+            <img
+              src="/pflogo.png"
+              alt="pump.fun Logo"
+              style={{
+                height: "12px",
+                width: "auto",
+                marginRight: "2px",
+                marginLeft: "2px",
+                filter: isGray ? "grayscale(100%)" : "none",
+              }}
+            />
+            : {total_comments}
+          </p>
+        )}
+      </div>
+
+      {/* RIGHT COLUMN: circular image with text to its right, or loading spinner */}
+      <div className="col-md-6 d-flex align-items-center justify-content-center">
+        {isLoading ? (
+          <div className="text-center">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        ) : (
+          <div className="d-flex align-items-center">
+            {/* Circular Token Image */}
+            <img
+              src={image}
+              alt={`${name} logo`}
+              className="rounded-circle me-3"
+              style={{
+                width: "80px",
+                height: "80px",
+                objectFit: "cover",
+                filter: isGray ? "grayscale(100%)" : "none",
+              }}
+            />
+
+            {/* Name, Symbol, and Shortened ID with Copy Icon */}
+            <div className="text-start">
+              <h5
+                style={{
+                  color: isGray ? "gray" : undefined,
+                  margin: 0,
+                  lineHeight: 1.2,
+                }}
+              >
+                {name}
+              </h5>
+              <p
+                style={{
+                  color: isGray ? "gray" : undefined,
+                  margin: 0,
+                  lineHeight: 1.2,
+                }}
+              >
+                {symbol}
+              </p>
+              <div className="d-flex align-items-center">
+                <p
+                  style={{
+                    color: isGray ? "gray" : undefined,
+                    margin: 0,
+                    lineHeight: 1.2,
+                    fontSize: "12px",
+                  }}
+                >
+                  {shortId}
+                </p>
+                <button
+                  type="button"
+                  onClick={handleCopyId}
+                  className="btn btn-sm btn-link p-0 ms-2"
+                  title="Copy full ID"
+                  style={{ color: isGray ? "gray" : undefined }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-copy"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

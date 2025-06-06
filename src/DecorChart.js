@@ -3,8 +3,7 @@ import Chart from "./Chart";
 import io from "socket.io-client";
 import { useLocation } from "react-router-dom";
 import DecorHeader from "./DecorHeader";
-
-const TOKEN = "token123";
+const TOKEN = "no-auth";
 
 export const NotFound = () => (
   <div className="container text-center py-5">
@@ -116,6 +115,22 @@ const DecorChart = () => {
               incomingData.total_comments !== undefined
                 ? incomingData.total_comments
                 : prevData.total_comments,
+            migrated:
+              incomingData.migrated !== undefined
+                ? incomingData.migrated
+                : prevData.migrated,
+            image:
+              incomingData.image !== undefined
+                ? incomingData.image
+                : prevData.image,
+            name:
+              incomingData.name !== undefined
+                ? incomingData.name
+                : prevData.name,
+            symbol:
+              incomingData.symbol !== undefined
+                ? incomingData.symbol
+                : prevData.symbol,
           };
         });
       }
@@ -167,11 +182,13 @@ const DecorChart = () => {
 
   return (
     <div className="container my-3">
-      <img
-        src="/logo.png"
-        alt="Logo"
-        style={{ height: "24px", width: "auto", marginBottom: "20px" }}
-      />
+      <a href="https://onchainrank.com" alt="onchain rank main page">
+        <img
+          src="/logo.png"
+          alt="Logo"
+          style={{ height: "24px", width: "auto", marginBottom: "20px" }}
+        />
+      </a>
       <DecorHeader
         recentCSolVal={recentCSolVal}
         max_cactor_rank={chartData.max_cactor_rank}
@@ -184,6 +201,11 @@ const DecorChart = () => {
         bundle_ratio={chartData.bundle_ratio}
         pump_dump_risk={chartData.is_pump_dump_risk}
         total_comments={chartData.total_comments}
+        migrated={chartData.migrated}
+        name={chartData.name}
+        symbol={chartData.symbol}
+        image={chartData.image}
+        id={id}
       />
       <Chart
         chartId={chartData.id}
