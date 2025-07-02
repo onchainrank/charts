@@ -21,6 +21,10 @@ const SingleHeader = ({
   role,
   id,
   token,
+  hv_wallets_count,
+  hv_holdings,
+  hv_avg_profit_only,
+  nov_wallets_count,
 }) => {
   const fmt = (ts) => new Date(ts * 1000).toLocaleString();
 
@@ -44,7 +48,7 @@ const SingleHeader = ({
       <img
         src="/logo.png"
         alt="Logo"
-        style={{ height: "24px", width: "auto", marginRight: "10px" }}
+        style={{ height: "17px", width: "auto", marginRight: "10px" }}
       />
 
       <span style={{ color: volumeColor, marginRight: 8 }}>
@@ -66,6 +70,31 @@ const SingleHeader = ({
       {bullx !== undefined && (
         <span style={{ marginRight: 8 }}>BullX: {bullx}</span>
       )}
+
+      {hv_wallets_count !== undefined && (
+        <span style={{ marginRight: 8 }}>
+          <span style={{ color: "gray" }}>HV Wallets:</span> {Number(hv_wallets_count).toFixed(0)}
+        </span>
+      )}
+
+      {hv_holdings !== undefined && (
+        <span style={{ marginRight: 8 }}>
+          <span style={{ color: "gray" }}>HV Holdings:</span> {Number(hv_holdings).toFixed(2)}
+        </span>
+      )}
+
+      {hv_avg_profit_only !== undefined && (
+        <span style={{ marginRight: 8 }}>
+          <span style={{ color: "gray" }}>HV Avg Profit:</span> {Number(hv_avg_profit_only).toFixed(2)}
+        </span>
+      )}
+
+      {nov_wallets_count !== undefined && (
+        <span style={{ marginRight: 8 }}>
+          <span style={{ color: "gray" }}>NOV Wallets:</span> {Number(nov_wallets_count).toFixed(0)}
+        </span>
+      )}
+
       {role === "admin" && <AdminComponent id={id} token={token} />}
 
       {dex_paid && (

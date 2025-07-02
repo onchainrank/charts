@@ -69,6 +69,22 @@ const SingleChartPage = () => {
                 incomingData.role !== undefined
                   ? incomingData.role
                   : prevData.role,
+              hv_wallets_count:
+                incomingData.hv_wallets_count !== undefined
+                  ? incomingData.hv_wallets_count
+                  : prevData.hv_wallets_count,
+              hv_holdings:
+                incomingData.hv_holdings !== undefined
+                  ? incomingData.hv_holdings
+                  : prevData.hv_holdings,
+              hv_avg_profit_only:
+                incomingData.hv_avg_profit_only !== undefined
+                  ? incomingData.hv_avg_profit_only
+                  : prevData.hv_avg_profit_only,
+              nov_wallets_count:
+                incomingData.nov_wallets_count !== undefined
+                  ? incomingData.nov_wallets_count
+                  : prevData.nov_wallets_count,
             };
           }
           return prevData;
@@ -134,6 +150,10 @@ const SingleChartPage = () => {
         role={chartData.role}
         id={id}
         token={token}
+        hv_wallets_count={chartData.hv_wallets_count}
+        hv_holdings={chartData.hv_holdings}
+        hv_avg_profit_only={chartData.hv_avg_profit_only}
+        nov_wallets_count={chartData.nov_wallets_count}
       />
       <Chart
         chartId={chartData.id}
