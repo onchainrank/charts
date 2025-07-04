@@ -33,9 +33,6 @@ const SingleHeader = ({
   if (volume < 200) volumeColor = "red";
   else if (volume < 400) volumeColor = "orange";
 
-  // MCAR color
-  const mcarN = Number(max_cactor_rank);
-  let mcarColor = mcarN > 400 ? "green" : mcarN < 200 ? "red" : "orange";
 
   // AR styling
   const ar = Math.round(Number(recentActorRank));
@@ -104,11 +101,24 @@ const SingleHeader = ({
       {id && (
         <button
           onClick={handleSearchX}
-          className="btn btn-sm btn-outline-primary"
-          style={{ marginRight: 8 }}
+          className="btn btn-sm"
+          style={{ 
+            marginRight: 8, 
+            padding: "2px 6px",
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            backgroundColor: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
           title="Search on X.com"
         >
-          Search X
+          <img
+            src="/searchonX.png"
+            alt="Search on X"
+            style={{ height: "16px", width: "16px" }}
+          />
         </button>
       )}
 
