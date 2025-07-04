@@ -65,82 +65,83 @@ const DecorChart = () => {
   useEffect(() => {
     if (!id) return;
 
-    const socket = io("https://api.onchainrank.com", {
+    const socket = io("https://ws.onchainrank.com", {
       query: { token: TOKEN },
     });
 
     socket.on("connect", () => {
       console.log("Connected to WebSocket for single chart.");
+      // Subscribe to the specific room for this ID
+      socket.emit("subscribe", { room: id });
     });
 
     socket.on("single", (incomingData) => {
-      if (incomingData.id === id) {
-        setChartData((prevData) => {
-          if (!prevData) return prevData;
+      setChartData((prevData) => {
+        if (!prevData) return prevData;
 
-          const mergedData = mergeCandles(prevData.data, incomingData.data);
-          return {
-            ...prevData,
-            data: mergedData,
-            updatedAt: incomingData.updatedAt || prevData.updatedAt,
-            max_cactor_rank:
-              incomingData.max_cactor_rank !== undefined
-                ? incomingData.max_cactor_rank
-                : prevData.max_cactor_rank,
-            volRatio:
-              incomingData.volRatio !== undefined
-                ? incomingData.volRatio
-                : prevData.volRatio,
-            dex_paid:
-              incomingData.dex_paid !== undefined
-                ? incomingData.dex_paid
-                : prevData.dex_paid,
-            valid_socials:
-              incomingData.valid_socials !== undefined
-                ? incomingData.valid_socials
-                : prevData.valid_socials,
-            valid_launch:
-              incomingData.valid_launch !== undefined
-                ? incomingData.valid_launch
-                : prevData.valid_launch,
-            unique_socials:
-              incomingData.unique_socials !== undefined
-                ? incomingData.unique_socials
-                : prevData.unique_socials,
-            bundle_ratio:
-              incomingData.bundle_ratio !== undefined
-                ? incomingData.bundle_ratio
-                : prevData.bundle_ratio,
-            total_comments:
-              incomingData.total_comments !== undefined
-                ? incomingData.total_comments
-                : prevData.total_comments,
-            migrated:
-              incomingData.migrated !== undefined
-                ? incomingData.migrated
-                : prevData.migrated,
-            image:
-              incomingData.image !== undefined
-                ? incomingData.image
-                : prevData.image,
-            name:
-              incomingData.name !== undefined
-                ? incomingData.name
-                : prevData.name,
-            symbol:
-              incomingData.symbol !== undefined
-                ? incomingData.symbol
-                : prevData.symbol,
-          };
-        });
-      }
+        const mergedData = mergeCandles(prevData.data, incomingData.data);
+        return {
+          ...prevData,
+          data: mergedData,
+          updatedAt: incomingData.updatedAt || prevData.updatedAt,
+          max_cactor_rank:
+            incomingData.max_cactor_rank !== undefined
+              ? incomingData.max_cactor_rank
+              : prevData.max_cactor_rank,
+          volRatio:
+            incomingData.volRatio !== undefined
+              ? incomingData.volRatio
+              : prevData.volRatio,
+          dex_paid:
+            incomingData.dex_paid !== undefined
+              ? incomingData.dex_paid
+              : prevData.dex_paid,
+          valid_socials:
+            incomingData.valid_socials !== undefined
+              ? incomingData.valid_socials
+              : prevData.valid_socials,
+          valid_launch:
+            incomingData.valid_launch !== undefined
+              ? incomingData.valid_launch
+              : prevData.valid_launch,
+          unique_socials:
+            incomingData.unique_socials !== undefined
+              ? incomingData.unique_socials
+              : prevData.unique_socials,
+          bundle_ratio:
+            incomingData.bundle_ratio !== undefined
+              ? incomingData.bundle_ratio
+              : prevData.bundle_ratio,
+          total_comments:
+            incomingData.total_comments !== undefined
+              ? incomingData.total_comments
+              : prevData.total_comments,
+          migrated:
+            incomingData.migrated !== undefined
+              ? incomingData.migrated
+              : prevData.migrated,
+          image:
+            incomingData.image !== undefined
+              ? incomingData.image
+              : prevData.image,
+          name:
+            incomingData.name !== undefined ? incomingData.name : prevData.name,
+          symbol:
+            incomingData.symbol !== undefined
+              ? incomingData.symbol
+              : prevData.symbol,
+        };
+      });
     });
 
     socket.on("disconnect", () => {
       console.log("Disconnected from WebSocket.");
     });
 
-    return () => socket.disconnect();
+    return () => {
+      socket.emit("unsubscribe", { room: id });
+      socket.disconnect();
+    };
   }, [id]);
 
   // Merge incoming candles into the existing array.

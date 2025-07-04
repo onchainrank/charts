@@ -24,7 +24,6 @@ const SingleHeader = ({
   hv_wallets_count,
   hv_holdings,
   hv_avg_profit_only,
-  nov_wallets_count,
 }) => {
   const fmt = (ts) => new Date(ts * 1000).toLocaleString();
 
@@ -42,6 +41,15 @@ const SingleHeader = ({
   const ar = Math.round(Number(recentActorRank));
   let arColor = ar > 400 ? "green" : ar < 200 ? "red" : "orange";
   const arStyle = ar > 520 ? { fontWeight: "bold" } : {};
+
+  const handleSearchX = () => {
+    if (id) {
+      const searchUrl = `https://x.com/search?q=${encodeURIComponent(
+        id
+      )}&src=typed_query`;
+      window.open(searchUrl, "_blank");
+    }
+  };
 
   return (
     <div className="card-header d-flex align-items-center flex-wrap">
@@ -73,29 +81,37 @@ const SingleHeader = ({
 
       {hv_wallets_count !== undefined && (
         <span style={{ marginRight: 8 }}>
-          <span style={{ color: "gray" }}>HV Wallets:</span> {Number(hv_wallets_count).toFixed(0)}
+          <span style={{ color: "gray" }}>HV Wallets:</span>{" "}
+          {Number(hv_wallets_count).toFixed(0)}
         </span>
       )}
 
       {hv_holdings !== undefined && (
         <span style={{ marginRight: 8 }}>
-          <span style={{ color: "gray" }}>HV Holdings:</span> {Number(hv_holdings).toFixed(2)}
+          <span style={{ color: "gray" }}>HV Holdings:</span>{" "}
+          {Number(hv_holdings).toFixed(2)}
         </span>
       )}
 
       {hv_avg_profit_only !== undefined && (
         <span style={{ marginRight: 8 }}>
-          <span style={{ color: "gray" }}>HV Avg Profit:</span> {Number(hv_avg_profit_only).toFixed(2)}
-        </span>
-      )}
-
-      {nov_wallets_count !== undefined && (
-        <span style={{ marginRight: 8 }}>
-          <span style={{ color: "gray" }}>NOV Wallets:</span> {Number(nov_wallets_count).toFixed(0)}
+          <span style={{ color: "gray" }}>HV Avg Profit:</span>{" "}
+          {Number(hv_avg_profit_only).toFixed(2)}
         </span>
       )}
 
       {role === "admin" && <AdminComponent id={id} token={token} />}
+
+      {id && (
+        <button
+          onClick={handleSearchX}
+          className="btn btn-sm btn-outline-primary"
+          style={{ marginRight: 8 }}
+          title="Search on X.com"
+        >
+          Search X
+        </button>
+      )}
 
       {dex_paid && (
         <span className="badge bg-success ms-2" style={{ marginRight: 8 }}>
