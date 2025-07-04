@@ -52,7 +52,7 @@ const SingleHeader = ({
   };
 
   return (
-    <div className="card-header d-flex align-items-center flex-wrap">
+    <div className="card-header d-flex align-items-center flex-wrap" style={{ fontSize: "12px" }}>
       <img
         src="/logo.png"
         alt="Logo"
@@ -62,18 +62,17 @@ const SingleHeader = ({
       <span style={{ color: volumeColor, marginRight: 8 }}>
         <span style={{ color: "gray" }}>VOL:</span> {recentCSolVal}
       </span>
-      <span style={{ color: mcarColor, marginRight: 8 }}>
-        <div className="d-flex align-items-center">
-          <span style={{ marginRight: 4 }}>
-            <span style={{ color: "gray" }}>OS:</span>
-            <span style={{ color: arColor, marginRight: 1, marginLeft: 2 }}>
-              {ar}{" "}
-            </span>{" "}
-            ({Math.round(max_cactor_rank)})
-          </span>
-          <InfoIcon text="Token Onchain Score: Current (Max)" />
-        </div>
-      </span>
+      
+      <div className="d-flex align-items-center" style={{ marginRight: 8 }}>
+        <span style={{ marginRight: 4 }}>
+          <span style={{ color: "gray" }}>OS:</span>
+          <span style={{ color: arColor, marginRight: 1, marginLeft: 2 }}>
+            {ar}{" "}
+          </span>{" "}
+          ({Math.round(max_cactor_rank)})
+        </span>
+        <InfoIcon text="Token Onchain Score: Current (Max)" />
+      </div>
 
       {bullx !== undefined && (
         <span style={{ marginRight: 8 }}>BullX: {bullx}</span>
@@ -114,12 +113,11 @@ const SingleHeader = ({
       )}
 
       {dex_paid && (
-        <span className="badge bg-success ms-2" style={{ marginRight: 8 }}>
+        <span className="badge bg-success" style={{ marginRight: 8 }}>
           dex paid
         </span>
       )}
 
-      {/* valid_launch logic */}
       {valid_launch === false && <ValidLaunchIcon />}
       {pump_dump_risk === true && <PumpDumpIcon />}
 
@@ -127,7 +125,7 @@ const SingleHeader = ({
       {!unique_socials && <UniqueSocialsIcon />}
 
       {bundle_ratio > 0.01 && (
-        <span class="badge text-bg-warning">
+        <span className="badge text-bg-warning" style={{ marginRight: 8 }}>
           Bundle:{Math.round(bundle_ratio * 100)}%
         </span>
       )}
