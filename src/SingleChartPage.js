@@ -89,6 +89,14 @@ const SingleChartPage = () => {
               incomingData.nov_wallets_count !== undefined
                 ? incomingData.nov_wallets_count
                 : prevData.nov_wallets_count,
+            fresh_creator_wallet:
+              incomingData.fresh_creator_wallet !== undefined
+                ? incomingData.fresh_creator_wallet
+                : prevData.fresh_creator_wallet,
+            creator:
+              incomingData.creator !== undefined
+                ? incomingData.creator
+                : prevData.creator,
           };
         }
         return prevData;
@@ -159,6 +167,8 @@ const SingleChartPage = () => {
         hv_holdings={chartData.hv_holdings}
         hv_avg_profit_only={chartData.hv_avg_profit_only}
         nov_wallets_count={chartData.nov_wallets_count}
+        fresh_creator_wallet={chartData.fresh_creator_wallet}
+        creator={chartData.creator}
       />
       <Chart
         chartId={chartData.id}

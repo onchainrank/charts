@@ -1,5 +1,6 @@
 import React from "react";
 import InfoIcon from "./components/InfoIcon";
+import WalletIcon from "./components/WalletIcon";
 
 const DecorHeader = ({
   recentCSolVal,
@@ -18,6 +19,8 @@ const DecorHeader = ({
   symbol,
   image,
   id, // <-- make sure 'id' is passed in as a prop
+  fresh_creator_wallet,
+  creator,
 }) => {
   // If migrated is true, force all colors to gray
   const isGray = Boolean(migrated);
@@ -100,6 +103,10 @@ const DecorHeader = ({
         </p>
 
         {bullx !== undefined && <p style={pStyle}>BullX: {bullx}</p>}
+
+        <div className="d-flex align-items-center">
+          <WalletIcon fresh_creator_wallet={fresh_creator_wallet} creator={creator} />
+        </div>
 
         {dex_paid && (
           <span className="badge bg-success ms-2" style={{ marginRight: 8 }}>

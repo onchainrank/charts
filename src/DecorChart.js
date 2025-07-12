@@ -130,6 +130,14 @@ const DecorChart = () => {
             incomingData.symbol !== undefined
               ? incomingData.symbol
               : prevData.symbol,
+          fresh_creator_wallet:
+            incomingData.fresh_creator_wallet !== undefined
+              ? incomingData.fresh_creator_wallet
+              : prevData.fresh_creator_wallet,
+          creator:
+            incomingData.creator !== undefined
+              ? incomingData.creator
+              : prevData.creator,
         };
       });
     });
@@ -207,6 +215,8 @@ const DecorChart = () => {
         symbol={chartData.symbol}
         image={chartData.image}
         id={id}
+        fresh_creator_wallet={chartData.fresh_creator_wallet}
+        creator={chartData.creator}
       />
       <Chart
         chartId={chartData.id}
