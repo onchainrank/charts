@@ -3,18 +3,6 @@ import { createChart } from "lightweight-charts";
 import ChartHeader from "./ChartHeader";
 import ChartLegend from "./ChartLegend";
 
-// Helper: convert UNIX timestamp (seconds) to human-readable datetime.
-const formatTimestamp = (timestamp) => {
-  const date = new Date(timestamp * 1000);
-  const year = date.getFullYear();
-  const month = ("0" + (date.getMonth() + 1)).slice(-2);
-  const day = ("0" + date.getDate()).slice(-2);
-  const hours = ("0" + date.getHours()).slice(-2);
-  const minutes = ("0" + date.getMinutes()).slice(-2);
-  const seconds = ("0" + date.getSeconds()).slice(-2);
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-};
-
 function Chart({
   chartId,
   name,
@@ -80,7 +68,14 @@ function Chart({
     });
 
     // Add candlestick series.
-    candleSeriesRef.current = chartRef.current.addCandlestickSeries();
+    candleSeriesRef.current = chartRef.current.addCandlestickSeries({
+      upColor: '#808080',
+      downColor: '#000000',
+      borderUpColor: '#808080',
+      borderDownColor: '#000000',
+      wickUpColor: '#808080',
+      wickDownColor: '#000000',
+    });
 
     // Add volume histogram series (using solVal as volume).
     volumeSeriesRef.current = chartRef.current.addHistogramSeries({
@@ -297,11 +292,6 @@ function Chart({
       )}
       <div className="card-body">
         <div ref={chartContainerRef} />
-        {candles && candles.length > 0 && (
-          <small className="text-muted">
-            Latest: {formatTimestamp(candles[candles.length - 1].time)}
-          </small>
-        )}
         <ChartLegend />
         {/* Checkbox controls for each indicator */}
         <div className="mt-3">
