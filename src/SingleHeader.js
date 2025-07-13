@@ -28,8 +28,6 @@ const SingleHeader = ({
   fresh_creator_wallet,
   creator,
 }) => {
-  const fmt = (ts) => new Date(ts * 1000).toLocaleString();
-
   // Volume color
   const volume = Number(recentCSolVal);
   let volumeColor = "green";
@@ -39,7 +37,6 @@ const SingleHeader = ({
   // AR styling
   const ar = Math.round(Number(recentActorRank));
   let arColor = ar > 400 ? "green" : ar < 200 ? "red" : "orange";
-  const arStyle = ar > 520 ? { fontWeight: "bold" } : {};
 
   const handleSearchX = () => {
     if (id) {
@@ -139,7 +136,10 @@ const SingleHeader = ({
       {!valid_socials && <ValidSocialsIcon />}
       {!unique_socials && <UniqueSocialsIcon />}
 
-      <WalletIcon fresh_creator_wallet={fresh_creator_wallet} creator={creator} />
+      <WalletIcon
+        fresh_creator_wallet={fresh_creator_wallet}
+        creator={creator}
+      />
 
       {bundle_ratio > 0.01 && (
         <span className="badge text-bg-warning" style={{ marginRight: 8 }}>
