@@ -68,14 +68,7 @@ function Chart({
     });
 
     // Add candlestick series.
-    candleSeriesRef.current = chartRef.current.addCandlestickSeries({
-      upColor: '#808080',
-      downColor: '#000000',
-      borderUpColor: '#808080',
-      borderDownColor: '#000000',
-      wickUpColor: '#808080',
-      wickDownColor: '#000000',
-    });
+    candleSeriesRef.current = chartRef.current.addCandlestickSeries();
 
     // Add volume histogram series (using solVal as volume).
     volumeSeriesRef.current = chartRef.current.addHistogramSeries({
@@ -100,16 +93,81 @@ function Chart({
     };
   }, []);
 
+  // Helper function to calculate color based on new_money_ratio
+  const getColorFromRatio = (ratio) => {
+    if (ratio === undefined || ratio === null) {
+      // Default colors when new_money_ratio is missing
+      return {
+        upColor: "#5e91ff",
+        downColor: "#335db6",
+        borderUpColor: "#5e91ff",
+        borderDownColor: "#335db6",
+        wickUpColor: "#5e91ff",
+        wickDownColor: "#335db6",
+      };
+    }
+
+    // Clamp ratio between 0 and 1
+    const clampedRatio = Math.max(0, Math.min(1, ratio));
+
+    let bodyColor;
+    let borderColor;
+
+    if (clampedRatio < 0.1) {
+      // Use default colors when ratio is below 0.1
+      bodyColor = {
+        upColor: "#5e91ff",
+        downColor: "#335db6",
+      };
+      borderColor = {
+        borderUpColor: "#5e91ff",
+        borderDownColor: "#335db6",
+      };
+    } else {
+      // Determine color based on ratio thresholds
+      let color;
+      if (clampedRatio >= 0.75) {
+        color = "#ffff00"; // Yellow for ratio >= 0.75
+      } else if (clampedRatio >= 0.49) {
+        color = "#99ff00"; // Light green for ratio >= 0.49
+      } else {
+        color = "#ffcc00"; // Orange for ratio >= 0.1
+      }
+
+      bodyColor = {
+        upColor: color,
+        downColor: color,
+      };
+
+      // Yellow borders for positive ratios
+      borderColor = {
+        borderUpColor: "#ffff00",
+        borderDownColor: "#ffff00",
+      };
+    }
+
+    return {
+      ...bodyColor,
+      ...borderColor,
+      wickUpColor: bodyColor.upColor,
+      wickDownColor: bodyColor.downColor,
+    };
+  };
+
   // Update basic series data (candlestick & volume) when candles change.
   useEffect(() => {
     if (candles && candleSeriesRef.current) {
-      const formattedCandles = candles.map((candle) => ({
-        time: candle.time,
-        open: candle.open,
-        high: candle.high,
-        low: candle.low,
-        close: candle.close,
-      }));
+      const formattedCandles = candles.map((candle) => {
+        const colors = getColorFromRatio(candle.new_money / candle.solVal);
+        return {
+          time: candle.time,
+          open: candle.open,
+          high: candle.high,
+          low: candle.low,
+          close: candle.close,
+          color: colors.upColor, // Use the calculated color
+        };
+      });
       candleSeriesRef.current.setData(formattedCandles);
 
       const formattedVolume = candles.map((candle) => ({
