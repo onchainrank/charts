@@ -5,6 +5,7 @@ const ChartHeader = ({
   name,
   symbol,
   recentCSolVal,
+  recentTotalFee,
   image,
   handleCopy,
   handleDelete,
@@ -41,10 +42,11 @@ const ChartHeader = ({
           </svg>
         </span>
       </div>
-      {/* Middle: Name, Symbol, and recent cSolVal */}
+      {/* Middle: Name, Symbol, recent cSolVal, and total fee */}
       <div>
         <span>Name: {name}</span> | <span>Symbol: {symbol}</span> |{" "}
-        <span>cSolVal: {recentCSolVal}</span>
+        <span>cSolVal: {recentCSolVal}</span> |{" "}
+        <span>Total Fee: {recentTotalFee}</span>
       </div>
       {/* Right: Delete icon */}
       <div>

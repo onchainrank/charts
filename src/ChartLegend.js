@@ -8,6 +8,8 @@ const ChartLegend = () => {
     { color: "#9d4e15", label: "realized_loss" },
     { color: "#156a9d", label: "realized_profit" },
     { color: "#c91483", label: "onchain_score" },
+    { color: "#00b300", label: "buy_volume" },
+    { color: "#e60000", label: "sell_volume" },
   ];
 
   return (

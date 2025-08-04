@@ -22,6 +22,10 @@ function Chart({
   const realizedLossSeriesRef = useRef(null);
   const realizedProfitSeriesRef = useRef(null);
   const actorRankSeriesRef = useRef(null);
+  const last10secVolSeriesRef = useRef(null);
+  const last5secVolSeriesRef = useRef(null);
+  const buyVolumeSeriesRef = useRef(null);
+  const sellVolumeSeriesRef = useRef(null);
 
   // Define default indicator visibility.
   const defaultIndicatorVisibility = {
@@ -30,6 +34,10 @@ function Chart({
     realizedLoss: true,
     realizedProfit: true,
     actorRank: true,
+    last10secVol: false,
+    last5secVol: false,
+    buyVolume: false,
+    sellVolume: false,
   };
 
   // Load saved indicator visibility from localStorage, or fallback to defaults.
@@ -50,7 +58,7 @@ function Chart({
   useEffect(() => {
     chartRef.current = createChart(chartContainerRef.current, {
       width: chartContainerRef.current.clientWidth,
-      height: 300,
+      height: 400,
       layout: {
         backgroundColor: "#ffffff",
         textColor: "#000",
@@ -58,9 +66,30 @@ function Chart({
       timeScale: {
         timeVisible: true,
         secondsVisible: true,
+        rightOffset: 0,
+        barSpacing: 3,
+        fixLeftEdge: false,
+        lockVisibleTimeRangeOnResize: true,
+        rightBarStaysOnScroll: false,
+        borderVisible: false,
+        borderColor: "#fff000",
+        visible: true,
+        timeFormat: {
+          type: "time-scale",
+          minMove: 1,
+        },
+        tickMarkFormatter: (time) => {
+          const date = new Date(time * 1000);
+          return date.toLocaleTimeString();
+        },
       },
       rightPriceScale: {
         visible: true,
+        autoScale: true,
+        scaleMargins: {
+          top: 0,
+          bottom: 0,
+        },
       },
       leftPriceScale: {
         visible: true,
@@ -68,13 +97,23 @@ function Chart({
     });
 
     // Add candlestick series.
-    candleSeriesRef.current = chartRef.current.addCandlestickSeries();
+    candleSeriesRef.current = chartRef.current.addCandlestickSeries({
+      priceScaleId: "right",
+    });
 
     // Add volume histogram series (using solVal as volume).
     volumeSeriesRef.current = chartRef.current.addHistogramSeries({
       color: "#26a69a",
       priceFormat: { type: "volume" },
+      priceScaleId: "volume",
       scaleMargins: { top: 0.8, bottom: 0 },
+    });
+
+    // Configure the volume price scale
+    chartRef.current.priceScale("volume").applyOptions({
+      visible: true,
+      scaleMargins: { top: 0.8, bottom: 0 },
+      autoScale: true,
     });
 
     // Set up a resize listener.
@@ -87,8 +126,31 @@ function Chart({
     window.addEventListener("resize", handleResize);
     handleResize();
 
+    // Auto-scale on scroll/pan
+    const handleVisibleTimeRangeChange = () => {
+      if (chartRef.current) {
+        chartRef.current.priceScale("right").applyOptions({
+          autoScale: true,
+        });
+        chartRef.current.priceScale("volume").applyOptions({
+          autoScale: true,
+        });
+        chartRef.current.priceScale("last10secVol").applyOptions({
+          autoScale: true,
+        });
+        chartRef.current.priceScale("last5secVol").applyOptions({
+          autoScale: true,
+        });
+        chartRef.current.priceScale("buySellVolume").applyOptions({
+          autoScale: true,
+        });
+      }
+    };
+
     return () => {
-      window.removeEventListener("resize", handleResize);
+      chartRef.current
+        .timeScale()
+        .unsubscribeVisibleTimeRangeChange(handleVisibleTimeRangeChange);
       chartRef.current.remove();
     };
   }, []);
@@ -98,12 +160,12 @@ function Chart({
     if (ratio === undefined || ratio === null) {
       // Default colors when new_money_ratio is missing
       return {
-        upColor: "#5e91ff",
-        downColor: "#335db6",
-        borderUpColor: "#5e91ff",
-        borderDownColor: "#335db6",
-        wickUpColor: "#5e91ff",
-        wickDownColor: "#335db6",
+        upColor: "#c0e7ffff",
+        downColor: "#c0e7ffff",
+        borderUpColor: "#c0e7ffff",
+        borderDownColor: "#c0e7ffff",
+        wickUpColor: "#c0e7ffff",
+        wickDownColor: "#c0e7ffff",
       };
     }
 
@@ -116,22 +178,22 @@ function Chart({
     if (clampedRatio < 0.1) {
       // Use default colors when ratio is below 0.1
       bodyColor = {
-        upColor: "#5e91ff",
-        downColor: "#335db6",
+        upColor: "#c0e7ffff",
+        downColor: "#c0e7ffff",
       };
       borderColor = {
-        borderUpColor: "#5e91ff",
-        borderDownColor: "#335db6",
+        borderUpColor: "#c0e7ffff",
+        borderDownColor: "#c0e7ffff",
       };
     } else {
       // Determine color based on ratio thresholds
       let color;
       if (clampedRatio >= 0.75) {
-        color = "#ffff00"; // Yellow for ratio >= 0.75
+        color = "#020438ff"; // Yellow for ratio >= 0.75
       } else if (clampedRatio >= 0.49) {
-        color = "#99ff00"; // Light green for ratio >= 0.49
+        color = "#393c8aff"; // Light green for ratio >= 0.49
       } else {
-        color = "#ffcc00"; // Orange for ratio >= 0.1
+        color = "#535696ff"; // Orange for ratio >= 0.1
       }
 
       bodyColor = {
@@ -139,10 +201,10 @@ function Chart({
         downColor: color,
       };
 
-      // Yellow borders for positive ratios
+      // Borders match body color
       borderColor = {
-        borderUpColor: "#ffff00",
-        borderDownColor: "#ffff00",
+        borderUpColor: color,
+        borderDownColor: color,
       };
     }
 
@@ -165,7 +227,16 @@ function Chart({
           high: candle.high,
           low: candle.low,
           close: candle.close,
-          color: colors.upColor, // Use the calculated color
+          color:
+            candle.close >= candle.open ? colors.upColor : colors.downColor,
+          borderColor:
+            candle.close >= candle.open
+              ? colors.borderUpColor
+              : colors.borderDownColor,
+          wickColor:
+            candle.close >= candle.open
+              ? colors.wickUpColor
+              : colors.wickDownColor,
         };
       });
       candleSeriesRef.current.setData(formattedCandles);
@@ -176,6 +247,26 @@ function Chart({
         color: candle.close >= candle.open ? "#26a69a" : "#ef5350",
       }));
       volumeSeriesRef.current.setData(formattedVolume);
+
+      // Set visible range to show at least 30 data points
+      if (formattedCandles.length > 0) {
+        // Auto-fit the price scales to show all visible data
+        chartRef.current.priceScale("right").applyOptions({
+          autoScale: true,
+        });
+        chartRef.current.priceScale("volume").applyOptions({
+          autoScale: true,
+        });
+        chartRef.current.priceScale("last10secVol").applyOptions({
+          autoScale: true,
+        });
+        chartRef.current.priceScale("last5secVol").applyOptions({
+          autoScale: true,
+        });
+        chartRef.current.priceScale("buySellVolume").applyOptions({
+          autoScale: true,
+        });
+      }
     }
   }, [candles]);
 
@@ -270,7 +361,7 @@ function Chart({
       if (!actorRankSeriesRef.current) {
         actorRankSeriesRef.current = chartRef.current.addLineSeries({
           priceScaleId: "actor_rank",
-          color: "#c91483",
+          color: "#dd0808ff",
           lineWidth: 2,
           lineStyle: 0,
         });
@@ -289,6 +380,114 @@ function Chart({
       actorRankSeriesRef.current = null;
     }
   }, [indicatorVisibility.actorRank, candles]);
+
+  // Last 10 Second Volume
+  useEffect(() => {
+    if (indicatorVisibility.last10secVol) {
+      if (!last10secVolSeriesRef.current) {
+        last10secVolSeriesRef.current = chartRef.current.addLineSeries({
+          priceScaleId: "last10secVol",
+          color: "#ff6b35",
+          lineWidth: 2,
+          lineStyle: 0,
+        });
+        chartRef.current.priceScale("last10secVol").applyOptions({
+          visible: false,
+          scaleMargins: { top: 0.1, bottom: 0.1 },
+          autoScale: true,
+        });
+      }
+      const data = candles.map((candle) => ({
+        time: candle.time,
+        value: candle.last10secVol,
+      }));
+      last10secVolSeriesRef.current.setData(data);
+    } else if (last10secVolSeriesRef.current) {
+      chartRef.current.removeSeries(last10secVolSeriesRef.current);
+      last10secVolSeriesRef.current = null;
+    }
+  }, [indicatorVisibility.last10secVol, candles]);
+
+  // Last 5 Second Volume
+  useEffect(() => {
+    if (indicatorVisibility.last5secVol) {
+      if (!last5secVolSeriesRef.current) {
+        last5secVolSeriesRef.current = chartRef.current.addLineSeries({
+          priceScaleId: "last5secVol",
+          color: "#f7931e",
+          lineWidth: 2,
+          lineStyle: 1,
+        });
+        chartRef.current.priceScale("last5secVol").applyOptions({
+          visible: false,
+          scaleMargins: { top: 0.1, bottom: 0.1 },
+          autoScale: true,
+        });
+      }
+      const data = candles.map((candle) => ({
+        time: candle.time,
+        value: candle.last5secVol,
+      }));
+      last5secVolSeriesRef.current.setData(data);
+    } else if (last5secVolSeriesRef.current) {
+      chartRef.current.removeSeries(last5secVolSeriesRef.current);
+      last5secVolSeriesRef.current = null;
+    }
+  }, [indicatorVisibility.last5secVol, candles]);
+
+  // Buy Volume
+  useEffect(() => {
+    if (indicatorVisibility.buyVolume) {
+      if (!buyVolumeSeriesRef.current) {
+        buyVolumeSeriesRef.current = chartRef.current.addLineSeries({
+          priceScaleId: "buySellVolume",
+          color: "#00b300",
+          lineWidth: 2,
+          lineStyle: 0,
+        });
+        chartRef.current.priceScale("buySellVolume").applyOptions({
+          visible: false,
+          scaleMargins: { top: 0.1, bottom: 0.1 },
+          autoScale: true,
+        });
+      }
+      const data = candles.map((candle) => ({
+        time: candle.time,
+        value: candle.buy_volume,
+      }));
+      buyVolumeSeriesRef.current.setData(data);
+    } else if (buyVolumeSeriesRef.current) {
+      chartRef.current.removeSeries(buyVolumeSeriesRef.current);
+      buyVolumeSeriesRef.current = null;
+    }
+  }, [indicatorVisibility.buyVolume, candles]);
+
+  // Sell Volume
+  useEffect(() => {
+    if (indicatorVisibility.sellVolume) {
+      if (!sellVolumeSeriesRef.current) {
+        sellVolumeSeriesRef.current = chartRef.current.addLineSeries({
+          priceScaleId: "buySellVolume",
+          color: "#e60000",
+          lineWidth: 2,
+          lineStyle: 0,
+        });
+        chartRef.current.priceScale("buySellVolume").applyOptions({
+          visible: false,
+          scaleMargins: { top: 0.1, bottom: 0.1 },
+          autoScale: true,
+        });
+      }
+      const data = candles.map((candle) => ({
+        time: candle.time,
+        value: candle.sell_volume,
+      }));
+      sellVolumeSeriesRef.current.setData(data);
+    } else if (sellVolumeSeriesRef.current) {
+      chartRef.current.removeSeries(sellVolumeSeriesRef.current);
+      sellVolumeSeriesRef.current = null;
+    }
+  }, [indicatorVisibility.sellVolume, candles]);
 
   // Create horizontal price line for probaPrice if provided and nonzero.
   useEffect(() => {
@@ -309,10 +508,15 @@ function Chart({
     };
   }, [probaPrice]);
 
-  // Compute the most recent cSolVal.
+  // Compute the most recent cSolVal and total_fee.
   const recentCSolVal =
     candles && candles.length > 0
       ? Number(candles[candles.length - 1].cSolVal).toFixed(2)
+      : "";
+  
+  const recentTotalFee =
+    candles && candles.length > 0
+      ? Number(candles[candles.length - 1].total_fee).toFixed(1)
       : "";
 
   // Copy full Chart ID and Delete Chart handlers.
@@ -344,6 +548,7 @@ function Chart({
           symbol={symbol}
           image={image}
           recentCSolVal={recentCSolVal}
+          recentTotalFee={recentTotalFee}
           handleCopy={handleCopy}
           handleDelete={handleDelete}
         />
@@ -445,6 +650,74 @@ function Chart({
             />
             <label className="form-check-label" htmlFor="actorRankCheckbox">
               Onchain Score
+            </label>
+          </div>
+          <div className="form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="last10secVolCheckbox"
+              checked={indicatorVisibility.last10secVol}
+              onChange={() =>
+                setIndicatorVisibility({
+                  ...indicatorVisibility,
+                  last10secVol: !indicatorVisibility.last10secVol,
+                })
+              }
+            />
+            <label className="form-check-label" htmlFor="last10secVolCheckbox">
+              Last 10 Sec Volume
+            </label>
+          </div>
+          <div className="form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="last5secVolCheckbox"
+              checked={indicatorVisibility.last5secVol}
+              onChange={() =>
+                setIndicatorVisibility({
+                  ...indicatorVisibility,
+                  last5secVol: !indicatorVisibility.last5secVol,
+                })
+              }
+            />
+            <label className="form-check-label" htmlFor="last5secVolCheckbox">
+              Last 5 Sec Volume
+            </label>
+          </div>
+          <div className="form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="buyVolumeCheckbox"
+              checked={indicatorVisibility.buyVolume}
+              onChange={() =>
+                setIndicatorVisibility({
+                  ...indicatorVisibility,
+                  buyVolume: !indicatorVisibility.buyVolume,
+                })
+              }
+            />
+            <label className="form-check-label" htmlFor="buyVolumeCheckbox">
+              Buy Volume
+            </label>
+          </div>
+          <div className="form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="sellVolumeCheckbox"
+              checked={indicatorVisibility.sellVolume}
+              onChange={() =>
+                setIndicatorVisibility({
+                  ...indicatorVisibility,
+                  sellVolume: !indicatorVisibility.sellVolume,
+                })
+              }
+            />
+            <label className="form-check-label" htmlFor="sellVolumeCheckbox">
+              Sell Volume
             </label>
           </div>
         </div>
