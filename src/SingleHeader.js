@@ -9,6 +9,7 @@ import WalletIcon from "./components/WalletIcon";
 
 const SingleHeader = ({
   recentCSolVal,
+  recentTotalFee,
   max_cactor_rank,
   recentActorRank,
   dex_paid,
@@ -27,6 +28,7 @@ const SingleHeader = ({
   hv_avg_profit_only,
   fresh_creator_wallet,
   creator,
+  recentHt,
 }) => {
   // Volume color
   const volume = Number(recentCSolVal);
@@ -61,6 +63,16 @@ const SingleHeader = ({
       <span style={{ color: volumeColor, marginRight: 8 }}>
         <span style={{ color: "gray" }}>VOL:</span> {recentCSolVal}
       </span>
+
+      <span style={{ marginRight: 8 }}>
+        <span style={{ color: "gray" }}>Total Fee:</span> {recentTotalFee}
+      </span>
+
+      {recentHt && (
+        <span style={{ marginRight: 8 }}>
+          <span style={{ color: "gray" }}>HT:</span> {recentHt}
+        </span>
+      )}
 
       <div className="d-flex align-items-center" style={{ marginRight: 8 }}>
         <span style={{ marginRight: 4 }}>

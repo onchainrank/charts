@@ -145,11 +145,22 @@ const SingleChartPage = () => {
     chartData.data && chartData.data.length > 0
       ? chartData.data[chartData.data.length - 1].actor_rank
       : "";
+  // Compute the most recent total_fee from the last candle.
+  const recentTotalFee =
+    chartData.data && chartData.data.length > 0
+      ? Number(chartData.data[chartData.data.length - 1].total_fee).toFixed(1)
+      : "";
+  // Compute the most recent ht from the last candle.
+  const recentHt =
+    chartData.data && chartData.data.length > 0
+      ? Number(chartData.data[chartData.data.length - 1].ht).toFixed(4)
+      : "";
 
   return (
     <div className="container my-3">
       <SingleHeader
         recentCSolVal={recentCSolVal}
+        recentTotalFee={recentTotalFee}
         max_cactor_rank={chartData.max_cactor_rank}
         volRatio={chartData.volRatio}
         recentActorRank={recentActorRank}
@@ -169,6 +180,7 @@ const SingleChartPage = () => {
         nov_wallets_count={chartData.nov_wallets_count}
         fresh_creator_wallet={chartData.fresh_creator_wallet}
         creator={chartData.creator}
+        recentHt={recentHt}
       />
       <Chart
         chartId={chartData.id}

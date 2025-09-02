@@ -26,6 +26,7 @@ function Chart({
   const last5secVolSeriesRef = useRef(null);
   const buyVolumeSeriesRef = useRef(null);
   const sellVolumeSeriesRef = useRef(null);
+  const htSeriesRef = useRef(null);
 
   // Define default indicator visibility.
   const defaultIndicatorVisibility = {
@@ -38,6 +39,7 @@ function Chart({
     last5secVol: false,
     buyVolume: false,
     sellVolume: false,
+    ht: true,
   };
 
   // Load saved indicator visibility from localStorage, or fallback to defaults.
@@ -142,6 +144,9 @@ function Chart({
           autoScale: true,
         });
         chartRef.current.priceScale("buySellVolume").applyOptions({
+          autoScale: true,
+        });
+        chartRef.current.priceScale("ht").applyOptions({
           autoScale: true,
         });
       }
@@ -264,6 +269,9 @@ function Chart({
           autoScale: true,
         });
         chartRef.current.priceScale("buySellVolume").applyOptions({
+          autoScale: true,
+        });
+        chartRef.current.priceScale("ht").applyOptions({
           autoScale: true,
         });
       }
@@ -489,6 +497,33 @@ function Chart({
     }
   }, [indicatorVisibility.sellVolume, candles]);
 
+  // HT Line
+  useEffect(() => {
+    if (indicatorVisibility.ht) {
+      if (!htSeriesRef.current) {
+        htSeriesRef.current = chartRef.current.addLineSeries({
+          priceScaleId: "ht",
+          color: "#8E44AD",
+          lineWidth: 2,
+          lineStyle: 0,
+        });
+        chartRef.current.priceScale("ht").applyOptions({
+          visible: false,
+          scaleMargins: { top: 0.1, bottom: 0.1 },
+          autoScale: true,
+        });
+      }
+      const data = candles.map((candle) => ({
+        time: candle.time,
+        value: candle.ht,
+      }));
+      htSeriesRef.current.setData(data);
+    } else if (htSeriesRef.current) {
+      chartRef.current.removeSeries(htSeriesRef.current);
+      htSeriesRef.current = null;
+    }
+  }, [indicatorVisibility.ht, candles]);
+
   // Create horizontal price line for probaPrice if provided and nonzero.
   useEffect(() => {
     let priceLine = null;
@@ -513,7 +548,7 @@ function Chart({
     candles && candles.length > 0
       ? Number(candles[candles.length - 1].cSolVal).toFixed(2)
       : "";
-  
+
   const recentTotalFee =
     candles && candles.length > 0
       ? Number(candles[candles.length - 1].total_fee).toFixed(1)
@@ -718,6 +753,23 @@ function Chart({
             />
             <label className="form-check-label" htmlFor="sellVolumeCheckbox">
               Sell Volume
+            </label>
+          </div>
+          <div className="form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="htCheckbox"
+              checked={indicatorVisibility.ht}
+              onChange={() =>
+                setIndicatorVisibility({
+                  ...indicatorVisibility,
+                  ht: !indicatorVisibility.ht,
+                })
+              }
+            />
+            <label className="form-check-label" htmlFor="htCheckbox">
+              HT
             </label>
           </div>
         </div>
