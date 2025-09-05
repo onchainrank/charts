@@ -27,6 +27,7 @@ function Chart({
   const buyVolumeSeriesRef = useRef(null);
   const sellVolumeSeriesRef = useRef(null);
   const htSeriesRef = useRef(null);
+  const totalVolumeSeriesRef = useRef(null);
 
   // Define default indicator visibility.
   const defaultIndicatorVisibility = {
@@ -40,6 +41,7 @@ function Chart({
     buyVolume: false,
     sellVolume: false,
     ht: true,
+    totalVolume: false,
   };
 
   // Load saved indicator visibility from localStorage, or fallback to defaults.
@@ -147,6 +149,9 @@ function Chart({
           autoScale: true,
         });
         chartRef.current.priceScale("ht").applyOptions({
+          autoScale: true,
+        });
+        chartRef.current.priceScale("totalVolume").applyOptions({
           autoScale: true,
         });
       }
@@ -272,6 +277,9 @@ function Chart({
           autoScale: true,
         });
         chartRef.current.priceScale("ht").applyOptions({
+          autoScale: true,
+        });
+        chartRef.current.priceScale("totalVolume").applyOptions({
           autoScale: true,
         });
       }
@@ -524,6 +532,33 @@ function Chart({
     }
   }, [indicatorVisibility.ht, candles]);
 
+  // Total Volume Line
+  useEffect(() => {
+    if (indicatorVisibility.totalVolume) {
+      if (!totalVolumeSeriesRef.current) {
+        totalVolumeSeriesRef.current = chartRef.current.addLineSeries({
+          priceScaleId: "totalVolume",
+          color: "#2E86AB",
+          lineWidth: 2,
+          lineStyle: 0,
+        });
+        chartRef.current.priceScale("totalVolume").applyOptions({
+          visible: false,
+          scaleMargins: { top: 0.1, bottom: 0.1 },
+          autoScale: true,
+        });
+      }
+      const data = candles.map((candle) => ({
+        time: candle.time,
+        value: candle.cSolVal,
+      }));
+      totalVolumeSeriesRef.current.setData(data);
+    } else if (totalVolumeSeriesRef.current) {
+      chartRef.current.removeSeries(totalVolumeSeriesRef.current);
+      totalVolumeSeriesRef.current = null;
+    }
+  }, [indicatorVisibility.totalVolume, candles]);
+
   // Create horizontal price line for probaPrice if provided and nonzero.
   useEffect(() => {
     let priceLine = null;
@@ -770,6 +805,23 @@ function Chart({
             />
             <label className="form-check-label" htmlFor="htCheckbox">
               HT
+            </label>
+          </div>
+          <div className="form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="totalVolumeCheckbox"
+              checked={indicatorVisibility.totalVolume}
+              onChange={() =>
+                setIndicatorVisibility({
+                  ...indicatorVisibility,
+                  totalVolume: !indicatorVisibility.totalVolume,
+                })
+              }
+            />
+            <label className="form-check-label" htmlFor="totalVolumeCheckbox">
+              Total Volume
             </label>
           </div>
         </div>

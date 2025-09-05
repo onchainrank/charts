@@ -153,8 +153,13 @@ const SingleChartPage = () => {
   // Compute the most recent ht from the last candle.
   const recentHt =
     chartData.data && chartData.data.length > 0
-      ? Number(chartData.data[chartData.data.length - 1].ht).toFixed(4)
+      ? Number(chartData.data[chartData.data.length - 1].ht).toFixed(2)
       : "";
+  // Compute the most recent close price from the last candle.
+  const recentClose =
+    chartData.data && chartData.data.length > 0
+      ? chartData.data[chartData.data.length - 1].close
+      : 0;
 
   return (
     <div className="container my-3">
@@ -181,6 +186,7 @@ const SingleChartPage = () => {
         fresh_creator_wallet={chartData.fresh_creator_wallet}
         creator={chartData.creator}
         recentHt={recentHt}
+        recentClose={recentClose}
       />
       <Chart
         chartId={chartData.id}
