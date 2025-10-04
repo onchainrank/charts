@@ -31,6 +31,7 @@ const SingleHeader = ({
   creator,
   recentHt,
   recentClose,
+  timeDuration,
 }) => {
   // Volume color
   const volume = Number(recentCSolVal);
@@ -96,7 +97,7 @@ const SingleHeader = ({
       {/* 3-Column Data Layout */}
       <div className="row">
         {/* Column 1: Trading Metrics */}
-        <div className="col-md-4">
+        <div className="col-4">
           <div className="mb-1">
             <strong>Trading Metrics</strong>
           </div>
@@ -110,10 +111,32 @@ const SingleHeader = ({
             <span style={{ color: "gray" }}>Total Fee:</span>{" "}
             <span style={{ fontWeight: "bold" }}>{recentTotalFee}</span>
           </div>
+          <div className="mb-1">
+            <span className="d-inline-flex align-items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                fill="currentColor"
+                className="bi bi-cone-striped me-1"
+                viewBox="0 0 16 16"
+              >
+                <path d="m9.97 4.88.953 3.811C10.159 8.878 9.14 9 8 9s-2.158-.122-2.923-.309L6.03 4.88C6.635 4.957 7.3 5 8 5s1.365-.043 1.97-.12zm-.245-.978L8.97.88C8.718-.13 7.282-.13 7.03.88L6.275 3.9C6.8 3.965 7.382 4 8 4s1.2-.036 1.725-.098zm4.396 8.613a.5.5 0 0 1 .037.96l-6 2a.5.5 0 0 1-.316 0l-6-2a.5.5 0 0 1 .037-.96l2.391-.598.565-2.257c.862.212 1.964.339 3.165.339s2.303-.127 3.165-.339l.565 2.257z" />
+              </svg>
+              <span style={{ color: "gray" }}>FRI:</span>{" "}
+              <span style={{ fontWeight: "bold", marginLeft: "4px" }}>
+                {recentTotalFee && recentCSolVal && Number(recentCSolVal) !== 0
+                  ? (Number(recentTotalFee) / Number(recentCSolVal)).toFixed(4)
+                  : "N/A"}
+              </span>
+            </span>
+          </div>
           {recentHt && (
             <div className="mb-1">
               <span style={{ color: "gray" }}>HT:</span>{" "}
-              <span style={{ fontWeight: "bold", color: htColor }}>{recentHt}</span>
+              <span style={{ fontWeight: "bold", color: htColor }}>
+                {recentHt}
+              </span>
               <PriceWarningIcon closePrice={recentClose} />
             </div>
           )}
@@ -126,7 +149,7 @@ const SingleHeader = ({
         </div>
 
         {/* Column 2: Wallet Analytics */}
-        <div className="col-md-4">
+        <div className="col-4">
           <div className="mb-1">
             <strong>Wallet Analytics</strong>
           </div>
@@ -167,14 +190,32 @@ const SingleHeader = ({
         </div>
 
         {/* Column 3: Status & Indicators */}
-        <div className="col-md-4">
+        <div className="col-4">
           <div className="mb-1">
             <strong>Status & Indicators</strong>
           </div>
+          {timeDuration && (
+            <div className="mb-1">
+              <span className="d-inline-flex align-items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="12"
+                  height="12"
+                  fill="currentColor"
+                  className="bi bi-stopwatch me-1"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M8.5 5.6a.5.5 0 1 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8.5 8.664z" />
+                  <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64l.012-.013.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354-.013.012A7 7 0 1 1 7 1.071V1.5a.5.5 0 0 1-.5-.5M8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3" />
+                </svg>
+                <span style={{ fontWeight: "bold", color: "gray" }}>
+                  {timeDuration}
+                </span>
+              </span>
+            </div>
+          )}
           <div className="d-flex flex-wrap gap-1 align-items-center">
-            {dex_paid && (
-              <span className="badge bg-success">dex paid</span>
-            )}
+            {dex_paid && <span className="badge bg-success">dex paid</span>}
             {bundle_ratio > 0.01 && (
               <span className="badge text-bg-warning">
                 Bundle:{Math.round(bundle_ratio * 100)}%

@@ -15,11 +15,13 @@ const PriceWarningIcon = ({ closePrice }) => {
       width="16"
       height="16"
       fill={fillColor}
-      className="bi bi-caret-down-square-fill ms-1"
+      className="bi bi-cash ms-1"
       viewBox="0 0 16 16"
       style={{ marginLeft: "4px" }}
+      title="High Price warning indicator"
     >
-      <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4 4a.5.5 0 0 0-.374.832l4 4.5a.5.5 0 0 0 .748 0l4-4.5A.5.5 0 0 0 12 6z" />
+      <path d="M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
+      <path d="M0 4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V6a2 2 0 0 1-2-2z" />
     </svg>
   );
 };

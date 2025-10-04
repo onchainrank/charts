@@ -589,6 +589,19 @@ function Chart({
       ? Number(candles[candles.length - 1].total_fee).toFixed(1)
       : "";
 
+  // Calculate time duration between first and last candle
+  const timeDuration =
+    candles && candles.length > 1
+      ? (() => {
+          const firstTime = candles[0].time;
+          const lastTime = candles[candles.length - 1].time;
+          const diffInSeconds = lastTime - firstTime;
+          const minutes = Math.floor(diffInSeconds / 60);
+          const seconds = diffInSeconds % 60;
+          return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        })()
+      : "";
+
   // Copy full Chart ID and Delete Chart handlers.
   const handleCopy = () => {
     navigator.clipboard
@@ -619,6 +632,7 @@ function Chart({
           image={image}
           recentCSolVal={recentCSolVal}
           recentTotalFee={recentTotalFee}
+          timeDuration={timeDuration}
           handleCopy={handleCopy}
           handleDelete={handleDelete}
         />

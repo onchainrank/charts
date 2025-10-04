@@ -1,70 +1,137 @@
-# Getting Started with Create React App
+# Webhook Client - Cryptocurrency Trading Dashboard
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A real-time cryptocurrency trading dashboard that displays interactive financial charts with onchain analytics. Built with React and integrated with OnchainRank APIs for live trading data and onchain metrics.
+
+## Overview
+
+This application provides comprehensive visualization of cryptocurrency trading activity with real-time updates via WebSocket. It displays candlestick charts enhanced with multiple technical indicators, onchain analytics, and trader behavior metrics to help analyze token launches and trading patterns.
+
+## Features
+
+- **Real-time Chart Updates**: Live candlestick data via WebSocket connection
+- **Onchain Analytics**: Track wallet behavior, profit/loss metrics, and trader quality scores
+- **Interactive Indicators**: Toggle 11+ different indicators on/off with persistent preferences
+- **Color-coded Candles**: Visual representation of new money ratio through candle colors
+- **Validation Metrics**: Display launch quality, social media validation, and bundle risk analysis
+- **Responsive Design**: Bootstrap-based UI that adapts to different screen sizes
+
+## Technical Stack
+
+- **React 19.0.0**: Frontend framework
+- **lightweight-charts 4.2.3**: Professional financial charting library
+- **Socket.IO Client 4.8.1**: Real-time bidirectional event-based communication
+- **React Router DOM 7.2.0**: Client-side routing
+- **Bootstrap 5.3.3**: CSS framework for responsive design
+
+## Installation
+
+```bash
+npm install
+```
 
 ## Available Scripts
 
-In the project directory, you can run:
-
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Runs the app in development mode at [http://localhost:3000](http://localhost:3000)
 
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches the test runner in interactive watch mode
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Builds the app for production to the `build` folder
 
 ### `npm run eject`
 
 **Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Chart Indicators
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+The application displays the following indicators, all of which can be toggled on/off individually:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Profit/Loss Indicators
 
-## Learn More
+- **Unrealized Profit** (solid line, dark blue #0f4a6e): Potential profit from open positions
+- **Unrealized Loss** (solid line, brown #6e3d0f): Potential loss from open positions
+- **Realized Profit** (dashed line, blue #156a9d): Actual profit from closed positions
+- **Realized Loss** (dashed line, orange #9d4e15): Actual loss from closed positions
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Volume Indicators
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- **Volume** (histogram, bottom): Trading volume in SOL (green for up, red for down)
+- **Total Volume** (line, blue #2E86AB): Cumulative trading volume (cSolVal)
+- **Buy Volume** (line, green #00b300): Volume from buy transactions
+- **Sell Volume** (line, red #e60000): Volume from sell transactions
+- **Last 10 Sec Volume** (line, orange #ff6b35): Trading volume in last 10 seconds
+- **Last 5 Sec Volume** (line, dotted orange #f7931e): Trading volume in last 5 seconds
 
-### Code Splitting
+### Quality Metrics
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- **Onchain Score** (line, red #dd0808ff): Actor rank quality metric (higher = better trader quality)
+- **HT** (line, purple #8E44AD): Holder tracking metric
 
-### Analyzing the Bundle Size
+### Visual Features
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- **Candlestick Colors**: Candles are color-coded based on new_money_ratio:
+  - Default light blue (#c0e7ffff): Ratio < 0.1 or undefined
+  - Light purple (#535696ff): Ratio 0.1-0.49
+  - Medium purple (#393c8aff): Ratio 0.49-0.75
+  - Dark purple (#020438ff): Ratio ≥ 0.75
+- **Probability Price Line**: Red horizontal line showing predicted price target (when available)
 
-### Making a Progressive Web App
+## Architecture
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Routing
 
-### Advanced Configuration
+- `/single/:id/:token` - Authenticated single chart view with full analytics
+- `*` (catch-all) - Public chart view via address resolution
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Data Flow
 
-### Deployment
+1. Initial data fetch from `https://api.onchainrank.com/startup/${id}/${token}`
+2. WebSocket connection to `https://ws.onchainrank.com`
+3. Subscribe to chart-specific room for real-time updates
+4. Merge incoming candle data with existing data
+5. Auto-update all indicators and metrics
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### API Endpoints
 
-### `npm run build` fails to minify
+- `GET https://profile.onchainrank.com/marketing-addr/` - Address to ID resolution
+- `GET https://api.onchainrank.com/startup/${id}/${token}` - Initial chart data
+- `DELETE https://api.onchainrank.com/delete/${id}` - Chart deletion
+- `WS https://ws.onchainrank.com` - Real-time updates via Socket.IO
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### State Management
+
+- React hooks (useState, useEffect) for local component state
+- localStorage for persistent indicator visibility preferences
+- WebSocket subscriptions managed in useEffect cleanup functions
+- Chart instance management via useRef
+
+## Key Components
+
+- **App.js**: Main router and application entry point
+- **SingleChartPage.js**: Authenticated chart page with full analytics
+- **DecorChart.js**: Public chart page with address-based access
+- **Chart.js**: Core charting component with indicator management
+- **SingleHeader.js**: Header displaying onchain metrics and validation scores
+- **ChartHeader.js**: Chart-specific metadata display
+- **ChartLegend.js**: Indicator color legend
+
+## Data Structure
+
+Each candle contains:
+
+- OHLC data (open, high, low, close)
+- Volume metrics (solVal, cSolVal, buy_volume, sell_volume)
+- Profit/loss data (unrealized_profit, unrealized_loss, realized_profit, realized_loss)
+- Quality metrics (actor_rank, ht)
+- Time-based volume (last5secVol, last10secVol)
+- Fees and ratios (total_fee, new_money)
+
+## Browser Support
+
+- Production: >0.2% market share, not dead browsers, excluding Opera Mini
+- Development: Latest Chrome, Firefox, and Safari versions

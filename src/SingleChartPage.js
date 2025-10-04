@@ -161,6 +161,19 @@ const SingleChartPage = () => {
       ? chartData.data[chartData.data.length - 1].close
       : 0;
 
+  // Calculate time duration between first and last candle
+  const timeDuration =
+    chartData.data && chartData.data.length > 1
+      ? (() => {
+          const firstTime = chartData.data[0].time;
+          const lastTime = chartData.data[chartData.data.length - 1].time;
+          const diffInSeconds = lastTime - firstTime;
+          const minutes = Math.floor(diffInSeconds / 60);
+          const seconds = diffInSeconds % 60;
+          return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        })()
+      : "";
+
   return (
     <div className="container my-3">
       <SingleHeader
@@ -187,6 +200,7 @@ const SingleChartPage = () => {
         creator={chartData.creator}
         recentHt={recentHt}
         recentClose={recentClose}
+        timeDuration={timeDuration}
       />
       <Chart
         chartId={chartData.id}
