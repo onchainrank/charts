@@ -118,7 +118,6 @@ The application displays the following indicators, all of which can be toggled o
 - **Chart.js**: Core charting component with indicator management
 - **SingleHeader.js**: Header displaying onchain metrics and validation scores
 - **ChartHeader.js**: Chart-specific metadata display
-- **ChartLegend.js**: Indicator color legend
 
 ## Data Structure
 

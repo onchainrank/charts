@@ -18,6 +18,15 @@ const SingleChartPage = () => {
       .catch((err) => console.error("Error fetching chart data:", err));
   }, [id]);
 
+  // Update page title when chartData changes
+  useEffect(() => {
+    if (chartData && chartData.name && chartData.symbol) {
+      document.title = `${chartData.name} (${chartData.symbol}) - onchainrank`;
+    } else {
+      document.title = "onchainrank";
+    }
+  }, [chartData]);
+
   // Subscribe to WebSocket updates for this chart on the 'single' event.
   useEffect(() => {
     const socket = io(`https://ws.onchainrank.com`, { query: { token } });

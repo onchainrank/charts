@@ -18,10 +18,12 @@ This is a React-based cryptocurrency trading dashboard called "webhook-client" t
 ### Core Components Structure
 
 **App.js** - Main router with two routes:
+
 - `/single/:id/:token` - SingleChartPage for authenticated chart viewing
 - `*` (catch-all) - DecorChart for public address-based chart viewing
 
 **Chart Flow Architecture:**
+
 1. **DecorChart.js** - Public entry point that resolves addresses to IDs via marketing-addr API
 2. **SingleChartPage.js** - Authenticated chart page that takes ID/token from URL params
 3. **Chart.js** - Core charting component using lightweight-charts library
@@ -29,26 +31,30 @@ This is a React-based cryptocurrency trading dashboard called "webhook-client" t
 ### Real-time Data Flow
 
 Both DecorChart and SingleChartPage follow the same pattern:
+
 1. Fetch initial data from `https://api.onchainrank.com/startup/${id}/${token}`
-2. Establish WebSocket connection to `https://api.onchainrank.com` 
+2. Establish WebSocket connection to `https://api.onchainrank.com`
 3. Listen for 'single' events that match the chart ID
 4. Merge incoming candle data using `mergeCandles()` function
 
 ### API Integration
 
 **External APIs:**
+
 - `https://profile.onchainrank.com/marketing-addr/` - Address to ID resolution
 - `https://api.onchainrank.com/startup/` - Initial chart data
 - `https://api.onchainrank.com/delete/` - Chart deletion
 - WebSocket at `https://api.onchainrank.com` - Real-time updates
 
 **Authentication:**
+
 - Public charts use hardcoded TOKEN = "no-auth"
 - Private charts use token from URL parameters
 
 ### Chart Data Structure
 
 Charts display candlestick data with additional indicators:
+
 - Basic OHLC candles with volume histogram
 - Technical indicators: unrealized_profit, unrealized_loss, realized_loss, realized_profit, actor_rank
 - Indicators can be toggled on/off with visibility stored in localStorage
@@ -57,13 +63,13 @@ Charts display candlestick data with additional indicators:
 ### Component Hierarchy
 
 **Headers:** SingleHeader (authenticated) vs DecorHeader (public) - display token metadata and onchain scores
-**Chart Components:** Chart.js contains all charting logic, ChartHeader for controls, ChartLegend for indicator colors
+**Chart Components:** Chart.js contains all charting logic, ChartHeader for controls
 **Utility Components:** InfoIcon tooltips, validation icons (ValidLaunchIcon, etc.), AdminComponent for admin functions
 
 ### State Management
 
 - React useState/useEffect for local state
-- localStorage for indicator visibility preferences  
+- localStorage for indicator visibility preferences
 - WebSocket state managed in useEffect cleanup functions
 - Chart references managed with useRef for lightweight-charts integration
 

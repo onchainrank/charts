@@ -61,6 +61,15 @@ const DecorChart = () => {
     fetchData();
   }, [addr]);
 
+  // Update page title when chartData changes
+  useEffect(() => {
+    if (chartData && chartData.name && chartData.symbol) {
+      document.title = `${chartData.name} (${chartData.symbol}) - onchainrank`;
+    } else {
+      document.title = "onchainrank";
+    }
+  }, [chartData]);
+
   // 2) Subscribe to live updates once we have an ID
   useEffect(() => {
     if (!id) return;
@@ -130,6 +139,22 @@ const DecorChart = () => {
             incomingData.symbol !== undefined
               ? incomingData.symbol
               : prevData.symbol,
+          bullx:
+            incomingData.bullx !== undefined
+              ? incomingData.bullx
+              : prevData.bullx,
+          hv_wallets_count:
+            incomingData.hv_wallets_count !== undefined
+              ? incomingData.hv_wallets_count
+              : prevData.hv_wallets_count,
+          hv_holdings:
+            incomingData.hv_holdings !== undefined
+              ? incomingData.hv_holdings
+              : prevData.hv_holdings,
+          hv_avg_profit_only:
+            incomingData.hv_avg_profit_only !== undefined
+              ? incomingData.hv_avg_profit_only
+              : prevData.hv_avg_profit_only,
           fresh_creator_wallet:
             incomingData.fresh_creator_wallet !== undefined
               ? incomingData.fresh_creator_wallet
@@ -179,7 +204,7 @@ const DecorChart = () => {
     return <div>Loading chart...</div>;
   }
 
-  // Compute the most recent cSolVal and actor_rank from the last candle
+  // Compute the most recent values from the last candle
   const recentCSolVal =
     chartData.data && chartData.data.length > 0
       ? Number(chartData.data[chartData.data.length - 1].cSolVal).toFixed(2)
@@ -187,6 +212,31 @@ const DecorChart = () => {
   const recentActorRank =
     chartData.data && chartData.data.length > 0
       ? chartData.data[chartData.data.length - 1].actor_rank
+      : "";
+  const recentTotalFee =
+    chartData.data && chartData.data.length > 0
+      ? Number(chartData.data[chartData.data.length - 1].total_fee).toFixed(1)
+      : "";
+  const recentHt =
+    chartData.data && chartData.data.length > 0
+      ? Number(chartData.data[chartData.data.length - 1].ht).toFixed(2)
+      : "";
+  const recentClose =
+    chartData.data && chartData.data.length > 0
+      ? chartData.data[chartData.data.length - 1].close
+      : 0;
+
+  // Calculate time duration between first and last candle
+  const timeDuration =
+    chartData.data && chartData.data.length > 1
+      ? (() => {
+          const firstTime = chartData.data[0].time;
+          const lastTime = chartData.data[chartData.data.length - 1].time;
+          const diffInSeconds = lastTime - firstTime;
+          const minutes = Math.floor(diffInSeconds / 60);
+          const seconds = diffInSeconds % 60;
+          return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        })()
       : "";
 
   return (
@@ -200,6 +250,7 @@ const DecorChart = () => {
       </a>
       <DecorHeader
         recentCSolVal={recentCSolVal}
+        recentTotalFee={recentTotalFee}
         max_cactor_rank={chartData.max_cactor_rank}
         volRatio={chartData.volRatio}
         recentActorRank={recentActorRank}
@@ -207,6 +258,7 @@ const DecorChart = () => {
         valid_socials={chartData.valid_socials}
         valid_launch={chartData.valid_launch}
         unique_socials={chartData.unique_socials}
+        bullx={chartData.bullx}
         bundle_ratio={chartData.bundle_ratio}
         pump_dump_risk={chartData.is_pump_dump_risk}
         total_comments={chartData.total_comments}
@@ -215,8 +267,14 @@ const DecorChart = () => {
         symbol={chartData.symbol}
         image={chartData.image}
         id={id}
+        hv_wallets_count={chartData.hv_wallets_count}
+        hv_holdings={chartData.hv_holdings}
+        hv_avg_profit_only={chartData.hv_avg_profit_only}
         fresh_creator_wallet={chartData.fresh_creator_wallet}
         creator={chartData.creator}
+        recentHt={recentHt}
+        recentClose={recentClose}
+        timeDuration={timeDuration}
       />
       <Chart
         chartId={chartData.id}

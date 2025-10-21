@@ -1,7 +1,40 @@
 import React, { useRef, useEffect, useState } from "react";
 import { createChart } from "lightweight-charts";
 import ChartHeader from "./ChartHeader";
-import ChartLegend from "./ChartLegend";
+
+// Helper component to render line style indicator
+const LineStyleIndicator = ({ color, lineStyle }) => {
+  const getLinePattern = (style) => {
+    switch (style) {
+      case 0:
+        return "none"; // Solid
+      case 1:
+        return "2,2"; // Dotted
+      case 2:
+        return "6,3"; // Dashed
+      default:
+        return "none";
+    }
+  };
+
+  return (
+    <svg
+      width="40"
+      height="12"
+      style={{ marginLeft: "8px", verticalAlign: "middle" }}
+    >
+      <line
+        x1="0"
+        y1="6"
+        x2="40"
+        y2="6"
+        stroke={color}
+        strokeWidth="2"
+        strokeDasharray={getLinePattern(lineStyle)}
+      />
+    </svg>
+  );
+};
 
 function Chart({
   chartId,
@@ -28,6 +61,7 @@ function Chart({
   const sellVolumeSeriesRef = useRef(null);
   const htSeriesRef = useRef(null);
   const totalVolumeSeriesRef = useRef(null);
+  const isInitialLoadRef = useRef(true);
 
   // Define default indicator visibility.
   const defaultIndicatorVisibility = {
@@ -258,8 +292,11 @@ function Chart({
       }));
       volumeSeriesRef.current.setData(formattedVolume);
 
-      // Set visible range to show at least 30 data points
-      if (formattedCandles.length > 0) {
+      // Fit all candles to visible area only on initial load
+      if (formattedCandles.length > 0 && isInitialLoadRef.current) {
+        // Fit the time scale to show all data from first to last candle
+        chartRef.current.timeScale().fitContent();
+
         // Auto-fit the price scales to show all visible data
         chartRef.current.priceScale("right").applyOptions({
           autoScale: true,
@@ -282,6 +319,12 @@ function Chart({
         chartRef.current.priceScale("totalVolume").applyOptions({
           autoScale: true,
         });
+        chartRef.current.priceScale("profitLoss").applyOptions({
+          autoScale: true,
+        });
+
+        // Mark that initial load is complete
+        isInitialLoadRef.current = false;
       }
     }
   }, [candles]);
@@ -292,6 +335,7 @@ function Chart({
     if (indicatorVisibility.unrealizedProfit) {
       if (!unrealizedProfitSeriesRef.current) {
         unrealizedProfitSeriesRef.current = chartRef.current.addLineSeries({
+          priceScaleId: "profitLoss",
           color: "#0f4a6e",
           lineWidth: 2,
           lineStyle: 0,
@@ -313,6 +357,7 @@ function Chart({
     if (indicatorVisibility.unrealizedLoss) {
       if (!unrealizedLossSeriesRef.current) {
         unrealizedLossSeriesRef.current = chartRef.current.addLineSeries({
+          priceScaleId: "profitLoss",
           color: "#6e3d0f",
           lineWidth: 2,
           lineStyle: 0,
@@ -334,6 +379,7 @@ function Chart({
     if (indicatorVisibility.realizedLoss) {
       if (!realizedLossSeriesRef.current) {
         realizedLossSeriesRef.current = chartRef.current.addLineSeries({
+          priceScaleId: "profitLoss",
           color: "#9d4e15",
           lineWidth: 2,
           lineStyle: 2,
@@ -355,6 +401,7 @@ function Chart({
     if (indicatorVisibility.realizedProfit) {
       if (!realizedProfitSeriesRef.current) {
         realizedProfitSeriesRef.current = chartRef.current.addLineSeries({
+          priceScaleId: "profitLoss",
           color: "#156a9d",
           lineWidth: 2,
           lineStyle: 2,
@@ -598,7 +645,7 @@ function Chart({
           const diffInSeconds = lastTime - firstTime;
           const minutes = Math.floor(diffInSeconds / 60);
           const seconds = diffInSeconds % 60;
-          return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+          return `${minutes}:${seconds.toString().padStart(2, "0")}`;
         })()
       : "";
 
@@ -639,204 +686,242 @@ function Chart({
       )}
       <div className="card-body">
         <div ref={chartContainerRef} />
-        <ChartLegend />
-        {/* Checkbox controls for each indicator */}
+        {/* Checkbox controls for each indicator - 3 Column Layout */}
         <div className="mt-3">
-          <div className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="unrealizedProfitCheckbox"
-              checked={indicatorVisibility.unrealizedProfit}
-              onChange={() =>
-                setIndicatorVisibility({
-                  ...indicatorVisibility,
-                  unrealizedProfit: !indicatorVisibility.unrealizedProfit,
-                })
-              }
-            />
-            <label
-              className="form-check-label"
-              htmlFor="unrealizedProfitCheckbox"
-            >
-              Unrealized Profit
-            </label>
-          </div>
-          <div className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="unrealizedLossCheckbox"
-              checked={indicatorVisibility.unrealizedLoss}
-              onChange={() =>
-                setIndicatorVisibility({
-                  ...indicatorVisibility,
-                  unrealizedLoss: !indicatorVisibility.unrealizedLoss,
-                })
-              }
-            />
-            <label
-              className="form-check-label"
-              htmlFor="unrealizedLossCheckbox"
-            >
-              Unrealized Loss
-            </label>
-          </div>
-          <div className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="realizedLossCheckbox"
-              checked={indicatorVisibility.realizedLoss}
-              onChange={() =>
-                setIndicatorVisibility({
-                  ...indicatorVisibility,
-                  realizedLoss: !indicatorVisibility.realizedLoss,
-                })
-              }
-            />
-            <label className="form-check-label" htmlFor="realizedLossCheckbox">
-              Realized Loss
-            </label>
-          </div>
-          <div className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="realizedProfitCheckbox"
-              checked={indicatorVisibility.realizedProfit}
-              onChange={() =>
-                setIndicatorVisibility({
-                  ...indicatorVisibility,
-                  realizedProfit: !indicatorVisibility.realizedProfit,
-                })
-              }
-            />
-            <label
-              className="form-check-label"
-              htmlFor="realizedProfitCheckbox"
-            >
-              Realized Profit
-            </label>
-          </div>
-          <div className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="actorRankCheckbox"
-              checked={indicatorVisibility.actorRank}
-              onChange={() =>
-                setIndicatorVisibility({
-                  ...indicatorVisibility,
-                  actorRank: !indicatorVisibility.actorRank,
-                })
-              }
-            />
-            <label className="form-check-label" htmlFor="actorRankCheckbox">
-              Onchain Score
-            </label>
-          </div>
-          <div className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="last10secVolCheckbox"
-              checked={indicatorVisibility.last10secVol}
-              onChange={() =>
-                setIndicatorVisibility({
-                  ...indicatorVisibility,
-                  last10secVol: !indicatorVisibility.last10secVol,
-                })
-              }
-            />
-            <label className="form-check-label" htmlFor="last10secVolCheckbox">
-              Last 10 Sec Volume
-            </label>
-          </div>
-          <div className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="last5secVolCheckbox"
-              checked={indicatorVisibility.last5secVol}
-              onChange={() =>
-                setIndicatorVisibility({
-                  ...indicatorVisibility,
-                  last5secVol: !indicatorVisibility.last5secVol,
-                })
-              }
-            />
-            <label className="form-check-label" htmlFor="last5secVolCheckbox">
-              Last 5 Sec Volume
-            </label>
-          </div>
-          <div className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="buyVolumeCheckbox"
-              checked={indicatorVisibility.buyVolume}
-              onChange={() =>
-                setIndicatorVisibility({
-                  ...indicatorVisibility,
-                  buyVolume: !indicatorVisibility.buyVolume,
-                })
-              }
-            />
-            <label className="form-check-label" htmlFor="buyVolumeCheckbox">
-              Buy Volume
-            </label>
-          </div>
-          <div className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="sellVolumeCheckbox"
-              checked={indicatorVisibility.sellVolume}
-              onChange={() =>
-                setIndicatorVisibility({
-                  ...indicatorVisibility,
-                  sellVolume: !indicatorVisibility.sellVolume,
-                })
-              }
-            />
-            <label className="form-check-label" htmlFor="sellVolumeCheckbox">
-              Sell Volume
-            </label>
-          </div>
-          <div className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="htCheckbox"
-              checked={indicatorVisibility.ht}
-              onChange={() =>
-                setIndicatorVisibility({
-                  ...indicatorVisibility,
-                  ht: !indicatorVisibility.ht,
-                })
-              }
-            />
-            <label className="form-check-label" htmlFor="htCheckbox">
-              HT
-            </label>
-          </div>
-          <div className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="totalVolumeCheckbox"
-              checked={indicatorVisibility.totalVolume}
-              onChange={() =>
-                setIndicatorVisibility({
-                  ...indicatorVisibility,
-                  totalVolume: !indicatorVisibility.totalVolume,
-                })
-              }
-            />
-            <label className="form-check-label" htmlFor="totalVolumeCheckbox">
-              Total Volume
-            </label>
+          <div className="row">
+            {/* Column 1 */}
+            <div className="col-4">
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="unrealizedProfitCheckbox"
+                  checked={indicatorVisibility.unrealizedProfit}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      unrealizedProfit: !indicatorVisibility.unrealizedProfit,
+                    })
+                  }
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor="unrealizedProfitCheckbox"
+                >
+                  Unrealized Profit
+                  <LineStyleIndicator color="#0f4a6e" lineStyle={0} />
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="unrealizedLossCheckbox"
+                  checked={indicatorVisibility.unrealizedLoss}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      unrealizedLoss: !indicatorVisibility.unrealizedLoss,
+                    })
+                  }
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor="unrealizedLossCheckbox"
+                >
+                  Unrealized Loss
+                  <LineStyleIndicator color="#6e3d0f" lineStyle={0} />
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="realizedLossCheckbox"
+                  checked={indicatorVisibility.realizedLoss}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      realizedLoss: !indicatorVisibility.realizedLoss,
+                    })
+                  }
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor="realizedLossCheckbox"
+                >
+                  Realized Loss
+                  <LineStyleIndicator color="#9d4e15" lineStyle={2} />
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="realizedProfitCheckbox"
+                  checked={indicatorVisibility.realizedProfit}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      realizedProfit: !indicatorVisibility.realizedProfit,
+                    })
+                  }
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor="realizedProfitCheckbox"
+                >
+                  Realized Profit
+                  <LineStyleIndicator color="#156a9d" lineStyle={2} />
+                </label>
+              </div>
+            </div>
+
+            {/* Column 2 */}
+            <div className="col-4">
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="actorRankCheckbox"
+                  checked={indicatorVisibility.actorRank}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      actorRank: !indicatorVisibility.actorRank,
+                    })
+                  }
+                />
+                <label className="form-check-label" htmlFor="actorRankCheckbox">
+                  Onchain Score
+                  <LineStyleIndicator color="#dd0808ff" lineStyle={0} />
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="last10secVolCheckbox"
+                  checked={indicatorVisibility.last10secVol}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      last10secVol: !indicatorVisibility.last10secVol,
+                    })
+                  }
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor="last10secVolCheckbox"
+                >
+                  Last 10 Sec Volume
+                  <LineStyleIndicator color="#ff6b35" lineStyle={0} />
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="last5secVolCheckbox"
+                  checked={indicatorVisibility.last5secVol}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      last5secVol: !indicatorVisibility.last5secVol,
+                    })
+                  }
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor="last5secVolCheckbox"
+                >
+                  Last 5 Sec Volume
+                  <LineStyleIndicator color="#f7931e" lineStyle={1} />
+                </label>
+              </div>
+            </div>
+
+            {/* Column 3 */}
+            <div className="col-4">
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="buyVolumeCheckbox"
+                  checked={indicatorVisibility.buyVolume}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      buyVolume: !indicatorVisibility.buyVolume,
+                    })
+                  }
+                />
+                <label className="form-check-label" htmlFor="buyVolumeCheckbox">
+                  Buy Volume
+                  <LineStyleIndicator color="#00b300" lineStyle={0} />
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="sellVolumeCheckbox"
+                  checked={indicatorVisibility.sellVolume}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      sellVolume: !indicatorVisibility.sellVolume,
+                    })
+                  }
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor="sellVolumeCheckbox"
+                >
+                  Sell Volume
+                  <LineStyleIndicator color="#e60000" lineStyle={0} />
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="htCheckbox"
+                  checked={indicatorVisibility.ht}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      ht: !indicatorVisibility.ht,
+                    })
+                  }
+                />
+                <label className="form-check-label" htmlFor="htCheckbox">
+                  HT
+                  <LineStyleIndicator color="#8E44AD" lineStyle={0} />
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="totalVolumeCheckbox"
+                  checked={indicatorVisibility.totalVolume}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      totalVolume: !indicatorVisibility.totalVolume,
+                    })
+                  }
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor="totalVolumeCheckbox"
+                >
+                  Total Volume
+                  <LineStyleIndicator color="#2E86AB" lineStyle={0} />
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
