@@ -67,8 +67,8 @@ function Chart({
   const defaultIndicatorVisibility = {
     unrealizedProfit: true,
     unrealizedLoss: true,
-    realizedLoss: true,
-    realizedProfit: true,
+    realizedLoss: false,
+    realizedProfit: false,
     actorRank: true,
     last10secVol: false,
     last5secVol: false,
@@ -78,10 +78,27 @@ function Chart({
     totalVolume: false,
   };
 
+  // Define default candle colors
+  const defaultCandleColors = {
+    // Default candles (low new money ratio)
+    defaultUp: "#c0e7ffff",
+    defaultDown: "#c0e7ffff",
+    // New money candles (different ratio levels)
+    newMoneyLow: "#535696ff",    // ratio 0.1-0.49
+    newMoneyMedium: "#393c8aff",  // ratio 0.49-0.75
+    newMoneyHigh: "#020438ff",    // ratio >= 0.75
+  };
+
   // Load saved indicator visibility from localStorage, or fallback to defaults.
   const [indicatorVisibility, setIndicatorVisibility] = useState(() => {
     const stored = localStorage.getItem("indicatorVisibility");
     return stored ? JSON.parse(stored) : defaultIndicatorVisibility;
+  });
+
+  // Load saved candle colors from localStorage, or fallback to defaults.
+  const [candleColors, setCandleColors] = useState(() => {
+    const stored = localStorage.getItem("candleColors");
+    return stored ? JSON.parse(stored) : defaultCandleColors;
   });
 
   // Save indicator visibility to localStorage whenever it changes.
@@ -91,6 +108,14 @@ function Chart({
       JSON.stringify(indicatorVisibility)
     );
   }, [indicatorVisibility]);
+
+  // Save candle colors to localStorage whenever they change.
+  useEffect(() => {
+    localStorage.setItem(
+      "candleColors",
+      JSON.stringify(candleColors)
+    );
+  }, [candleColors]);
 
   // Create the chart and add basic series on mount.
   useEffect(() => {
@@ -200,16 +225,16 @@ function Chart({
   }, []);
 
   // Helper function to calculate color based on new_money_ratio
-  const getColorFromRatio = (ratio) => {
+  const getColorFromRatio = (ratio, isUp) => {
     if (ratio === undefined || ratio === null) {
       // Default colors when new_money_ratio is missing
       return {
-        upColor: "#c0e7ffff",
-        downColor: "#c0e7ffff",
-        borderUpColor: "#c0e7ffff",
-        borderDownColor: "#c0e7ffff",
-        wickUpColor: "#c0e7ffff",
-        wickDownColor: "#c0e7ffff",
+        upColor: "#336280ff",
+        downColor: "#336280ff",
+        borderUpColor: "#336280ff",
+        borderDownColor: "#336280ff",
+        wickUpColor: "#336280ff",
+        wickDownColor: "#336280ff",
       };
     }
 
@@ -222,22 +247,22 @@ function Chart({
     if (clampedRatio < 0.1) {
       // Use default colors when ratio is below 0.1
       bodyColor = {
-        upColor: "#c0e7ffff",
-        downColor: "#c0e7ffff",
+        upColor: candleColors.defaultUp,
+        downColor: candleColors.defaultDown,
       };
       borderColor = {
-        borderUpColor: "#c0e7ffff",
-        borderDownColor: "#c0e7ffff",
+        borderUpColor: candleColors.defaultUp,
+        borderDownColor: candleColors.defaultDown,
       };
     } else {
       // Determine color based on ratio thresholds
       let color;
       if (clampedRatio >= 0.75) {
-        color = "#020438ff"; // Yellow for ratio >= 0.75
+        color = candleColors.newMoneyHigh;
       } else if (clampedRatio >= 0.49) {
-        color = "#393c8aff"; // Light green for ratio >= 0.49
+        color = candleColors.newMoneyMedium;
       } else {
-        color = "#535696ff"; // Orange for ratio >= 0.1
+        color = candleColors.newMoneyLow;
       }
 
       bodyColor = {
@@ -327,7 +352,7 @@ function Chart({
         isInitialLoadRef.current = false;
       }
     }
-  }, [candles]);
+  }, [candles, candleColors]);
 
   // For each indicator series, add/remove based on indicatorVisibility.
   // Unrealized Profit
@@ -737,27 +762,6 @@ function Chart({
                 <input
                   type="checkbox"
                   className="form-check-input"
-                  id="realizedLossCheckbox"
-                  checked={indicatorVisibility.realizedLoss}
-                  onChange={() =>
-                    setIndicatorVisibility({
-                      ...indicatorVisibility,
-                      realizedLoss: !indicatorVisibility.realizedLoss,
-                    })
-                  }
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="realizedLossCheckbox"
-                >
-                  Realized Loss
-                  <LineStyleIndicator color="#9d4e15" lineStyle={2} />
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
                   id="realizedProfitCheckbox"
                   checked={indicatorVisibility.realizedProfit}
                   onChange={() =>
@@ -773,6 +777,27 @@ function Chart({
                 >
                   Realized Profit
                   <LineStyleIndicator color="#156a9d" lineStyle={2} />
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="realizedLossCheckbox"
+                  checked={indicatorVisibility.realizedLoss}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      realizedLoss: !indicatorVisibility.realizedLoss,
+                    })
+                  }
+                />
+                <label
+                  className="form-check-label"
+                  htmlFor="realizedLossCheckbox"
+                >
+                  Realized Loss
+                  <LineStyleIndicator color="#9d4e15" lineStyle={2} />
                 </label>
               </div>
             </div>
@@ -920,6 +945,117 @@ function Chart({
                   Total Volume
                   <LineStyleIndicator color="#2E86AB" lineStyle={0} />
                 </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Color Pickers Section */}
+        <div className="mt-4 pt-3" style={{ borderTop: "1px solid #dee2e6" }}>
+          <h6 className="mb-3">Candle Colors</h6>
+          <div className="row">
+            {/* Column 1 - Default Candles */}
+            <div className="col-4">
+              <div className="mb-2">
+                <label className="form-label" style={{ fontSize: "0.875rem" }}>
+                  Default Up
+                </label>
+                <input
+                  type="color"
+                  className="form-control form-control-color"
+                  value={candleColors.defaultUp.slice(0, 7)}
+                  onChange={(e) =>
+                    setCandleColors({
+                      ...candleColors,
+                      defaultUp: e.target.value + "ff",
+                    })
+                  }
+                  title="Choose default up candle color"
+                />
+              </div>
+              <div className="mb-2">
+                <label className="form-label" style={{ fontSize: "0.875rem" }}>
+                  Default Down
+                </label>
+                <input
+                  type="color"
+                  className="form-control form-control-color"
+                  value={candleColors.defaultDown.slice(0, 7)}
+                  onChange={(e) =>
+                    setCandleColors({
+                      ...candleColors,
+                      defaultDown: e.target.value + "ff",
+                    })
+                  }
+                  title="Choose default down candle color"
+                />
+              </div>
+            </div>
+
+            {/* Column 2 - New Money Candles */}
+            <div className="col-4">
+              <div className="mb-2">
+                <label className="form-label" style={{ fontSize: "0.875rem" }}>
+                  New Money Low (0.1-0.49)
+                </label>
+                <input
+                  type="color"
+                  className="form-control form-control-color"
+                  value={candleColors.newMoneyLow.slice(0, 7)}
+                  onChange={(e) =>
+                    setCandleColors({
+                      ...candleColors,
+                      newMoneyLow: e.target.value + "ff",
+                    })
+                  }
+                  title="Choose new money low ratio color"
+                />
+              </div>
+              <div className="mb-2">
+                <label className="form-label" style={{ fontSize: "0.875rem" }}>
+                  New Money Medium (0.49-0.75)
+                </label>
+                <input
+                  type="color"
+                  className="form-control form-control-color"
+                  value={candleColors.newMoneyMedium.slice(0, 7)}
+                  onChange={(e) =>
+                    setCandleColors({
+                      ...candleColors,
+                      newMoneyMedium: e.target.value + "ff",
+                    })
+                  }
+                  title="Choose new money medium ratio color"
+                />
+              </div>
+            </div>
+
+            {/* Column 3 */}
+            <div className="col-4">
+              <div className="mb-2">
+                <label className="form-label" style={{ fontSize: "0.875rem" }}>
+                  New Money High (&gt;= 0.75)
+                </label>
+                <input
+                  type="color"
+                  className="form-control form-control-color"
+                  value={candleColors.newMoneyHigh.slice(0, 7)}
+                  onChange={(e) =>
+                    setCandleColors({
+                      ...candleColors,
+                      newMoneyHigh: e.target.value + "ff",
+                    })
+                  }
+                  title="Choose new money high ratio color"
+                />
+              </div>
+              <div className="mb-2">
+                <button
+                  className="btn btn-sm btn-outline-secondary w-100"
+                  onClick={() => setCandleColors(defaultCandleColors)}
+                >
+                  Reset to Defaults
+                </button>
               </div>
             </div>
           </div>

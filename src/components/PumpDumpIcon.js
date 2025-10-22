@@ -19,7 +19,7 @@ const PumpDumpIcon = () => (
 
     <span
       className="ms-2"
-      title="High risk of pump dump"
+      title="High risk of pump dump scheme"
       style={{ marginRight: 8 }}
     >
       <svg
