@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { createChart } from "lightweight-charts";
 import ChartHeader from "./ChartHeader";
+import "./DashboardStyles.css";
 
 // Helper component to render line style indicator
 const LineStyleIndicator = ({ color, lineStyle }) => {
@@ -123,8 +124,9 @@ function Chart({
       width: chartContainerRef.current.clientWidth,
       height: 400,
       layout: {
-        backgroundColor: "#ffffff",
-        textColor: "#000",
+        backgroundColor: "#f9fafb",
+        textColor: "#1a1a1a",
+        fontFamily: "'Poppins', sans-serif",
       },
       timeScale: {
         timeVisible: true,
@@ -189,30 +191,26 @@ function Chart({
     window.addEventListener("resize", handleResize);
     handleResize();
 
+    // Helper to safely apply price scale options only if the scale exists
+    const safelyApplyPriceScaleOptions = (scaleId, options) => {
+      try {
+        chartRef.current.priceScale(scaleId).applyOptions(options);
+      } catch (e) {
+        // Price scale doesn't exist yet, silently ignore
+      }
+    };
+
     // Auto-scale on scroll/pan
     const handleVisibleTimeRangeChange = () => {
       if (chartRef.current) {
-        chartRef.current.priceScale("right").applyOptions({
-          autoScale: true,
-        });
-        chartRef.current.priceScale("volume").applyOptions({
-          autoScale: true,
-        });
-        chartRef.current.priceScale("last10secVol").applyOptions({
-          autoScale: true,
-        });
-        chartRef.current.priceScale("last5secVol").applyOptions({
-          autoScale: true,
-        });
-        chartRef.current.priceScale("buySellVolume").applyOptions({
-          autoScale: true,
-        });
-        chartRef.current.priceScale("ht").applyOptions({
-          autoScale: true,
-        });
-        chartRef.current.priceScale("totalVolume").applyOptions({
-          autoScale: true,
-        });
+        safelyApplyPriceScaleOptions("right", { autoScale: true });
+        safelyApplyPriceScaleOptions("volume", { autoScale: true });
+        safelyApplyPriceScaleOptions("last10secVol", { autoScale: true });
+        safelyApplyPriceScaleOptions("last5secVol", { autoScale: true });
+        safelyApplyPriceScaleOptions("buySellVolume", { autoScale: true });
+        safelyApplyPriceScaleOptions("ht", { autoScale: true });
+        safelyApplyPriceScaleOptions("totalVolume", { autoScale: true });
+        safelyApplyPriceScaleOptions("profitLoss", { autoScale: true });
       }
     };
 
@@ -323,29 +321,25 @@ function Chart({
         chartRef.current.timeScale().fitContent();
 
         // Auto-fit the price scales to show all visible data
-        chartRef.current.priceScale("right").applyOptions({
-          autoScale: true,
-        });
-        chartRef.current.priceScale("volume").applyOptions({
-          autoScale: true,
-        });
-        chartRef.current.priceScale("last10secVol").applyOptions({
-          autoScale: true,
-        });
-        chartRef.current.priceScale("last5secVol").applyOptions({
-          autoScale: true,
-        });
-        chartRef.current.priceScale("buySellVolume").applyOptions({
-          autoScale: true,
-        });
-        chartRef.current.priceScale("ht").applyOptions({
-          autoScale: true,
-        });
-        chartRef.current.priceScale("totalVolume").applyOptions({
-          autoScale: true,
-        });
-        chartRef.current.priceScale("profitLoss").applyOptions({
-          autoScale: true,
+        // Only apply to scales that exist (some may not be created yet)
+        const scaleIds = [
+          "right",
+          "volume",
+          "last10secVol",
+          "last5secVol",
+          "buySellVolume",
+          "ht",
+          "totalVolume",
+          "profitLoss",
+        ];
+        scaleIds.forEach((scaleId) => {
+          try {
+            chartRef.current.priceScale(scaleId).applyOptions({
+              autoScale: true,
+            });
+          } catch (e) {
+            // Price scale doesn't exist yet, silently ignore
+          }
         });
 
         // Mark that initial load is complete
@@ -366,10 +360,12 @@ function Chart({
           lineStyle: 0,
         });
       }
-      const data = candles.map((candle) => ({
-        time: candle.time,
-        value: candle.unrealized_profit,
-      }));
+      const data = candles
+        .filter((candle) => candle.unrealized_profit != null && !isNaN(candle.unrealized_profit))
+        .map((candle) => ({
+          time: candle.time,
+          value: candle.unrealized_profit,
+        }));
       unrealizedProfitSeriesRef.current.setData(data);
     } else if (unrealizedProfitSeriesRef.current) {
       chartRef.current.removeSeries(unrealizedProfitSeriesRef.current);
@@ -388,10 +384,12 @@ function Chart({
           lineStyle: 0,
         });
       }
-      const data = candles.map((candle) => ({
-        time: candle.time,
-        value: candle.unrealized_loss,
-      }));
+      const data = candles
+        .filter((candle) => candle.unrealized_loss != null && !isNaN(candle.unrealized_loss))
+        .map((candle) => ({
+          time: candle.time,
+          value: candle.unrealized_loss,
+        }));
       unrealizedLossSeriesRef.current.setData(data);
     } else if (unrealizedLossSeriesRef.current) {
       chartRef.current.removeSeries(unrealizedLossSeriesRef.current);
@@ -410,10 +408,12 @@ function Chart({
           lineStyle: 2,
         });
       }
-      const data = candles.map((candle) => ({
-        time: candle.time,
-        value: candle.realized_loss,
-      }));
+      const data = candles
+        .filter((candle) => candle.realized_loss != null && !isNaN(candle.realized_loss))
+        .map((candle) => ({
+          time: candle.time,
+          value: candle.realized_loss,
+        }));
       realizedLossSeriesRef.current.setData(data);
     } else if (realizedLossSeriesRef.current) {
       chartRef.current.removeSeries(realizedLossSeriesRef.current);
@@ -432,10 +432,12 @@ function Chart({
           lineStyle: 2,
         });
       }
-      const data = candles.map((candle) => ({
-        time: candle.time,
-        value: candle.realized_profit,
-      }));
+      const data = candles
+        .filter((candle) => candle.realized_profit != null && !isNaN(candle.realized_profit))
+        .map((candle) => ({
+          time: candle.time,
+          value: candle.realized_profit,
+        }));
       realizedProfitSeriesRef.current.setData(data);
     } else if (realizedProfitSeriesRef.current) {
       chartRef.current.removeSeries(realizedProfitSeriesRef.current);
@@ -458,10 +460,12 @@ function Chart({
           scaleMargins: { top: 0.2, bottom: 0.2 },
         });
       }
-      const data = candles.map((candle) => ({
-        time: candle.time,
-        value: candle.actor_rank,
-      }));
+      const data = candles
+        .filter((candle) => candle.actor_rank != null && !isNaN(candle.actor_rank))
+        .map((candle) => ({
+          time: candle.time,
+          value: candle.actor_rank,
+        }));
       actorRankSeriesRef.current.setData(data);
     } else if (actorRankSeriesRef.current) {
       chartRef.current.removeSeries(actorRankSeriesRef.current);
@@ -485,10 +489,12 @@ function Chart({
           autoScale: true,
         });
       }
-      const data = candles.map((candle) => ({
-        time: candle.time,
-        value: candle.last10secVol,
-      }));
+      const data = candles
+        .filter((candle) => candle.last10secVol != null && !isNaN(candle.last10secVol))
+        .map((candle) => ({
+          time: candle.time,
+          value: candle.last10secVol,
+        }));
       last10secVolSeriesRef.current.setData(data);
     } else if (last10secVolSeriesRef.current) {
       chartRef.current.removeSeries(last10secVolSeriesRef.current);
@@ -512,10 +518,12 @@ function Chart({
           autoScale: true,
         });
       }
-      const data = candles.map((candle) => ({
-        time: candle.time,
-        value: candle.last5secVol,
-      }));
+      const data = candles
+        .filter((candle) => candle.last5secVol != null && !isNaN(candle.last5secVol))
+        .map((candle) => ({
+          time: candle.time,
+          value: candle.last5secVol,
+        }));
       last5secVolSeriesRef.current.setData(data);
     } else if (last5secVolSeriesRef.current) {
       chartRef.current.removeSeries(last5secVolSeriesRef.current);
@@ -539,10 +547,12 @@ function Chart({
           autoScale: true,
         });
       }
-      const data = candles.map((candle) => ({
-        time: candle.time,
-        value: candle.buy_volume,
-      }));
+      const data = candles
+        .filter((candle) => candle.buy_volume != null && !isNaN(candle.buy_volume))
+        .map((candle) => ({
+          time: candle.time,
+          value: candle.buy_volume,
+        }));
       buyVolumeSeriesRef.current.setData(data);
     } else if (buyVolumeSeriesRef.current) {
       chartRef.current.removeSeries(buyVolumeSeriesRef.current);
@@ -566,10 +576,12 @@ function Chart({
           autoScale: true,
         });
       }
-      const data = candles.map((candle) => ({
-        time: candle.time,
-        value: candle.sell_volume,
-      }));
+      const data = candles
+        .filter((candle) => candle.sell_volume != null && !isNaN(candle.sell_volume))
+        .map((candle) => ({
+          time: candle.time,
+          value: candle.sell_volume,
+        }));
       sellVolumeSeriesRef.current.setData(data);
     } else if (sellVolumeSeriesRef.current) {
       chartRef.current.removeSeries(sellVolumeSeriesRef.current);
@@ -593,10 +605,12 @@ function Chart({
           autoScale: true,
         });
       }
-      const data = candles.map((candle) => ({
-        time: candle.time,
-        value: candle.ht,
-      }));
+      const data = candles
+        .filter((candle) => candle.ht != null && !isNaN(candle.ht))
+        .map((candle) => ({
+          time: candle.time,
+          value: candle.ht,
+        }));
       htSeriesRef.current.setData(data);
     } else if (htSeriesRef.current) {
       chartRef.current.removeSeries(htSeriesRef.current);
@@ -620,10 +634,12 @@ function Chart({
           autoScale: true,
         });
       }
-      const data = candles.map((candle) => ({
-        time: candle.time,
-        value: candle.cSolVal,
-      }));
+      const data = candles
+        .filter((candle) => candle.cSolVal != null && !isNaN(candle.cSolVal))
+        .map((candle) => ({
+          time: candle.time,
+          value: candle.cSolVal,
+        }));
       totalVolumeSeriesRef.current.setData(data);
     } else if (totalVolumeSeriesRef.current) {
       chartRef.current.removeSeries(totalVolumeSeriesRef.current);
@@ -661,13 +677,21 @@ function Chart({
       ? Number(candles[candles.length - 1].total_fee).toFixed(1)
       : "";
 
-  // Calculate time duration between first and last candle
+  // Calculate time duration from first candle to now
   const timeDuration =
-    candles && candles.length > 1
+    candles && candles.length > 0
       ? (() => {
-          const firstTime = candles[0].time;
-          const lastTime = candles[candles.length - 1].time;
-          const diffInSeconds = lastTime - firstTime;
+          const firstTime = candles[0].time; // Unix timestamp in seconds
+          const nowInSeconds = Math.floor(Date.now() / 1000); // Current time in seconds
+          const diffInSeconds = nowInSeconds - firstTime;
+
+          // If 1 hour or more, show "X hr+"
+          if (diffInSeconds >= 3600) {
+            const hours = Math.floor(diffInSeconds / 3600);
+            return `${hours} hr+`;
+          }
+
+          // Otherwise show minutes:seconds
           const minutes = Math.floor(diffInSeconds / 60);
           const seconds = diffInSeconds % 60;
           return `${minutes}:${seconds.toString().padStart(2, "0")}`;
@@ -695,7 +719,12 @@ function Chart({
   };
 
   return (
-    <div className="card">
+    <div className="card" style={{
+      borderRadius: "12px",
+      boxShadow: "0 1px 3px rgba(0, 0, 0, 0.08)",
+      border: "none",
+      fontFamily: "'Poppins', sans-serif"
+    }}>
       {!hideHeader && (
         <ChartHeader
           chartId={chartId}
@@ -709,255 +738,261 @@ function Chart({
           handleDelete={handleDelete}
         />
       )}
-      <div className="card-body">
-        <div ref={chartContainerRef} />
-        {/* Checkbox controls for each indicator - 3 Column Layout */}
-        <div className="mt-3">
-          <div className="row">
-            {/* Column 1 */}
-            <div className="col-4">
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="unrealizedProfitCheckbox"
-                  checked={indicatorVisibility.unrealizedProfit}
-                  onChange={() =>
-                    setIndicatorVisibility({
-                      ...indicatorVisibility,
-                      unrealizedProfit: !indicatorVisibility.unrealizedProfit,
-                    })
-                  }
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="unrealizedProfitCheckbox"
-                >
-                  Unrealized Profit
-                  <LineStyleIndicator color="#0f4a6e" lineStyle={0} />
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="unrealizedLossCheckbox"
-                  checked={indicatorVisibility.unrealizedLoss}
-                  onChange={() =>
-                    setIndicatorVisibility({
-                      ...indicatorVisibility,
-                      unrealizedLoss: !indicatorVisibility.unrealizedLoss,
-                    })
-                  }
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="unrealizedLossCheckbox"
-                >
-                  Unrealized Loss
-                  <LineStyleIndicator color="#6e3d0f" lineStyle={0} />
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="realizedProfitCheckbox"
-                  checked={indicatorVisibility.realizedProfit}
-                  onChange={() =>
-                    setIndicatorVisibility({
-                      ...indicatorVisibility,
-                      realizedProfit: !indicatorVisibility.realizedProfit,
-                    })
-                  }
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="realizedProfitCheckbox"
-                >
-                  Realized Profit
-                  <LineStyleIndicator color="#156a9d" lineStyle={2} />
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="realizedLossCheckbox"
-                  checked={indicatorVisibility.realizedLoss}
-                  onChange={() =>
-                    setIndicatorVisibility({
-                      ...indicatorVisibility,
-                      realizedLoss: !indicatorVisibility.realizedLoss,
-                    })
-                  }
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="realizedLossCheckbox"
-                >
-                  Realized Loss
-                  <LineStyleIndicator color="#9d4e15" lineStyle={2} />
-                </label>
-              </div>
-            </div>
+      <div className="card-body" style={{ padding: "24px" }}>
+        <div ref={chartContainerRef} style={{
+          borderRadius: "8px",
+          overflow: "hidden",
+          marginBottom: "24px"
+        }} />
+        {/* Toggle controls for each indicator - 3 Column Layout */}
+        <div className="mt-4">
+          <h6 className="dashboard-section-title" style={{ fontSize: "16px", marginBottom: "16px" }}>
+            Chart Indicators
+          </h6>
+          <div className="toggle-group">
+            {/* Unrealized Profit */}
+            <label className="toggle-item">
+              <img src="/figma-assets/icons/Round Graph.svg" className="toggle-icon" alt="" />
+              <span>
+                Unrealized Profit
+                <LineStyleIndicator color="#0f4a6e" lineStyle={0} />
+              </span>
+              <input
+                type="checkbox"
+                className="toggle-switch"
+                id="unrealizedProfitCheckbox"
+                checked={indicatorVisibility.unrealizedProfit}
+                onChange={() =>
+                  setIndicatorVisibility({
+                    ...indicatorVisibility,
+                    unrealizedProfit: !indicatorVisibility.unrealizedProfit,
+                  })
+                }
+              />
+            </label>
 
-            {/* Column 2 */}
-            <div className="col-4">
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="actorRankCheckbox"
-                  checked={indicatorVisibility.actorRank}
-                  onChange={() =>
-                    setIndicatorVisibility({
-                      ...indicatorVisibility,
-                      actorRank: !indicatorVisibility.actorRank,
-                    })
-                  }
-                />
-                <label className="form-check-label" htmlFor="actorRankCheckbox">
-                  Onchain Score
-                  <LineStyleIndicator color="#dd0808ff" lineStyle={0} />
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="last10secVolCheckbox"
-                  checked={indicatorVisibility.last10secVol}
-                  onChange={() =>
-                    setIndicatorVisibility({
-                      ...indicatorVisibility,
-                      last10secVol: !indicatorVisibility.last10secVol,
-                    })
-                  }
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="last10secVolCheckbox"
-                >
-                  Last 10 Sec Volume
-                  <LineStyleIndicator color="#ff6b35" lineStyle={0} />
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="last5secVolCheckbox"
-                  checked={indicatorVisibility.last5secVol}
-                  onChange={() =>
-                    setIndicatorVisibility({
-                      ...indicatorVisibility,
-                      last5secVol: !indicatorVisibility.last5secVol,
-                    })
-                  }
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="last5secVolCheckbox"
-                >
-                  Last 5 Sec Volume
-                  <LineStyleIndicator color="#f7931e" lineStyle={1} />
-                </label>
-              </div>
-            </div>
+            {/* Unrealized Loss */}
+            <label className="toggle-item">
+              <img src="/figma-assets/icons/Round Graph.svg" className="toggle-icon" alt="" />
+              <span>
+                Unrealized Loss
+                <LineStyleIndicator color="#6e3d0f" lineStyle={0} />
+              </span>
+              <input
+                type="checkbox"
+                className="toggle-switch"
+                id="unrealizedLossCheckbox"
+                checked={indicatorVisibility.unrealizedLoss}
+                onChange={() =>
+                  setIndicatorVisibility({
+                    ...indicatorVisibility,
+                    unrealizedLoss: !indicatorVisibility.unrealizedLoss,
+                  })
+                }
+              />
+            </label>
 
-            {/* Column 3 */}
-            <div className="col-4">
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="buyVolumeCheckbox"
-                  checked={indicatorVisibility.buyVolume}
-                  onChange={() =>
-                    setIndicatorVisibility({
-                      ...indicatorVisibility,
-                      buyVolume: !indicatorVisibility.buyVolume,
-                    })
-                  }
-                />
-                <label className="form-check-label" htmlFor="buyVolumeCheckbox">
-                  Buy Volume
-                  <LineStyleIndicator color="#00b300" lineStyle={0} />
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="sellVolumeCheckbox"
-                  checked={indicatorVisibility.sellVolume}
-                  onChange={() =>
-                    setIndicatorVisibility({
-                      ...indicatorVisibility,
-                      sellVolume: !indicatorVisibility.sellVolume,
-                    })
-                  }
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="sellVolumeCheckbox"
-                >
-                  Sell Volume
-                  <LineStyleIndicator color="#e60000" lineStyle={0} />
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="htCheckbox"
-                  checked={indicatorVisibility.ht}
-                  onChange={() =>
-                    setIndicatorVisibility({
-                      ...indicatorVisibility,
-                      ht: !indicatorVisibility.ht,
-                    })
-                  }
-                />
-                <label className="form-check-label" htmlFor="htCheckbox">
-                  HT
-                  <LineStyleIndicator color="#8E44AD" lineStyle={0} />
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="totalVolumeCheckbox"
-                  checked={indicatorVisibility.totalVolume}
-                  onChange={() =>
-                    setIndicatorVisibility({
-                      ...indicatorVisibility,
-                      totalVolume: !indicatorVisibility.totalVolume,
-                    })
-                  }
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="totalVolumeCheckbox"
-                >
-                  Total Volume
-                  <LineStyleIndicator color="#2E86AB" lineStyle={0} />
-                </label>
-              </div>
-            </div>
+            {/* Realized Profit */}
+            <label className="toggle-item">
+              <img src="/figma-assets/icons/Graph New Up.svg" className="toggle-icon" alt="" />
+              <span>
+                Realized Profit
+                <LineStyleIndicator color="#156a9d" lineStyle={2} />
+              </span>
+              <input
+                type="checkbox"
+                className="toggle-switch"
+                id="realizedProfitCheckbox"
+                checked={indicatorVisibility.realizedProfit}
+                onChange={() =>
+                  setIndicatorVisibility({
+                    ...indicatorVisibility,
+                    realizedProfit: !indicatorVisibility.realizedProfit,
+                  })
+                }
+              />
+            </label>
+
+            {/* Realized Loss */}
+            <label className="toggle-item">
+              <img src="/figma-assets/icons/Graph New Up.svg" className="toggle-icon" alt="" />
+              <span>
+                Realized Loss
+                <LineStyleIndicator color="#9d4e15" lineStyle={2} />
+              </span>
+              <input
+                type="checkbox"
+                className="toggle-switch"
+                id="realizedLossCheckbox"
+                checked={indicatorVisibility.realizedLoss}
+                onChange={() =>
+                  setIndicatorVisibility({
+                    ...indicatorVisibility,
+                    realizedLoss: !indicatorVisibility.realizedLoss,
+                  })
+                }
+              />
+            </label>
+
+            {/* Onchain Score */}
+            <label className="toggle-item">
+              <img src="/figma-assets/icons/Graph New Up.svg" className="toggle-icon" alt="" />
+              <span>
+                Onchain Score
+                <LineStyleIndicator color="#dd0808ff" lineStyle={0} />
+              </span>
+              <input
+                type="checkbox"
+                className="toggle-switch"
+                id="actorRankCheckbox"
+                checked={indicatorVisibility.actorRank}
+                onChange={() =>
+                  setIndicatorVisibility({
+                    ...indicatorVisibility,
+                    actorRank: !indicatorVisibility.actorRank,
+                  })
+                }
+              />
+            </label>
+
+            {/* Last 10 Sec Volume */}
+            <label className="toggle-item">
+              <img src="/figma-assets/icons/Chart Square.svg" className="toggle-icon" alt="" />
+              <span>
+                Last 10 Sec Volume
+                <LineStyleIndicator color="#ff6b35" lineStyle={0} />
+              </span>
+              <input
+                type="checkbox"
+                className="toggle-switch"
+                id="last10secVolCheckbox"
+                checked={indicatorVisibility.last10secVol}
+                onChange={() =>
+                  setIndicatorVisibility({
+                    ...indicatorVisibility,
+                    last10secVol: !indicatorVisibility.last10secVol,
+                  })
+                }
+              />
+            </label>
+
+            {/* Last 5 Sec Volume */}
+            <label className="toggle-item">
+              <img src="/figma-assets/icons/Chart Square.svg" className="toggle-icon" alt="" />
+              <span>
+                Last 5 Sec Volume
+                <LineStyleIndicator color="#f7931e" lineStyle={1} />
+              </span>
+              <input
+                type="checkbox"
+                className="toggle-switch"
+                id="last5secVolCheckbox"
+                checked={indicatorVisibility.last5secVol}
+                onChange={() =>
+                  setIndicatorVisibility({
+                    ...indicatorVisibility,
+                    last5secVol: !indicatorVisibility.last5secVol,
+                  })
+                }
+              />
+            </label>
+
+            {/* Buy Volume */}
+            <label className="toggle-item">
+              <img src="/figma-assets/icons/Dollar Minimalistic.svg" className="toggle-icon" alt="" />
+              <span>
+                Buy Volume
+                <LineStyleIndicator color="#00b300" lineStyle={0} />
+              </span>
+              <input
+                type="checkbox"
+                className="toggle-switch"
+                id="buyVolumeCheckbox"
+                checked={indicatorVisibility.buyVolume}
+                onChange={() =>
+                  setIndicatorVisibility({
+                    ...indicatorVisibility,
+                    buyVolume: !indicatorVisibility.buyVolume,
+                  })
+                }
+              />
+            </label>
+
+            {/* Sell Volume */}
+            <label className="toggle-item">
+              <img src="/figma-assets/icons/Dollar Minimalistic.svg" className="toggle-icon" alt="" />
+              <span>
+                Sell Volume
+                <LineStyleIndicator color="#e60000" lineStyle={0} />
+              </span>
+              <input
+                type="checkbox"
+                className="toggle-switch"
+                id="sellVolumeCheckbox"
+                checked={indicatorVisibility.sellVolume}
+                onChange={() =>
+                  setIndicatorVisibility({
+                    ...indicatorVisibility,
+                    sellVolume: !indicatorVisibility.sellVolume,
+                  })
+                }
+              />
+            </label>
+
+            {/* HT */}
+            <label className="toggle-item">
+              <img src="/figma-assets/icons/Flame-1.svg" className="toggle-icon" alt="" />
+              <span>
+                HT
+                <LineStyleIndicator color="#8E44AD" lineStyle={0} />
+              </span>
+              <input
+                type="checkbox"
+                className="toggle-switch"
+                id="htCheckbox"
+                checked={indicatorVisibility.ht}
+                onChange={() =>
+                  setIndicatorVisibility({
+                    ...indicatorVisibility,
+                    ht: !indicatorVisibility.ht,
+                  })
+                }
+              />
+            </label>
+
+            {/* Total Volume */}
+            <label className="toggle-item">
+              <img src="/figma-assets/icons/wallet.svg" className="toggle-icon" alt="" />
+              <span>
+                Total Volume
+                <LineStyleIndicator color="#2E86AB" lineStyle={0} />
+              </span>
+              <input
+                type="checkbox"
+                className="toggle-switch"
+                id="totalVolumeCheckbox"
+                checked={indicatorVisibility.totalVolume}
+                onChange={() =>
+                  setIndicatorVisibility({
+                    ...indicatorVisibility,
+                    totalVolume: !indicatorVisibility.totalVolume,
+                  })
+                }
+              />
+            </label>
           </div>
         </div>
 
         {/* Color Pickers Section */}
-        <div className="mt-4 pt-3" style={{ borderTop: "1px solid #dee2e6" }}>
-          <h6 className="mb-3">Candle Colors</h6>
+        <div className="mt-4 pt-4" style={{ borderTop: "1px solid #dee2e6" }}>
+          <h6 className="dashboard-section-title" style={{ fontSize: "16px", marginBottom: "16px" }}>
+            Candle Colors
+          </h6>
           <div className="row">
             {/* Column 1 - Default Candles */}
             <div className="col-4">
-              <div className="mb-2">
-                <label className="form-label" style={{ fontSize: "0.875rem" }}>
+              <div className="mb-3">
+                <label className="form-label dashboard-metric-label" style={{ fontSize: "13px", marginBottom: "8px", display: "block" }}>
                   Default Up
                 </label>
                 <input
@@ -971,10 +1006,11 @@ function Chart({
                     })
                   }
                   title="Choose default up candle color"
+                  style={{ cursor: "pointer" }}
                 />
               </div>
-              <div className="mb-2">
-                <label className="form-label" style={{ fontSize: "0.875rem" }}>
+              <div className="mb-3">
+                <label className="form-label dashboard-metric-label" style={{ fontSize: "13px", marginBottom: "8px", display: "block" }}>
                   Default Down
                 </label>
                 <input
@@ -988,14 +1024,15 @@ function Chart({
                     })
                   }
                   title="Choose default down candle color"
+                  style={{ cursor: "pointer" }}
                 />
               </div>
             </div>
 
             {/* Column 2 - New Money Candles */}
             <div className="col-4">
-              <div className="mb-2">
-                <label className="form-label" style={{ fontSize: "0.875rem" }}>
+              <div className="mb-3">
+                <label className="form-label dashboard-metric-label" style={{ fontSize: "13px", marginBottom: "8px", display: "block" }}>
                   New Money Low (0.1-0.49)
                 </label>
                 <input
@@ -1009,10 +1046,11 @@ function Chart({
                     })
                   }
                   title="Choose new money low ratio color"
+                  style={{ cursor: "pointer" }}
                 />
               </div>
-              <div className="mb-2">
-                <label className="form-label" style={{ fontSize: "0.875rem" }}>
+              <div className="mb-3">
+                <label className="form-label dashboard-metric-label" style={{ fontSize: "13px", marginBottom: "8px", display: "block" }}>
                   New Money Medium (0.49-0.75)
                 </label>
                 <input
@@ -1026,14 +1064,15 @@ function Chart({
                     })
                   }
                   title="Choose new money medium ratio color"
+                  style={{ cursor: "pointer" }}
                 />
               </div>
             </div>
 
             {/* Column 3 */}
             <div className="col-4">
-              <div className="mb-2">
-                <label className="form-label" style={{ fontSize: "0.875rem" }}>
+              <div className="mb-3">
+                <label className="form-label dashboard-metric-label" style={{ fontSize: "13px", marginBottom: "8px", display: "block" }}>
                   New Money High (&gt;= 0.75)
                 </label>
                 <input
@@ -1047,12 +1086,18 @@ function Chart({
                     })
                   }
                   title="Choose new money high ratio color"
+                  style={{ cursor: "pointer" }}
                 />
               </div>
-              <div className="mb-2">
+              <div className="mb-3">
                 <button
-                  className="btn btn-sm btn-outline-secondary w-100"
+                  className="btn btn-outline-secondary w-100"
                   onClick={() => setCandleColors(defaultCandleColors)}
+                  style={{
+                    fontWeight: "500",
+                    borderRadius: "8px",
+                    padding: "8px 16px"
+                  }}
                 >
                   Reset to Defaults
                 </button>

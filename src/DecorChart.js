@@ -3,6 +3,7 @@ import Chart from "./Chart";
 import io from "socket.io-client";
 import { useLocation } from "react-router-dom";
 import DecorHeader from "./DecorHeader";
+import Unauthorized from "./components/Unauthorized";
 const TOKEN = "no-auth";
 
 export const NotFound = () => (
@@ -28,6 +29,7 @@ const DecorChart = () => {
   const [id, setId] = useState(null);
   const [chartData, setChartData] = useState(null);
   const [notFound, setNotFound] = useState(false);
+  const [isUnauthorized, setIsUnauthorized] = useState(false);
 
   // 1) Fetch the on-chain ID for the given address, then load the chart data
   useEffect(() => {
@@ -51,10 +53,21 @@ const DecorChart = () => {
         const chartRes = await fetch(
           `https://api.onchainrank.com/startup/${fetchedId}/${TOKEN}`
         );
+
+        if (chartRes.status === 401 || chartRes.status === 403) {
+          setIsUnauthorized(true);
+          return;
+        }
+
+        if (!chartRes.ok) {
+          throw new Error(`HTTP error! status: ${chartRes.status}`);
+        }
+
         const chartJson = await chartRes.json();
         setChartData(chartJson);
       } catch (err) {
         console.error("Error fetching chart data:", err);
+        setIsUnauthorized(true);
       }
     };
 
@@ -72,10 +85,31 @@ const DecorChart = () => {
 
   // 2) Subscribe to live updates once we have an ID
   useEffect(() => {
-    if (!id) return;
+    if (!id || isUnauthorized) return;
 
     const socket = io("https://ws.onchainrank.com", {
       query: { token: TOKEN },
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error("WebSocket connection error:", error);
+      if (
+        error.message.includes("unauthorized") ||
+        error.message.includes("auth")
+      ) {
+        setIsUnauthorized(true);
+      }
+    });
+
+    socket.on("error", (error) => {
+      console.error("WebSocket error:", error);
+      if (
+        error.message &&
+        (error.message.includes("unauthorized") ||
+          error.message.includes("auth"))
+      ) {
+        setIsUnauthorized(true);
+      }
     });
 
     socket.on("connect", () => {
@@ -175,7 +209,7 @@ const DecorChart = () => {
       socket.emit("unsubscribe", { room: id });
       socket.disconnect();
     };
-  }, [id]);
+  }, [id, isUnauthorized]);
 
   // Merge incoming candles into the existing array.
   const mergeCandles = (existing, incoming) => {
@@ -199,6 +233,12 @@ const DecorChart = () => {
   if (notFound) {
     return <NotFound />;
   }
+
+  // Show unauthorized component if authentication fails
+  if (isUnauthorized) {
+    return <Unauthorized />;
+  }
+
   // Show a loading state until data is ready
   if (!chartData) {
     return <div>Loading chart...</div>;
@@ -226,28 +266,29 @@ const DecorChart = () => {
       ? chartData.data[chartData.data.length - 1].close
       : 0;
 
-  // Calculate time duration between first and last candle
+  // Calculate time duration from first candle to now
   const timeDuration =
-    chartData.data && chartData.data.length > 1
+    chartData.data && chartData.data.length > 0
       ? (() => {
-          const firstTime = chartData.data[0].time;
-          const lastTime = chartData.data[chartData.data.length - 1].time;
-          const diffInSeconds = lastTime - firstTime;
+          const firstTime = chartData.data[0].time; // Unix timestamp in seconds
+          const nowInSeconds = Math.floor(Date.now() / 1000); // Current time in seconds
+          const diffInSeconds = nowInSeconds - firstTime;
+
+          // If 1 hour or more, show "X hr+"
+          if (diffInSeconds >= 3600) {
+            const hours = Math.floor(diffInSeconds / 3600);
+            return `${hours} hr+`;
+          }
+
+          // Otherwise show minutes:seconds
           const minutes = Math.floor(diffInSeconds / 60);
           const seconds = diffInSeconds % 60;
-          return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+          return `${minutes}:${seconds.toString().padStart(2, "0")}`;
         })()
       : "";
 
   return (
     <div className="container my-3">
-      <a href="https://onchainrank.com" alt="onchain rank main page">
-        <img
-          src="/logo.png"
-          alt="Logo"
-          style={{ height: "24px", width: "auto", marginBottom: "20px" }}
-        />
-      </a>
       <DecorHeader
         recentCSolVal={recentCSolVal}
         recentTotalFee={recentTotalFee}

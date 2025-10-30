@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OnchainRank - Trading Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-text">onchain<span class="logo-accent">rank</span></span>
+                </div>
+                <div class="user-profile">
+                    <img src="assets/images/Logo.png" alt="User Avatar" class="avatar">
+                    <div class="user-info">
+                        <span class="user-name">just a deadmarket</span>
+                        <span class="user-handle">DEADMARKET</span>
+                        <span class="user-address">D48k...pump 📋</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+
+            <!-- Trading Metrics Section -->
+            <section class="section">
+                <h2 class="section-title">Trading Metrics</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-content">
+                            <div class="metric-info">
+                                <span class="metric-label">VOL</span>
+                                <span class="metric-value red" id="recentCSolVal">98.94</span>
+                            </div>
+                            <div class="metric-icon mint-bg">
+                                <img src="assets/icons/Refresh.svg" alt="Refresh">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-content">
+                            <div class="metric-info">
+                                <span class="metric-label">Total Fee</span>
+                                <span class="metric-value" id="recentTotalFee">1.4</span>
+                            </div>
+                            <div class="metric-icon blue-bg">
+                                <img src="assets/icons/Dollar Minimalistic.svg" alt="Dollar">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-content">
+                            <div class="metric-info">
+                                <span class="metric-label">HT</span>
+                                <span class="metric-value" id="recentHt">0.98</span>
+                            </div>
+                            <div class="metric-icon peach-bg">
+                                <img src="assets/icons/Sun.svg" alt="Sun">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-content">
+                            <div class="metric-info">
+                                <span class="metric-label">FRI</span>
+                                <span class="metric-value" id="recentFri">0.0141</span>
+                            </div>
+                            <div class="metric-icon yellow-bg">
+                                <img src="assets/icons/Flame.svg" alt="Flame">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Wallet Analytics Section -->
+            <section class="section">
+                <h2 class="section-title">Wallet Analytics</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-content">
+                            <div class="metric-info">
+                                <span class="metric-label">OS</span>
+                                <span class="metric-value" id="recentActorRank">0 <span class="metric-subvalue"
+                                        id="max_cactor_rank">(57)</span></span>
+                            </div>
+                            <div class="metric-icon mint-bg">
+                                <img src="assets/icons/Dollar Minimalistic.svg" alt="Dollar">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-content">
+                            <div class="metric-info">
+                                <span class="metric-label">HV Wallets</span>
+                                <span class="metric-value" id="" hv_wallets_count>0</span>
+                            </div>
+                            <div class="metric-icon blue-bg">
+                                <img src="assets/icons/Copy.svg" alt="Copy">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-content">
+                            <div class="metric-info">
+                                <span class="metric-label">HV Holdings</span>
+                                <span class="metric-value" id="hv_holdings">0.00</span>
+                            </div>
+                            <div class="metric-icon purple-bg">
+                                <img src="assets/icons/Chart Square.svg" alt="Chart">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-content">
+                            <div class="metric-info">
+                                <span class="metric-label">HV Avg Profit</span>
+                                <span class="metric-value" id="hv_avg_profit_only">0.00</span>
+                            </div>
+                            <div class="metric-icon purple-bg">
+                                <img src="assets/icons/Graph New Up.svg" alt="Graph">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Status & Indicators Section -->
+            <section class="section">
+                <h2 class="section-title">Status & Indicators</h2>
+                <div class="status-grid">
+                    <div class="metric-card">
+                        <div class="metric-content">
+                            <div class="metric-info">
+                                <span class="metric-label">Total Time</span>
+                                <span class="metric-value" id="timeDuration">4:55</span>
+                            </div>
+                            <div class="metric-icon blue-bg">
+                                <img src="assets/icons/Clock Circle.svg" alt="Clock">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-content">
+                            <div class="metric-info">
+                                <span class="metric-label">Bundle</span>
+                                <span class="metric-value" id="bundle_ratio">8%</span>
+                            </div>
+                            <div class="metric-icon gray-bg">
+                                <img src="assets/icons/Copy.svg" alt="Bundle">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-content">
+                            <div class="metric-info">
+                                <span class="metric-label">Status</span>
+                                <span class="metric-value green">Active</span>
+                            </div>
+                            <div class="metric-icon green-bg">
+                                <img src="assets/icons/Chart Square.svg" alt="Status">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-card social-card">
+                        <div class="social-icons" id="indicator_icons">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Performance Overview Section -->
+            <section class="section performance-section">
+                <div class="chart-container">
+                    <div class="chart-placeholder">
+                        <p>Chart visualization area</p>
+                        <p class="chart-note">This would integrate with your actual charting library (e.g.,
+                            lightweight-charts)</p>
+                    </div>
+
+                    <!-- Chart Controls -->
+                    <div class="chart-controls">
+                        <div class="control-row">
+                            <div class="toggle-group">
+                                <label class="toggle-item">
+                                    <img src="assets/icons/Chart Square.svg" alt="" class="toggle-icon">
+                                    <span>Unrealized Profit</span>
+                                    <input type="checkbox" class="toggle-switch" checked>
+                                </label>
+                                <label class="toggle-item">
+                                    <img src="assets/icons/Chart Square.svg" alt="" class="toggle-icon">
+                                    <span>Unrealized Loss</span>
+                                    <input type="checkbox" class="toggle-switch">
+                                </label>
+                                <label class="toggle-item">
+                                    <img src="assets/icons/Chart Square.svg" alt="" class="toggle-icon">
+                                    <span>Realized Profit</span>
+                                    <input type="checkbox" class="toggle-switch" checked>
+                                </label>
+                                <label class="toggle-item">
+                                    <img src="assets/icons/Chart Square.svg" alt="" class="toggle-icon">
+                                    <span>Realized Loss</span>
+                                    <input type="checkbox" class="toggle-switch">
+                                </label>
+                                <label class="toggle-item">
+                                    <img src="assets/icons/Round Graph.svg" alt="" class="toggle-icon">
+                                    <span>Onchain Score</span>
+                                    <input type="checkbox" class="toggle-switch">
+                                </label>
+                            </div>
+                        </div>
+                        <div class="control-row">
+                            <div class="toggle-group">
+                                <label class="toggle-item">
+                                    <img src="assets/icons/Chart Square.svg" alt="" class="toggle-icon">
+                                    <span>Last 10 Sec Volume</span>
+                                    <input type="checkbox" class="toggle-switch">
+                                </label>
+                                <label class="toggle-item">
+                                    <img src="assets/icons/Chart Square.svg" alt="" class="toggle-icon">
+                                    <span>Last 5 Sec Volume</span>
+                                    <input type="checkbox" class="toggle-switch" checked>
+                                </label>
+                                <label class="toggle-item">
+                                    <img src="assets/icons/Chart Square.svg" alt="" class="toggle-icon">
+                                    <span>Buy Volume</span>
+                                    <input type="checkbox" class="toggle-switch">
+                                </label>
+                                <label class="toggle-item">
+                                    <img src="assets/icons/Chart Square.svg" alt="" class="toggle-icon">
+                                    <span>Sell Volume</span>
+                                    <input type="checkbox" class="toggle-switch" checked>
+                                </label>
+                                <label class="toggle-item">
+                                    <img src="assets/icons/Chart Square.svg" alt="" class="toggle-icon">
+                                    <span>HT</span>
+                                    <input type="checkbox" class="toggle-switch" checked>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="control-row">
+                            <div class="toggle-group">
+                                <label class="toggle-item">
+                                    <img src="assets/icons/Chart Square.svg" alt="" class="toggle-icon">
+                                    <span>Total Volume</span>
+                                    <input type="checkbox" class="toggle-switch">
+                                </label>
+                            </div>
+                            <button class="color-picker-btn">
+                                🎨 Show Color Pickers
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>© OnchainRank 2025 — All Rights Reserved.</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

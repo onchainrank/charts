@@ -2,21 +2,37 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Chart from "./Chart";
 import SingleHeader from "./SingleHeader";
+import Unauthorized from "./components/Unauthorized";
 import io from "socket.io-client";
 
 const SingleChartPage = () => {
   const { id, token } = useParams();
   const [chartData, setChartData] = useState(null);
+  const [isUnauthorized, setIsUnauthorized] = useState(false);
 
   // Fetch initial data for the selected chart.
   useEffect(() => {
     fetch(`https://api.onchainrank.com/startup/${id}/${token}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setChartData(data);
+      .then((response) => {
+        if (response.status === 401 || response.status === 403) {
+          setIsUnauthorized(true);
+          return null;
+        }
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
       })
-      .catch((err) => console.error("Error fetching chart data:", err));
-  }, [id]);
+      .then((data) => {
+        if (data) {
+          setChartData(data);
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching chart data:", err);
+        setIsUnauthorized(true);
+      });
+  }, [id, token]);
 
   // Update page title when chartData changes
   useEffect(() => {
@@ -29,10 +45,35 @@ const SingleChartPage = () => {
 
   // Subscribe to WebSocket updates for this chart on the 'single' event.
   useEffect(() => {
+    if (isUnauthorized) return;
+
     const socket = io(`https://ws.onchainrank.com`, { query: { token } });
+
+    socket.on("connect_error", (error) => {
+      console.error("WebSocket connection error:", error);
+      if (
+        error.message.includes("unauthorized") ||
+        error.message.includes("auth")
+      ) {
+        setIsUnauthorized(true);
+      }
+    });
+
+    socket.on("error", (error) => {
+      console.error("WebSocket error:", error);
+      if (
+        error.message &&
+        (error.message.includes("unauthorized") ||
+          error.message.includes("auth"))
+      ) {
+        setIsUnauthorized(true);
+      }
+    });
+
     socket.on("connect", () => {
       socket.emit("subscribe", { room: id });
     });
+
     socket.on("subscribed", (data) => {
       console.log("Successfully subscribed to room:", data.room);
     });
@@ -119,7 +160,7 @@ const SingleChartPage = () => {
       socket.emit("unsubscribe", { room: id });
       socket.disconnect();
     };
-  }, [id, token]);
+  }, [id, token, isUnauthorized]);
 
   // Merge incoming candles into the existing array.
   const mergeCandles = (existing, incoming) => {
@@ -139,6 +180,11 @@ const SingleChartPage = () => {
     });
     return merged;
   };
+
+  // Show unauthorized component if authentication fails
+  if (isUnauthorized) {
+    return <Unauthorized />;
+  }
 
   if (!chartData) {
     return <div>Loading chart...</div>;
@@ -170,21 +216,29 @@ const SingleChartPage = () => {
       ? chartData.data[chartData.data.length - 1].close
       : 0;
 
-  // Calculate time duration between first and last candle
+  // Calculate time duration from first candle to now
   const timeDuration =
-    chartData.data && chartData.data.length > 1
+    chartData.data && chartData.data.length > 0
       ? (() => {
-          const firstTime = chartData.data[0].time;
-          const lastTime = chartData.data[chartData.data.length - 1].time;
-          const diffInSeconds = lastTime - firstTime;
+          const firstTime = chartData.data[0].time; // Unix timestamp in seconds
+          const nowInSeconds = Math.floor(Date.now() / 1000); // Current time in seconds
+          const diffInSeconds = nowInSeconds - firstTime;
+
+          // If 1 hour or more, show "X hr+"
+          if (diffInSeconds >= 3600) {
+            const hours = Math.floor(diffInSeconds / 3600);
+            return `${hours} hr+`;
+          }
+
+          // Otherwise show minutes:seconds
           const minutes = Math.floor(diffInSeconds / 60);
           const seconds = diffInSeconds % 60;
-          return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+          return `${minutes}:${seconds.toString().padStart(2, "0")}`;
         })()
       : "";
 
   return (
-    <div className="container my-3">
+    <div className="container single-container">
       <SingleHeader
         recentCSolVal={recentCSolVal}
         recentTotalFee={recentTotalFee}
@@ -210,6 +264,7 @@ const SingleChartPage = () => {
         recentHt={recentHt}
         recentClose={recentClose}
         timeDuration={timeDuration}
+        image={chartData.image}
       />
       <Chart
         chartId={chartData.id}

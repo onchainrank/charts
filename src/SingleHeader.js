@@ -7,6 +7,7 @@ import AdminComponent from "./AdminComponent";
 import InfoIcon from "./components/InfoIcon";
 import WalletIcon from "./components/WalletIcon";
 import PriceWarningIcon from "./components/PriceWarningIcon";
+import "./DashboardStyles.css";
 
 const SingleHeader = ({
   recentCSolVal,
@@ -32,6 +33,7 @@ const SingleHeader = ({
   recentHt,
   recentClose,
   timeDuration,
+  image,
 }) => {
   // Volume color
   const volume = Number(recentCSolVal);
@@ -49,6 +51,31 @@ const SingleHeader = ({
   if (ht > 0.4) htColor = "red";
   else if (ht < 0.25) htColor = "green";
 
+  // Format HV Avg Profit
+  const formatHvAvgProfit = (value) => {
+    const num = Number(value);
+    if (isNaN(num)) return "0";
+
+    if (num < 100) {
+      return Math.round(num).toString();
+    } else if (num < 200) {
+      return `${Math.floor(num / 10) * 10}+`;
+    } else if (num < 300) {
+      return "200+";
+    } else if (num < 500) {
+      return `${Math.floor(num / 50) * 50}+`;
+    } else {
+      return "500+";
+    }
+  };
+
+  // Format HV Holdings as percentage
+  const formatHvHoldings = (value) => {
+    const num = Number(value);
+    if (isNaN(num)) return "0%";
+    return `${(num * 100).toFixed(0)}%`;
+  };
+
   const handleSearchX = () => {
     if (id) {
       const searchUrl = `https://x.com/search?q=${encodeURIComponent(
@@ -59,191 +86,306 @@ const SingleHeader = ({
   };
 
   return (
-    <div className="card-header" style={{ fontSize: "12px" }}>
-      {/* Header with Logo and Actions */}
-      <div className="d-flex align-items-center justify-content-between mb-2">
+    <div className="dashboard-container">
+      {/* Header with Logo and Profile */}
+      <header
+        className="dashboard-header-top"
+        style={{ justifyContent: "flex-end" }}
+      >
         <img
-          src="/logo.png"
-          alt="Logo"
-          style={{ height: "17px", width: "auto" }}
+          src={image}
+          alt="onchainrank logo"
+          className="logo"
+          style={{ width: "50px", height: "50px" }}
         />
-        <div className="d-flex align-items-center gap-2">
-          {id && (
-            <button
-              onClick={handleSearchX}
-              className="btn btn-sm"
-              style={{
-                padding: "2px 6px",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                backgroundColor: "white",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              title="Search on X.com"
-            >
-              <img
-                src="/searchonX.png"
-                alt="Search on X"
-                style={{ height: "16px", width: "16px" }}
-              />
-            </button>
-          )}
-          {role === "admin" && <AdminComponent id={id} token={token} />}
-        </div>
-      </div>
+      </header>
 
-      {/* 3-Column Data Layout */}
-      <div className="row">
-        {/* Column 1: Trading Metrics */}
-        <div className="col-4">
-          <div className="mb-1">
-            <strong>Trading Metrics</strong>
-          </div>
-          <div className="mb-1">
-            <span style={{ color: "gray" }}>VOL:</span>{" "}
-            <span style={{ color: volumeColor, fontWeight: "bold" }}>
-              {recentCSolVal}
-            </span>
-          </div>
-          <div className="mb-1">
-            <span style={{ color: "gray" }}>Total Fee:</span>{" "}
-            <span style={{ fontWeight: "bold" }}>{recentTotalFee}</span>
-          </div>
-          <div className="mb-1">
-            <span className="d-inline-flex align-items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="12"
-                height="12"
-                fill="currentColor"
-                className="bi bi-cone-striped me-1"
-                viewBox="0 0 16 16"
-              >
-                <path d="m9.97 4.88.953 3.811C10.159 8.878 9.14 9 8 9s-2.158-.122-2.923-.309L6.03 4.88C6.635 4.957 7.3 5 8 5s1.365-.043 1.97-.12zm-.245-.978L8.97.88C8.718-.13 7.282-.13 7.03.88L6.275 3.9C6.8 3.965 7.382 4 8 4s1.2-.036 1.725-.098zm4.396 8.613a.5.5 0 0 1 .037.96l-6 2a.5.5 0 0 1-.316 0l-6-2a.5.5 0 0 1 .037-.96l2.391-.598.565-2.257c.862.212 1.964.339 3.165.339s2.303-.127 3.165-.339l.565 2.257z" />
-              </svg>
-              <span style={{ color: "gray" }}>FRI:</span>{" "}
-              <span style={{ fontWeight: "bold", marginLeft: "4px" }}>
-                {recentTotalFee && recentCSolVal && Number(recentCSolVal) !== 0
-                  ? (Number(recentTotalFee) / Number(recentCSolVal)).toFixed(4)
-                  : "N/A"}
-              </span>
-            </span>
-          </div>
-          {recentHt && (
-            <div className="mb-1">
-              <span style={{ color: "gray" }}>HT:</span>{" "}
-              <span style={{ fontWeight: "bold", color: htColor }}>
-                {recentHt}
-              </span>
-              <PriceWarningIcon closePrice={recentClose} />
-            </div>
-          )}
-          {bullx !== undefined && (
-            <div className="mb-1">
-              <span style={{ color: "gray" }}>BullX:</span>{" "}
-              <span style={{ fontWeight: "bold" }}>{bullx}</span>
-            </div>
-          )}
-        </div>
-
-        {/* Column 2: Wallet Analytics */}
-        <div className="col-4">
-          <div className="mb-1">
-            <strong>Wallet Analytics</strong>
-          </div>
-          <div className="d-flex align-items-center mb-1">
-            <span style={{ color: "gray" }}>OS:</span>
-            <span style={{ color: arColor, fontWeight: "bold", marginLeft: 4 }}>
-              {ar}
-            </span>
-            <span style={{ color: "gray", marginLeft: 2 }}>
-              ({Math.round(max_cactor_rank)})
-            </span>
-            <InfoIcon text="Token Onchain Score: Current (Max)" />
-          </div>
-          {hv_wallets_count !== undefined && (
-            <div className="mb-1">
-              <span style={{ color: "gray" }}>HV Wallets:</span>{" "}
-              <span style={{ fontWeight: "bold" }}>
-                {Number(hv_wallets_count).toFixed(0)}
-              </span>
-            </div>
-          )}
-          {hv_holdings !== undefined && (
-            <div className="mb-1">
-              <span style={{ color: "gray" }}>HV Holdings:</span>{" "}
-              <span style={{ fontWeight: "bold" }}>
-                {Number(hv_holdings).toFixed(2)}
-              </span>
-            </div>
-          )}
-          {hv_avg_profit_only !== undefined && (
-            <div className="mb-1">
-              <span style={{ color: "gray" }}>HV Avg Profit:</span>{" "}
-              <span style={{ fontWeight: "bold" }}>
-                {Number(hv_avg_profit_only).toFixed(2)}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Column 3: Status & Indicators */}
-        <div className="col-4">
-          <div className="mb-1">
-            <strong>Status & Indicators</strong>
-          </div>
-          {timeDuration && (
-            <div className="mb-1">
-              <span className="d-inline-flex align-items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="12"
-                  height="12"
-                  fill="currentColor"
-                  className="bi bi-stopwatch me-1"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M8.5 5.6a.5.5 0 1 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8.5 8.664z" />
-                  <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64l.012-.013.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354-.013.012A7 7 0 1 1 7 1.071V1.5a.5.5 0 0 1-.5-.5M8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3" />
-                </svg>
-                <span style={{ fontWeight: "bold", color: "gray" }}>
-                  {timeDuration}
-                </span>
-              </span>
-            </div>
-          )}
-          <div className="d-flex flex-wrap gap-1 align-items-center">
-            {dex_paid && <span className="badge bg-success">dex paid</span>}
-            {bundle_ratio > 0.01 && (
-              <span className="badge text-bg-warning">
-                Bundle:{Math.round(bundle_ratio * 100)}%
-              </span>
-            )}
-            {total_comments > 0 && (
-              <span className="badge text-bg-light align-middle">
+      {/* Main Dashboard Content */}
+      <main className="dashboard-content">
+        {/* Trading Metrics Column */}
+        <div className="stats-column">
+          <h2 className="column-title">Trading Metrics</h2>
+          <div className="metrics-list">
+            <div className="metric-item">
+              <div className="icon-wrapper icon-bg-green">
                 <img
-                  src="/pflogo.png"
-                  alt="pump.fun Logo"
-                  style={{ height: "12px", width: "auto", marginRight: "2px" }}
+                  src="/dashboard-icons/vol.svg"
+                  alt="VOL icon"
+                  className="metric-icon"
                 />
-                {total_comments}
-              </span>
+              </div>
+              <div className="metric-text">
+                <span className="metric-label">VOL</span>
+                <span className={`metric-value ${volumeColor}`}>
+                  {recentCSolVal}
+                </span>
+              </div>
+            </div>
+            <div className="metric-item">
+              <div className="icon-wrapper icon-bg-blue">
+                <img
+                  src="/dashboard-icons/total_fee.svg"
+                  alt="Total Fee icon"
+                  className="metric-icon"
+                />
+              </div>
+              <div className="metric-text">
+                <span className="metric-label">Total Fee</span>
+                <span className="metric-value">{recentTotalFee}</span>
+              </div>
+            </div>
+            {recentHt && (
+              <div className="metric-item">
+                <div className="icon-wrapper icon-bg-red">
+                  <img
+                    src="/dashboard-icons/ht.svg"
+                    alt="HT icon"
+                    className="metric-icon"
+                  />
+                </div>
+                <div className="metric-text">
+                  <span className="metric-label">HT</span>
+                  <span
+                    className={`metric-value ${
+                      htColor === "red"
+                        ? "red"
+                        : htColor === "green"
+                        ? "green"
+                        : ""
+                    }`}
+                  >
+                    {recentHt}
+                    <PriceWarningIcon closePrice={recentClose} size="small" />
+                  </span>
+                </div>
+              </div>
             )}
-          </div>
-          <div className="d-flex flex-wrap gap-1 align-items-center mt-2">
-            {valid_launch === false && <ValidLaunchIcon />}
-            {pump_dump_risk === true && <PumpDumpIcon />}
-            {!valid_socials && <ValidSocialsIcon />}
-            {!unique_socials && <UniqueSocialsIcon />}
-            <WalletIcon
-              fresh_creator_wallet={fresh_creator_wallet}
-              creator={creator}
-            />
+            <div className="metric-item">
+              <div className="icon-wrapper icon-bg-yellow">
+                <img
+                  src="/dashboard-icons/fri.svg"
+                  alt="FRI icon"
+                  className="metric-icon"
+                />
+              </div>
+              <div className="metric-text">
+                <span className="metric-label">FRI</span>
+                <span className="metric-value">
+                  {recentTotalFee &&
+                  recentCSolVal &&
+                  Number(recentCSolVal) !== 0
+                    ? (Number(recentTotalFee) / Number(recentCSolVal)).toFixed(
+                        4
+                      )
+                    : "N/A"}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+
+        {/* Wallet Analytics Column */}
+        <div className="stats-column">
+          <h2 className="column-title">Wallet Analytics</h2>
+          <div className="metrics-list">
+            <div className="metric-item">
+              <div className="icon-wrapper icon-bg-green-2">
+                <img
+                  src="/dashboard-icons/os.svg"
+                  alt="OS icon"
+                  className="metric-icon"
+                />
+              </div>
+              <div className="metric-text">
+                <span className="metric-label" id="recentActorRank">
+                  OS <InfoIcon text="Token Onchain Score: Current (Max)" />
+                </span>
+                <span className={`metric-value ${arColor}`}>
+                  {ar}{" "}
+                  <span id="max_cactor_rank" class="gr">
+                    ({Math.round(max_cactor_rank)})
+                  </span>
+                </span>
+              </div>
+            </div>
+            {hv_wallets_count !== undefined && (
+              <div className="metric-item">
+                <div className="icon-wrapper icon-bg-cyan">
+                  <img
+                    src="/dashboard-icons/hv_wallets.svg"
+                    alt="HV Wallets icon"
+                    className="metric-icon"
+                  />
+                </div>
+                <div className="metric-text">
+                  <span className="metric-label">HV Wallets</span>
+                  <span className="metric-value">
+                    {Number(hv_wallets_count).toFixed(0)}{" "}
+                    <span class="gr">({formatHvHoldings(hv_holdings)})</span>
+                  </span>
+                </div>
+              </div>
+            )}
+            {hv_avg_profit_only !== undefined && (
+              <div className="metric-item">
+                <div className="icon-wrapper icon-bg-magenta">
+                  <img
+                    src="/dashboard-icons/hv_avg_profit.svg"
+                    alt="HV Avg Profit icon"
+                    className="metric-icon"
+                  />
+                </div>
+                <div className="metric-text">
+                  <span className="metric-label">HV Avg Profit</span>
+                  <span className="metric-value">
+                    {formatHvAvgProfit(hv_avg_profit_only)}
+                  </span>
+                </div>
+              </div>
+            )}
+            <div>
+              <div>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "12px" }}
+                >
+                  {id && (
+                    <button
+                      onClick={handleSearchX}
+                      className="btn btn-sm"
+                      style={{
+                        padding: "6px 12px",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "8px",
+                        backgroundColor: "white",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                      title="Search on X.com"
+                    >
+                      <img
+                        src="/searchonX.png"
+                        alt="Search on X"
+                        style={{ height: "16px", width: "16px" }}
+                      />
+                    </button>
+                  )}
+                  {role === "admin" && <AdminComponent id={id} token={token} />}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Status & Indicators Column */}
+        <div className="stats-column">
+          <h2 className="column-title">Status & Indicators</h2>
+          <div className="metrics-list">
+            {timeDuration && (
+              <div className="metric-item">
+                <div className="icon-wrapper icon-bg-blue-2">
+                  <img
+                    src="/dashboard-icons/last_update.svg"
+                    alt="Last Update icon"
+                    className="metric-icon"
+                  />
+                </div>
+                <div className="metric-text">
+                  <span className="metric-label">Token Created</span>
+                  <span className="metric-value">{timeDuration}</span>
+                </div>
+              </div>
+            )}
+            {bundle_ratio > 0.01 && (
+              <div className="metric-item">
+                <div className="icon-wrapper icon-bg-brown">
+                  <img
+                    src="/dashboard-icons/bundle.svg"
+                    alt="Bundle icon"
+                    className="metric-icon"
+                  />
+                </div>
+                <div className="metric-text">
+                  <span className="metric-label">Bundle</span>
+                  <span className="metric-value orange">
+                    {Math.round(bundle_ratio * 100)}%
+                  </span>
+                </div>
+              </div>
+            )}
+            <div className="metric-item">
+              <div className="icon-wrapper icon-bg-green-2">
+                <img
+                  src="/dashboard-icons/status.svg"
+                  alt="Status icon"
+                  className="metric-icon"
+                />
+              </div>
+              <div className="metric-text">
+                <span className="metric-label">Status</span>
+                <span className="metric-value">
+                  {dex_paid ? "Active" : "Pending"}
+                  {total_comments > 0 && (
+                    <img
+                      src="/pflogo.png"
+                      alt="pump.fun"
+                      style={{
+                        height: "12px",
+                        width: "auto",
+                        marginLeft: "4px",
+                      }}
+                    />
+                  )}
+                </span>
+              </div>
+            </div>
+            <div
+              className="metric-item social-item"
+              id="icons"
+              style={{ width: "auto", flex: "0 1 auto" }}
+            >
+              <div className="social-icons">
+                {!valid_socials && (
+                  <div className="social-icon-wrapper social-bg-red">
+                    <div className="social-icon-inner social-inner-red">
+                      <ValidSocialsIcon size="small" />
+                    </div>
+                  </div>
+                )}
+                {!unique_socials && (
+                  <div className="social-icon-group">
+                    <div className="social-icon-wrapper social-bg-green-3">
+                      <div className="social-icon-inner social-inner-green">
+                        <UniqueSocialsIcon size="small" />
+                      </div>
+                    </div>
+                    <span className="social-count">99</span>
+                  </div>
+                )}
+                {valid_launch === false && (
+                  <div className="social-icon-wrapper social-bg-red">
+                    <div className="social-icon-inner social-inner-red">
+                      <ValidLaunchIcon size="small" />
+                    </div>
+                  </div>
+                )}
+                {pump_dump_risk === true && (
+                  <div className="social-icon-wrapper social-bg-red">
+                    <div className="social-icon-inner social-inner-red">
+                      <PumpDumpIcon size="small" />
+                    </div>
+                  </div>
+                )}
+                <WalletIcon
+                  fresh_creator_wallet={fresh_creator_wallet}
+                  creator={creator}
+                  size="small"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 };

@@ -1,4 +1,7 @@
-const PriceWarningIcon = ({ closePrice }) => {
+const PriceWarningIcon = ({ closePrice, size = "normal" }) => {
+  // normal size is 25% smaller than original (16px = 12px), small is 50% of normal
+  const dimensions = size === "small" ? 8 : 12;
+
   // Determine fill color based on price
   let fillColor;
   if (closePrice > 150) {
@@ -12,8 +15,8 @@ const PriceWarningIcon = ({ closePrice }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
+      width={dimensions}
+      height={dimensions}
       fill={fillColor}
       className="bi bi-cash ms-1"
       viewBox="0 0 16 16"

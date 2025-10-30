@@ -1,0 +1,304 @@
+/* Dashboard Container */
+.dashboard-container {
+    max-width: 724px;
+    margin: 0 auto;
+    background-color: #f7faff;
+    border-radius: 10px;
+    padding: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Dashboard Header */
+.dashboard-header-top {
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.logo {
+    width: 114.69px;
+    height: 15.09px;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+    display: flex;
+    gap: 4px;
+}
+
+/* Stats Column */
+.stats-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.column-title {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 21px;
+    color: #000000;
+    margin: 0;
+    padding-left: 4px;
+}
+
+/* Metrics List */
+.metrics-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.metric-item {
+    background-color: #ffffff;
+    border: 1.5px solid #dee7ef;
+    border-radius: 8px;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 30px;
+}
+
+/* Icon Wrapper */
+.icon-wrapper {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.metric-icon {
+    width: 21.32px;
+    height: 21.32px;
+}
+
+/* Icon Background Colors */
+.icon-bg-green {
+    background-color: rgba(1, 173, 126, 0.08);
+}
+
+.icon-bg-blue {
+    background-color: rgba(17, 67, 120, 0.08);
+}
+
+.icon-bg-red {
+    background-color: rgba(237, 62, 53, 0.08);
+}
+
+.icon-bg-yellow {
+    background-color: rgba(231, 185, 0, 0.08);
+}
+
+.icon-bg-green-2 {
+    background-color: rgba(26, 168, 48, 0.08);
+}
+
+.icon-bg-cyan {
+    background-color: rgba(36, 158, 182, 0.08);
+}
+
+.icon-bg-purple {
+    background-color: rgba(80, 36, 182, 0.08);
+}
+
+.icon-bg-magenta {
+    background-color: rgba(182, 36, 168, 0.08);
+}
+
+.icon-bg-blue-2 {
+    background-color: rgba(12, 111, 250, 0.08);
+}
+
+.icon-bg-brown {
+    background-color: rgba(100, 49, 49, 0.08);
+}
+
+/* Metric Text */
+.metric-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 4px;
+}
+
+.metric-label {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 17px;
+    color: #555555;
+    letter-spacing: -0.28px;
+    white-space: nowrap;
+}
+
+.metric-value {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 18px;
+    color: #000000;
+    text-align: right;
+}
+
+.metric-value.red {
+    color: #ef4444;
+}
+
+.metric-value.green {
+    color: #10b981;
+}
+
+.metric-value.orange {
+    color: #f97316;
+}
+
+/* Social Icons */
+.social-item {
+    gap: 20px;
+}
+
+.social-icons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.social-icon-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    width: 31.5px;
+    height: 31.5px;
+    padding: 4px;
+}
+
+.social-bg-red {
+    background-color: rgba(255, 72, 64, 0.08);
+}
+
+.social-bg-green-3 {
+    background-color: rgba(96, 203, 135, 0.28);
+}
+
+.social-icon-inner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 23.2px;
+    height: 23.2px;
+    border-radius: 50%;
+}
+
+.social-inner-red {
+    background-color: #fce3df;
+}
+
+.social-inner-green {
+    background-color: #60cb87;
+}
+
+.social-icon-group {
+    display: flex;
+    align-items: center;
+    gap: 1.4px;
+}
+
+.social-count {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 11.28px;
+    line-height: 17px;
+    color: #555555;
+}
+
+/* Chart Controls - Toggle Switches */
+.toggle-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.toggle-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #f9fafb;
+    transition: background-color 0.2s ease;
+    user-select: none;
+}
+
+.toggle-item:hover {
+    background: #f3f4f6;
+}
+
+.toggle-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+}
+
+.toggle-item span {
+    font-size: 13px;
+    font-weight: 500;
+    color: #4b5563;
+}
+
+/* Custom Toggle Switch */
+.toggle-switch {
+    position: relative;
+    appearance: none;
+    width: 42px;
+    height: 24px;
+    background: #d1d5db;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    outline: none;
+}
+
+.toggle-switch::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.3s ease;
+}
+
+.toggle-switch:checked {
+    background: #3b82f6;
+}
+
+.toggle-switch:checked::before {
+    transform: translateX(18px);
+}
+
+/* Responsive Design */
+@media (max-width: 740px) {
+    .dashboard-content {
+        flex-direction: column;
+    }
+
+    .stats-column {
+        min-width: 100%;
+    }
+}
