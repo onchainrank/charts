@@ -85,9 +85,9 @@ function Chart({
     defaultUp: "#c0e7ffff",
     defaultDown: "#c0e7ffff",
     // New money candles (different ratio levels)
-    newMoneyLow: "#535696ff",    // ratio 0.1-0.49
-    newMoneyMedium: "#393c8aff",  // ratio 0.49-0.75
-    newMoneyHigh: "#020438ff",    // ratio >= 0.75
+    newMoneyLow: "#535696ff", // ratio 0.1-0.49
+    newMoneyMedium: "#393c8aff", // ratio 0.49-0.75
+    newMoneyHigh: "#020438ff", // ratio >= 0.75
   };
 
   // Load saved indicator visibility from localStorage, or fallback to defaults.
@@ -102,6 +102,9 @@ function Chart({
     return stored ? JSON.parse(stored) : defaultCandleColors;
   });
 
+  // State to control options visibility (hidden by default)
+  const [showOptions, setShowOptions] = useState(false);
+
   // Save indicator visibility to localStorage whenever it changes.
   useEffect(() => {
     localStorage.setItem(
@@ -112,10 +115,7 @@ function Chart({
 
   // Save candle colors to localStorage whenever they change.
   useEffect(() => {
-    localStorage.setItem(
-      "candleColors",
-      JSON.stringify(candleColors)
-    );
+    localStorage.setItem("candleColors", JSON.stringify(candleColors));
   }, [candleColors]);
 
   // Create the chart and add basic series on mount.
@@ -361,7 +361,10 @@ function Chart({
         });
       }
       const data = candles
-        .filter((candle) => candle.unrealized_profit != null && !isNaN(candle.unrealized_profit))
+        .filter(
+          (candle) =>
+            candle.unrealized_profit != null && !isNaN(candle.unrealized_profit)
+        )
         .map((candle) => ({
           time: candle.time,
           value: candle.unrealized_profit,
@@ -385,7 +388,10 @@ function Chart({
         });
       }
       const data = candles
-        .filter((candle) => candle.unrealized_loss != null && !isNaN(candle.unrealized_loss))
+        .filter(
+          (candle) =>
+            candle.unrealized_loss != null && !isNaN(candle.unrealized_loss)
+        )
         .map((candle) => ({
           time: candle.time,
           value: candle.unrealized_loss,
@@ -409,7 +415,10 @@ function Chart({
         });
       }
       const data = candles
-        .filter((candle) => candle.realized_loss != null && !isNaN(candle.realized_loss))
+        .filter(
+          (candle) =>
+            candle.realized_loss != null && !isNaN(candle.realized_loss)
+        )
         .map((candle) => ({
           time: candle.time,
           value: candle.realized_loss,
@@ -433,7 +442,10 @@ function Chart({
         });
       }
       const data = candles
-        .filter((candle) => candle.realized_profit != null && !isNaN(candle.realized_profit))
+        .filter(
+          (candle) =>
+            candle.realized_profit != null && !isNaN(candle.realized_profit)
+        )
         .map((candle) => ({
           time: candle.time,
           value: candle.realized_profit,
@@ -461,7 +473,9 @@ function Chart({
         });
       }
       const data = candles
-        .filter((candle) => candle.actor_rank != null && !isNaN(candle.actor_rank))
+        .filter(
+          (candle) => candle.actor_rank != null && !isNaN(candle.actor_rank)
+        )
         .map((candle) => ({
           time: candle.time,
           value: candle.actor_rank,
@@ -490,7 +504,9 @@ function Chart({
         });
       }
       const data = candles
-        .filter((candle) => candle.last10secVol != null && !isNaN(candle.last10secVol))
+        .filter(
+          (candle) => candle.last10secVol != null && !isNaN(candle.last10secVol)
+        )
         .map((candle) => ({
           time: candle.time,
           value: candle.last10secVol,
@@ -519,7 +535,9 @@ function Chart({
         });
       }
       const data = candles
-        .filter((candle) => candle.last5secVol != null && !isNaN(candle.last5secVol))
+        .filter(
+          (candle) => candle.last5secVol != null && !isNaN(candle.last5secVol)
+        )
         .map((candle) => ({
           time: candle.time,
           value: candle.last5secVol,
@@ -548,7 +566,9 @@ function Chart({
         });
       }
       const data = candles
-        .filter((candle) => candle.buy_volume != null && !isNaN(candle.buy_volume))
+        .filter(
+          (candle) => candle.buy_volume != null && !isNaN(candle.buy_volume)
+        )
         .map((candle) => ({
           time: candle.time,
           value: candle.buy_volume,
@@ -577,7 +597,9 @@ function Chart({
         });
       }
       const data = candles
-        .filter((candle) => candle.sell_volume != null && !isNaN(candle.sell_volume))
+        .filter(
+          (candle) => candle.sell_volume != null && !isNaN(candle.sell_volume)
+        )
         .map((candle) => ({
           time: candle.time,
           value: candle.sell_volume,
@@ -719,12 +741,15 @@ function Chart({
   };
 
   return (
-    <div className="card" style={{
-      borderRadius: "12px",
-      boxShadow: "0 1px 3px rgba(0, 0, 0, 0.08)",
-      border: "none",
-      fontFamily: "'Poppins', sans-serif"
-    }}>
+    <div
+      className="card"
+      style={{
+        borderRadius: "12px",
+        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.08)",
+        border: "none",
+        fontFamily: "'Poppins', sans-serif",
+      }}
+    >
       {!hideHeader && (
         <ChartHeader
           chartId={chartId}
@@ -739,372 +764,489 @@ function Chart({
         />
       )}
       <div className="card-body" style={{ padding: "24px" }}>
-        <div ref={chartContainerRef} style={{
-          borderRadius: "8px",
-          overflow: "hidden",
-          marginBottom: "24px"
-        }} />
-        {/* Toggle controls for each indicator - 3 Column Layout */}
-        <div className="mt-4">
-          <h6 className="dashboard-section-title" style={{ fontSize: "16px", marginBottom: "16px" }}>
-            Chart Indicators
-          </h6>
-          <div className="toggle-group">
-            {/* Unrealized Profit */}
-            <label className="toggle-item">
-              <img src="/figma-assets/icons/Round Graph.svg" className="toggle-icon" alt="" />
-              <span>
-                Unrealized Profit
-                <LineStyleIndicator color="#0f4a6e" lineStyle={0} />
-              </span>
-              <input
-                type="checkbox"
-                className="toggle-switch"
-                id="unrealizedProfitCheckbox"
-                checked={indicatorVisibility.unrealizedProfit}
-                onChange={() =>
-                  setIndicatorVisibility({
-                    ...indicatorVisibility,
-                    unrealizedProfit: !indicatorVisibility.unrealizedProfit,
-                  })
-                }
-              />
-            </label>
+        <div
+          ref={chartContainerRef}
+          style={{
+            borderRadius: "8px",
+            overflow: "hidden",
+            marginBottom: "24px",
+          }}
+        />
 
-            {/* Unrealized Loss */}
-            <label className="toggle-item">
-              <img src="/figma-assets/icons/Round Graph.svg" className="toggle-icon" alt="" />
-              <span>
-                Unrealized Loss
-                <LineStyleIndicator color="#6e3d0f" lineStyle={0} />
-              </span>
-              <input
-                type="checkbox"
-                className="toggle-switch"
-                id="unrealizedLossCheckbox"
-                checked={indicatorVisibility.unrealizedLoss}
-                onChange={() =>
-                  setIndicatorVisibility({
-                    ...indicatorVisibility,
-                    unrealizedLoss: !indicatorVisibility.unrealizedLoss,
-                  })
-                }
-              />
-            </label>
-
-            {/* Realized Profit */}
-            <label className="toggle-item">
-              <img src="/figma-assets/icons/Graph New Up.svg" className="toggle-icon" alt="" />
-              <span>
-                Realized Profit
-                <LineStyleIndicator color="#156a9d" lineStyle={2} />
-              </span>
-              <input
-                type="checkbox"
-                className="toggle-switch"
-                id="realizedProfitCheckbox"
-                checked={indicatorVisibility.realizedProfit}
-                onChange={() =>
-                  setIndicatorVisibility({
-                    ...indicatorVisibility,
-                    realizedProfit: !indicatorVisibility.realizedProfit,
-                  })
-                }
-              />
-            </label>
-
-            {/* Realized Loss */}
-            <label className="toggle-item">
-              <img src="/figma-assets/icons/Graph New Up.svg" className="toggle-icon" alt="" />
-              <span>
-                Realized Loss
-                <LineStyleIndicator color="#9d4e15" lineStyle={2} />
-              </span>
-              <input
-                type="checkbox"
-                className="toggle-switch"
-                id="realizedLossCheckbox"
-                checked={indicatorVisibility.realizedLoss}
-                onChange={() =>
-                  setIndicatorVisibility({
-                    ...indicatorVisibility,
-                    realizedLoss: !indicatorVisibility.realizedLoss,
-                  })
-                }
-              />
-            </label>
-
-            {/* Onchain Score */}
-            <label className="toggle-item">
-              <img src="/figma-assets/icons/Graph New Up.svg" className="toggle-icon" alt="" />
-              <span>
-                Onchain Score
-                <LineStyleIndicator color="#dd0808ff" lineStyle={0} />
-              </span>
-              <input
-                type="checkbox"
-                className="toggle-switch"
-                id="actorRankCheckbox"
-                checked={indicatorVisibility.actorRank}
-                onChange={() =>
-                  setIndicatorVisibility({
-                    ...indicatorVisibility,
-                    actorRank: !indicatorVisibility.actorRank,
-                  })
-                }
-              />
-            </label>
-
-            {/* Last 10 Sec Volume */}
-            <label className="toggle-item">
-              <img src="/figma-assets/icons/Chart Square.svg" className="toggle-icon" alt="" />
-              <span>
-                Last 10 Sec Volume
-                <LineStyleIndicator color="#ff6b35" lineStyle={0} />
-              </span>
-              <input
-                type="checkbox"
-                className="toggle-switch"
-                id="last10secVolCheckbox"
-                checked={indicatorVisibility.last10secVol}
-                onChange={() =>
-                  setIndicatorVisibility({
-                    ...indicatorVisibility,
-                    last10secVol: !indicatorVisibility.last10secVol,
-                  })
-                }
-              />
-            </label>
-
-            {/* Last 5 Sec Volume */}
-            <label className="toggle-item">
-              <img src="/figma-assets/icons/Chart Square.svg" className="toggle-icon" alt="" />
-              <span>
-                Last 5 Sec Volume
-                <LineStyleIndicator color="#f7931e" lineStyle={1} />
-              </span>
-              <input
-                type="checkbox"
-                className="toggle-switch"
-                id="last5secVolCheckbox"
-                checked={indicatorVisibility.last5secVol}
-                onChange={() =>
-                  setIndicatorVisibility({
-                    ...indicatorVisibility,
-                    last5secVol: !indicatorVisibility.last5secVol,
-                  })
-                }
-              />
-            </label>
-
-            {/* Buy Volume */}
-            <label className="toggle-item">
-              <img src="/figma-assets/icons/Dollar Minimalistic.svg" className="toggle-icon" alt="" />
-              <span>
-                Buy Volume
-                <LineStyleIndicator color="#00b300" lineStyle={0} />
-              </span>
-              <input
-                type="checkbox"
-                className="toggle-switch"
-                id="buyVolumeCheckbox"
-                checked={indicatorVisibility.buyVolume}
-                onChange={() =>
-                  setIndicatorVisibility({
-                    ...indicatorVisibility,
-                    buyVolume: !indicatorVisibility.buyVolume,
-                  })
-                }
-              />
-            </label>
-
-            {/* Sell Volume */}
-            <label className="toggle-item">
-              <img src="/figma-assets/icons/Dollar Minimalistic.svg" className="toggle-icon" alt="" />
-              <span>
-                Sell Volume
-                <LineStyleIndicator color="#e60000" lineStyle={0} />
-              </span>
-              <input
-                type="checkbox"
-                className="toggle-switch"
-                id="sellVolumeCheckbox"
-                checked={indicatorVisibility.sellVolume}
-                onChange={() =>
-                  setIndicatorVisibility({
-                    ...indicatorVisibility,
-                    sellVolume: !indicatorVisibility.sellVolume,
-                  })
-                }
-              />
-            </label>
-
-            {/* HT */}
-            <label className="toggle-item">
-              <img src="/figma-assets/icons/Flame-1.svg" className="toggle-icon" alt="" />
-              <span>
-                HT
-                <LineStyleIndicator color="#8E44AD" lineStyle={0} />
-              </span>
-              <input
-                type="checkbox"
-                className="toggle-switch"
-                id="htCheckbox"
-                checked={indicatorVisibility.ht}
-                onChange={() =>
-                  setIndicatorVisibility({
-                    ...indicatorVisibility,
-                    ht: !indicatorVisibility.ht,
-                  })
-                }
-              />
-            </label>
-
-            {/* Total Volume */}
-            <label className="toggle-item">
-              <img src="/figma-assets/icons/wallet.svg" className="toggle-icon" alt="" />
-              <span>
-                Total Volume
-                <LineStyleIndicator color="#2E86AB" lineStyle={0} />
-              </span>
-              <input
-                type="checkbox"
-                className="toggle-switch"
-                id="totalVolumeCheckbox"
-                checked={indicatorVisibility.totalVolume}
-                onChange={() =>
-                  setIndicatorVisibility({
-                    ...indicatorVisibility,
-                    totalVolume: !indicatorVisibility.totalVolume,
-                  })
-                }
-              />
-            </label>
-          </div>
+        {/* Show Options Button */}
+        <div className="mt-3">
+          <button
+            className="color-picker-btn"
+            onClick={() => setShowOptions(!showOptions)}
+            style={{
+              padding: "10px 20px",
+              background: "#acc7f4ff",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "14px",
+              fontWeight: "500",
+              cursor: "pointer",
+              transition: "background-color 0.2s ease",
+              fontFamily: "'Poppins', sans-serif",
+            }}
+            onMouseEnter={(e) => (e.target.style.background = "#2563eb")}
+            onMouseLeave={(e) => (e.target.style.background = "#3b82f6")}
+          >
+            {showOptions ? "Hide Options" : "Options"}
+          </button>
         </div>
 
-        {/* Color Pickers Section */}
-        <div className="mt-4 pt-4" style={{ borderTop: "1px solid #dee2e6" }}>
-          <h6 className="dashboard-section-title" style={{ fontSize: "16px", marginBottom: "16px" }}>
-            Candle Colors
-          </h6>
-          <div className="row">
-            {/* Column 1 - Default Candles */}
-            <div className="col-4">
-              <div className="mb-3">
-                <label className="form-label dashboard-metric-label" style={{ fontSize: "13px", marginBottom: "8px", display: "block" }}>
-                  Default Up
-                </label>
+        {/* Chart Indicators Section - Conditionally Rendered */}
+        {showOptions && (
+          <div className="mt-4">
+            <h6
+              className="dashboard-section-title"
+              style={{ fontSize: "16px", marginBottom: "16px" }}
+            >
+              Chart Indicators
+            </h6>
+            <div className="toggle-group">
+              {/* Unrealized Profit */}
+              <label className="toggle-item">
+                <img
+                  src="/figma-assets/icons/Round Graph.svg"
+                  className="toggle-icon"
+                  alt=""
+                />
+                <span>
+                  Unrealized Profit
+                  <LineStyleIndicator color="#0f4a6e" lineStyle={0} />
+                </span>
                 <input
-                  type="color"
-                  className="form-control form-control-color"
-                  value={candleColors.defaultUp.slice(0, 7)}
-                  onChange={(e) =>
-                    setCandleColors({
-                      ...candleColors,
-                      defaultUp: e.target.value + "ff",
+                  type="checkbox"
+                  className="toggle-switch"
+                  id="unrealizedProfitCheckbox"
+                  checked={indicatorVisibility.unrealizedProfit}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      unrealizedProfit: !indicatorVisibility.unrealizedProfit,
                     })
                   }
-                  title="Choose default up candle color"
-                  style={{ cursor: "pointer" }}
                 />
-              </div>
-              <div className="mb-3">
-                <label className="form-label dashboard-metric-label" style={{ fontSize: "13px", marginBottom: "8px", display: "block" }}>
-                  Default Down
-                </label>
-                <input
-                  type="color"
-                  className="form-control form-control-color"
-                  value={candleColors.defaultDown.slice(0, 7)}
-                  onChange={(e) =>
-                    setCandleColors({
-                      ...candleColors,
-                      defaultDown: e.target.value + "ff",
-                    })
-                  }
-                  title="Choose default down candle color"
-                  style={{ cursor: "pointer" }}
-                />
-              </div>
-            </div>
+              </label>
 
-            {/* Column 2 - New Money Candles */}
-            <div className="col-4">
-              <div className="mb-3">
-                <label className="form-label dashboard-metric-label" style={{ fontSize: "13px", marginBottom: "8px", display: "block" }}>
-                  New Money Low (0.1-0.49)
-                </label>
+              {/* Unrealized Loss */}
+              <label className="toggle-item">
+                <img
+                  src="/figma-assets/icons/Round Graph.svg"
+                  className="toggle-icon"
+                  alt=""
+                />
+                <span>
+                  Unrealized Loss
+                  <LineStyleIndicator color="#6e3d0f" lineStyle={0} />
+                </span>
                 <input
-                  type="color"
-                  className="form-control form-control-color"
-                  value={candleColors.newMoneyLow.slice(0, 7)}
-                  onChange={(e) =>
-                    setCandleColors({
-                      ...candleColors,
-                      newMoneyLow: e.target.value + "ff",
+                  type="checkbox"
+                  className="toggle-switch"
+                  id="unrealizedLossCheckbox"
+                  checked={indicatorVisibility.unrealizedLoss}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      unrealizedLoss: !indicatorVisibility.unrealizedLoss,
                     })
                   }
-                  title="Choose new money low ratio color"
-                  style={{ cursor: "pointer" }}
                 />
-              </div>
-              <div className="mb-3">
-                <label className="form-label dashboard-metric-label" style={{ fontSize: "13px", marginBottom: "8px", display: "block" }}>
-                  New Money Medium (0.49-0.75)
-                </label>
-                <input
-                  type="color"
-                  className="form-control form-control-color"
-                  value={candleColors.newMoneyMedium.slice(0, 7)}
-                  onChange={(e) =>
-                    setCandleColors({
-                      ...candleColors,
-                      newMoneyMedium: e.target.value + "ff",
-                    })
-                  }
-                  title="Choose new money medium ratio color"
-                  style={{ cursor: "pointer" }}
-                />
-              </div>
-            </div>
+              </label>
 
-            {/* Column 3 */}
-            <div className="col-4">
-              <div className="mb-3">
-                <label className="form-label dashboard-metric-label" style={{ fontSize: "13px", marginBottom: "8px", display: "block" }}>
-                  New Money High (&gt;= 0.75)
-                </label>
+              {/* Realized Profit */}
+              <label className="toggle-item">
+                <img
+                  src="/figma-assets/icons/Graph New Up.svg"
+                  className="toggle-icon"
+                  alt=""
+                />
+                <span>
+                  Realized Profit
+                  <LineStyleIndicator color="#156a9d" lineStyle={2} />
+                </span>
                 <input
-                  type="color"
-                  className="form-control form-control-color"
-                  value={candleColors.newMoneyHigh.slice(0, 7)}
-                  onChange={(e) =>
-                    setCandleColors({
-                      ...candleColors,
-                      newMoneyHigh: e.target.value + "ff",
+                  type="checkbox"
+                  className="toggle-switch"
+                  id="realizedProfitCheckbox"
+                  checked={indicatorVisibility.realizedProfit}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      realizedProfit: !indicatorVisibility.realizedProfit,
                     })
                   }
-                  title="Choose new money high ratio color"
-                  style={{ cursor: "pointer" }}
                 />
+              </label>
+
+              {/* Realized Loss */}
+              <label className="toggle-item">
+                <img
+                  src="/figma-assets/icons/Graph New Up.svg"
+                  className="toggle-icon"
+                  alt=""
+                />
+                <span>
+                  Realized Loss
+                  <LineStyleIndicator color="#9d4e15" lineStyle={2} />
+                </span>
+                <input
+                  type="checkbox"
+                  className="toggle-switch"
+                  id="realizedLossCheckbox"
+                  checked={indicatorVisibility.realizedLoss}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      realizedLoss: !indicatorVisibility.realizedLoss,
+                    })
+                  }
+                />
+              </label>
+
+              {/* Onchain Score */}
+              <label className="toggle-item">
+                <img
+                  src="/figma-assets/icons/Graph New Up.svg"
+                  className="toggle-icon"
+                  alt=""
+                />
+                <span>
+                  Onchain Score
+                  <LineStyleIndicator color="#dd0808ff" lineStyle={0} />
+                </span>
+                <input
+                  type="checkbox"
+                  className="toggle-switch"
+                  id="actorRankCheckbox"
+                  checked={indicatorVisibility.actorRank}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      actorRank: !indicatorVisibility.actorRank,
+                    })
+                  }
+                />
+              </label>
+
+              {/* Last 10 Sec Volume */}
+              <label className="toggle-item">
+                <img
+                  src="/figma-assets/icons/Chart Square.svg"
+                  className="toggle-icon"
+                  alt=""
+                />
+                <span>
+                  Last 10 Sec Volume
+                  <LineStyleIndicator color="#ff6b35" lineStyle={0} />
+                </span>
+                <input
+                  type="checkbox"
+                  className="toggle-switch"
+                  id="last10secVolCheckbox"
+                  checked={indicatorVisibility.last10secVol}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      last10secVol: !indicatorVisibility.last10secVol,
+                    })
+                  }
+                />
+              </label>
+
+              {/* Last 5 Sec Volume */}
+              <label className="toggle-item">
+                <img
+                  src="/figma-assets/icons/Chart Square.svg"
+                  className="toggle-icon"
+                  alt=""
+                />
+                <span>
+                  Last 5 Sec Volume
+                  <LineStyleIndicator color="#f7931e" lineStyle={1} />
+                </span>
+                <input
+                  type="checkbox"
+                  className="toggle-switch"
+                  id="last5secVolCheckbox"
+                  checked={indicatorVisibility.last5secVol}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      last5secVol: !indicatorVisibility.last5secVol,
+                    })
+                  }
+                />
+              </label>
+
+              {/* Buy Volume */}
+              <label className="toggle-item">
+                <img
+                  src="/figma-assets/icons/Dollar Minimalistic.svg"
+                  className="toggle-icon"
+                  alt=""
+                />
+                <span>
+                  Buy Volume
+                  <LineStyleIndicator color="#00b300" lineStyle={0} />
+                </span>
+                <input
+                  type="checkbox"
+                  className="toggle-switch"
+                  id="buyVolumeCheckbox"
+                  checked={indicatorVisibility.buyVolume}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      buyVolume: !indicatorVisibility.buyVolume,
+                    })
+                  }
+                />
+              </label>
+
+              {/* Sell Volume */}
+              <label className="toggle-item">
+                <img
+                  src="/figma-assets/icons/Dollar Minimalistic.svg"
+                  className="toggle-icon"
+                  alt=""
+                />
+                <span>
+                  Sell Volume
+                  <LineStyleIndicator color="#e60000" lineStyle={0} />
+                </span>
+                <input
+                  type="checkbox"
+                  className="toggle-switch"
+                  id="sellVolumeCheckbox"
+                  checked={indicatorVisibility.sellVolume}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      sellVolume: !indicatorVisibility.sellVolume,
+                    })
+                  }
+                />
+              </label>
+
+              {/* HT */}
+              <label className="toggle-item">
+                <img
+                  src="/figma-assets/icons/Flame-1.svg"
+                  className="toggle-icon"
+                  alt=""
+                />
+                <span>
+                  HT
+                  <LineStyleIndicator color="#8E44AD" lineStyle={0} />
+                </span>
+                <input
+                  type="checkbox"
+                  className="toggle-switch"
+                  id="htCheckbox"
+                  checked={indicatorVisibility.ht}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      ht: !indicatorVisibility.ht,
+                    })
+                  }
+                />
+              </label>
+
+              {/* Total Volume */}
+              <label className="toggle-item">
+                <img
+                  src="/figma-assets/icons/wallet.svg"
+                  className="toggle-icon"
+                  alt=""
+                />
+                <span>
+                  Total Volume
+                  <LineStyleIndicator color="#2E86AB" lineStyle={0} />
+                </span>
+                <input
+                  type="checkbox"
+                  className="toggle-switch"
+                  id="totalVolumeCheckbox"
+                  checked={indicatorVisibility.totalVolume}
+                  onChange={() =>
+                    setIndicatorVisibility({
+                      ...indicatorVisibility,
+                      totalVolume: !indicatorVisibility.totalVolume,
+                    })
+                  }
+                />
+              </label>
+            </div>
+          </div>
+        )}
+
+        {/* Color Pickers Section - Conditionally Rendered */}
+        {showOptions && (
+          <div className="mt-4 pt-4" style={{ borderTop: "1px solid #dee2e6" }}>
+            <h6
+              className="dashboard-section-title"
+              style={{ fontSize: "16px", marginBottom: "16px" }}
+            >
+              Candle Colors
+            </h6>
+            <div className="row">
+              {/* Column 1 - Default Candles */}
+              <div className="col-4">
+                <div className="mb-3">
+                  <label
+                    className="form-label dashboard-metric-label"
+                    style={{
+                      fontSize: "13px",
+                      marginBottom: "8px",
+                      display: "block",
+                    }}
+                  >
+                    Default Up
+                  </label>
+                  <input
+                    type="color"
+                    className="form-control form-control-color"
+                    value={candleColors.defaultUp.slice(0, 7)}
+                    onChange={(e) =>
+                      setCandleColors({
+                        ...candleColors,
+                        defaultUp: e.target.value + "ff",
+                      })
+                    }
+                    title="Choose default up candle color"
+                    style={{ cursor: "pointer" }}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label
+                    className="form-label dashboard-metric-label"
+                    style={{
+                      fontSize: "13px",
+                      marginBottom: "8px",
+                      display: "block",
+                    }}
+                  >
+                    Default Down
+                  </label>
+                  <input
+                    type="color"
+                    className="form-control form-control-color"
+                    value={candleColors.defaultDown.slice(0, 7)}
+                    onChange={(e) =>
+                      setCandleColors({
+                        ...candleColors,
+                        defaultDown: e.target.value + "ff",
+                      })
+                    }
+                    title="Choose default down candle color"
+                    style={{ cursor: "pointer" }}
+                  />
+                </div>
               </div>
-              <div className="mb-3">
-                <button
-                  className="btn btn-outline-secondary w-100"
-                  onClick={() => setCandleColors(defaultCandleColors)}
-                  style={{
-                    fontWeight: "500",
-                    borderRadius: "8px",
-                    padding: "8px 16px"
-                  }}
-                >
-                  Reset to Defaults
-                </button>
+
+              {/* Column 2 - New Money Candles */}
+              <div className="col-4">
+                <div className="mb-3">
+                  <label
+                    className="form-label dashboard-metric-label"
+                    style={{
+                      fontSize: "13px",
+                      marginBottom: "8px",
+                      display: "block",
+                    }}
+                  >
+                    New Money Low (0.1-0.49)
+                  </label>
+                  <input
+                    type="color"
+                    className="form-control form-control-color"
+                    value={candleColors.newMoneyLow.slice(0, 7)}
+                    onChange={(e) =>
+                      setCandleColors({
+                        ...candleColors,
+                        newMoneyLow: e.target.value + "ff",
+                      })
+                    }
+                    title="Choose new money low ratio color"
+                    style={{ cursor: "pointer" }}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label
+                    className="form-label dashboard-metric-label"
+                    style={{
+                      fontSize: "13px",
+                      marginBottom: "8px",
+                      display: "block",
+                    }}
+                  >
+                    New Money Medium (0.49-0.75)
+                  </label>
+                  <input
+                    type="color"
+                    className="form-control form-control-color"
+                    value={candleColors.newMoneyMedium.slice(0, 7)}
+                    onChange={(e) =>
+                      setCandleColors({
+                        ...candleColors,
+                        newMoneyMedium: e.target.value + "ff",
+                      })
+                    }
+                    title="Choose new money medium ratio color"
+                    style={{ cursor: "pointer" }}
+                  />
+                </div>
+              </div>
+
+              {/* Column 3 */}
+              <div className="col-4">
+                <div className="mb-3">
+                  <label
+                    className="form-label dashboard-metric-label"
+                    style={{
+                      fontSize: "13px",
+                      marginBottom: "8px",
+                      display: "block",
+                    }}
+                  >
+                    New Money High (&gt;= 0.75)
+                  </label>
+                  <input
+                    type="color"
+                    className="form-control form-control-color"
+                    value={candleColors.newMoneyHigh.slice(0, 7)}
+                    onChange={(e) =>
+                      setCandleColors({
+                        ...candleColors,
+                        newMoneyHigh: e.target.value + "ff",
+                      })
+                    }
+                    title="Choose new money high ratio color"
+                    style={{ cursor: "pointer" }}
+                  />
+                </div>
+                <div className="mb-3">
+                  <button
+                    className="btn btn-outline-secondary w-100"
+                    onClick={() => setCandleColors(defaultCandleColors)}
+                    style={{
+                      fontWeight: "500",
+                      borderRadius: "8px",
+                      padding: "8px 16px",
+                    }}
+                  >
+                    Reset to Defaults
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

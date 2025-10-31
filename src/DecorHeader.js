@@ -142,7 +142,7 @@ const DecorHeader = ({
               />
               <div>
                 <h4
-                  className="dashboard-logo-text"
+                  className="decor-logo-text"
                   style={{
                     margin: 0,
                     fontSize: "24px",
@@ -189,22 +189,20 @@ const DecorHeader = ({
       </div>
 
       {/* Dashboard Metrics Grid */}
-      <div className="dashboard-metrics-grid">
+      <div className="decor-metrics-grid">
         {/* Volume Metric */}
-        <div className="dashboard-metric-card">
-          <div className="dashboard-metric-content">
-            <div className="dashboard-metric-info">
-              <span className="dashboard-metric-label">VOL</span>
+        <div className="decor-metric-card">
+          <div className="decor-metric-content">
+            <div className="decor-metric-info">
+              <span className="decor-metric-label">VOL</span>
               <span
                 id="recentCSolVal"
-                className={`dashboard-metric-value ${
-                  isGray ? "" : volumeColor
-                }`}
+                className={`decor-metric-value ${isGray ? "" : volumeColor}`}
               >
                 {recentCSolVal}
               </span>
             </div>
-            <div className="dashboard-metric-icon dashboard-icon-blue-bg">
+            <div className="decor-metric-icon decor-icon-blue-bg">
               <img
                 src="/figma-assets/icons/Dollar Minimalistic.svg"
                 alt="Volume"
@@ -213,46 +211,43 @@ const DecorHeader = ({
           </div>
         </div>
         {/* Onchain Score Metric */}
-        <div className="dashboard-metric-card">
-          <div className="dashboard-metric-content">
-            <div className="dashboard-metric-info">
-              <span className="dashboard-metric-label">OS</span>
+        <div className="decor-metric-card">
+          <div className="decor-metric-content">
+            <div className="decor-metric-info">
+              <span className="decor-metric-label">OS</span>
               <div className="d-flex align-items-center">
                 <span
                   id="recentActorRank"
-                  className={`dashboard-metric-value ${isGray ? "" : arColor}`}
+                  className={`decor-metric-value ${isGray ? "" : arColor}`}
                 >
                   {actorRankNum}
                 </span>
-                <span
-                  id="max_cactor_rank"
-                  className="dashboard-metric-subvalue"
-                >
+                <span id="max_cactor_rank" className="decor-metric-subvalue">
                   ({Math.round(mcarNum)})
                 </span>
                 <InfoIcon text="Token Onchain Score: Current (Max)" />
               </div>
             </div>
-            <div className="dashboard-metric-icon dashboard-icon-mint-bg">
+            <div className="decor-metric-icon decor-icon-mint-bg">
               <img src="/figma-assets/icons/Graph New Up.svg" alt="Score" />
             </div>
           </div>
         </div>
         {/* Total Fee Metric */}
         {recentTotalFee && (
-          <div className="dashboard-metric-card">
-            <div className="dashboard-metric-content">
-              <div className="dashboard-metric-info">
-                <span className="dashboard-metric-label">Total Fee</span>
+          <div className="decor-metric-card">
+            <div className="decor-metric-content">
+              <div className="decor-metric-info">
+                <span className="decor-metric-label">Total Fee</span>
                 <span
                   id="recentTotalFee"
-                  className="dashboard-metric-value"
+                  className="decor-metric-value"
                   style={{ color: isGray ? "gray" : "#1a1a1a" }}
                 >
                   {recentTotalFee}
                 </span>
               </div>
-              <div className="dashboard-metric-icon dashboard-icon-yellow-bg">
+              <div className="decor-metric-icon decor-icon-yellow-bg">
                 <img src="/figma-assets/icons/wallet.svg" alt="Fee" />
               </div>
             </div>
@@ -260,14 +255,14 @@ const DecorHeader = ({
         )}
         {/* HT Metric */}
         {recentHt && (
-          <div className="dashboard-metric-card">
-            <div className="dashboard-metric-content">
-              <div className="dashboard-metric-info">
-                <span className="dashboard-metric-label">HT</span>
+          <div className="decor-metric-card">
+            <div className="decor-metric-content">
+              <div className="decor-metric-info">
+                <span className="decor-metric-label">HT</span>
                 <div className="d-flex align-items-center">
                   <span
                     id="recentHt"
-                    className={`dashboard-metric-value`}
+                    className={`decor-metric-value`}
                     style={{ color: isGray ? "gray" : htColor }}
                   >
                     {recentHt}
@@ -275,42 +270,40 @@ const DecorHeader = ({
                   <PriceWarningIcon closePrice={recentClose} size="normal" />
                 </div>
               </div>
-              <div className="dashboard-metric-icon dashboard-icon-peach-bg">
+              <div className="decor-metric-icon decor-icon-peach-bg">
                 <img src="/figma-assets/icons/Flame-1.svg" alt="HT" />
               </div>
             </div>
           </div>
         )}
-        <div className="dashboard-metric-card">
-          <div className="dashboard-metric-content">
-            <div className="dashboard-metric-info">
-              <span className="dashboard-metric-label">FRI</span>
-              <span id="recentFri" className="dashboard-metric-value">
+        <div className="decor-metric-card">
+          <div className="decor-metric-content">
+            <div className="decor-metric-info">
+              <span className="decor-metric-label">FRI</span>
+              <span id="recentFri" className="decor-metric-value">
                 {Number(recentFri) !== 0 ? recentFri.toFixed(4) : "N/A"}
               </span>
             </div>
-            <div className="dashboard-metric-icon dashboard-icon-purple-bg">
+            <div className="decor-metric-icon decor-icon-purple-bg">
               <img src="/figma-assets/icons/Flame.svg" alt="FRI" />
             </div>
           </div>
         </div>
         {/* Time Duration Metric */}
         {timeDuration && (
-          <div className="dashboard-metric-card">
-            <div className="dashboard-metric-content">
-              <div className="dashboard-metric-info">
-                <span className="dashboard-metric-label">
-                  Time Since Creation
-                </span>
+          <div className="decor-metric-card">
+            <div className="decor-metric-content">
+              <div className="decor-metric-info">
+                <span className="decor-metric-label">Created</span>
                 <span
                   id="timeDuration"
-                  className="dashboard-metric-value"
+                  className="decor-metric-value"
                   style={{ color: isGray ? "gray" : "#1a1a1a" }}
                 >
                   {timeDuration}
                 </span>
               </div>
-              <div className="dashboard-metric-icon dashboard-icon-gray-bg">
+              <div className="decor-metric-icon decor-icon-gray-bg">
                 <img src="/figma-assets/icons/Clock Circle.svg" alt="Time" />
               </div>
             </div>
@@ -318,19 +311,19 @@ const DecorHeader = ({
         )}
         {/* HV Wallets */}
         {hv_wallets_count !== undefined && (
-          <div className="dashboard-metric-card">
-            <div className="dashboard-metric-content">
-              <div className="dashboard-metric-info">
-                <span className="dashboard-metric-label">HV Wallets</span>
+          <div className="decor-metric-card">
+            <div className="decor-metric-content">
+              <div className="decor-metric-info">
+                <span className="decor-metric-label">HV Wallets</span>
                 <span
                   id="hv_wallets_count"
-                  className="dashboard-metric-value"
+                  className="decor-metric-value"
                   style={{ color: isGray ? "gray" : "#1a1a1a" }}
                 >
                   {Number(hv_wallets_count).toFixed(0)}
                 </span>
               </div>
-              <div className="dashboard-metric-icon dashboard-icon-blue-bg">
+              <div className="decor-metric-icon decor-icon-blue-bg">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -346,19 +339,19 @@ const DecorHeader = ({
         )}
         {/* HV Holdings */}
         {hv_holdings !== undefined && (
-          <div className="dashboard-metric-card">
-            <div className="dashboard-metric-content">
-              <div className="dashboard-metric-info">
-                <span className="dashboard-metric-label">HV Holdings</span>
+          <div className="decor-metric-card">
+            <div className="decor-metric-content">
+              <div className="decor-metric-info">
+                <span className="decor-metric-label">HV Holdings</span>
                 <span
                   id="hv_holdings"
-                  className="dashboard-metric-value"
+                  className="decor-metric-value"
                   style={{ color: isGray ? "gray" : "#1a1a1a" }}
                 >
                   {formatHvHoldings(hv_holdings)}
                 </span>
               </div>
-              <div className="dashboard-metric-icon dashboard-icon-green-bg">
+              <div className="decor-metric-icon decor-icon-green-bg">
                 <img
                   src="/figma-assets/icons/Chart Square.svg"
                   alt="Holdings"
@@ -369,19 +362,19 @@ const DecorHeader = ({
         )}
         {/* HV Avg Profit */}
         {hv_avg_profit_only !== undefined && (
-          <div className="dashboard-metric-card">
-            <div className="dashboard-metric-content">
-              <div className="dashboard-metric-info">
-                <span className="dashboard-metric-label">HV Avg Profit</span>
+          <div className="decor-metric-card">
+            <div className="decor-metric-content">
+              <div className="decor-metric-info">
+                <span className="decor-metric-label">HV Avg Profit</span>
                 <span
                   id="hv_avg_profit_only"
-                  className="dashboard-metric-value"
+                  className="decor-metric-value"
                   style={{ color: isGray ? "gray" : "#10b981" }}
                 >
                   {formatHvAvgProfit(hv_avg_profit_only)}
                 </span>
               </div>
-              <div className="dashboard-metric-icon dashboard-icon-mint-bg">
+              <div className="decor-metric-icon decor-icon-mint-bg">
                 <img src="/figma-assets/icons/Round Graph.svg" alt="Profit" />
               </div>
             </div>
@@ -389,28 +382,28 @@ const DecorHeader = ({
         )}
         {/* Bundle Ratio */}
         {bundle_ratio > 0.1 && (
-          <div className="dashboard-metric-card">
-            <div className="dashboard-metric-content">
-              <div className="dashboard-metric-info">
-                <span className="dashboard-metric-label">Bundle</span>
+          <div className="decor-metric-card">
+            <div className="decor-metric-content">
+              <div className="decor-metric-info">
+                <span className="decor-metric-label">Bundle</span>
                 <span
                   id="bundle_ratio"
-                  className="dashboard-metric-value"
+                  className="decor-metric-value"
                   style={{ color: isGray ? "gray" : "#1a1a1a" }}
                 >
                   {Math.round(bundle_ratio * 100)}%
                 </span>
               </div>
-              <div className="dashboard-metric-icon dashboard-icon-gray-bg">
+              <div className="decor-metric-icon decor-icon-gray-bg">
                 <img src="/figma-assets/icons/Copy.svg" alt="Bundle" />
               </div>
             </div>
           </div>
         )}
-        <div className="dashboard-metric-card" id="icon-placeholder">
-          <div className="dashboard-metric-content">
-            <div className="dashboard-metric-info">
-              <span className="dashboard-metric-label">Indicators</span>
+        <div className="decor-metric-card" id="icon-placeholder">
+          <div className="decor-metric-content">
+            <div className="decor-metric-info">
+              <span className="decor-metric-label">Indicators</span>
               <div
                 style={{
                   display: "flex",

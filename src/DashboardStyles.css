@@ -302,3 +302,161 @@
         min-width: 100%;
     }
 }
+
+/* ============================================ */
+/* DECOR HEADER STYLES (DecorHeader.js)        */
+/* ============================================ */
+
+/* Decor Metrics Grid */
+.decor-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+}
+
+/* Decor Metric Card */
+.decor-metric-card {
+    background: white;
+    border-radius: 12px;
+    padding: 4px 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.decor-metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.decor-metric-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.decor-metric-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.decor-metric-label {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.decor-metric-value {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.2;
+    color: #1a1a1a;
+}
+
+.decor-metric-value.red {
+    color: #ef4444;
+}
+
+.decor-metric-value.green {
+    color: #10b981;
+}
+
+.decor-metric-value.orange {
+    color: #f97316;
+}
+
+.decor-metric-subvalue {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    color: #6b7280;
+    margin-left: 4px;
+}
+
+/* Decor Metric Icons */
+.decor-metric-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.decor-metric-icon img,
+.decor-metric-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Decor Icon Background Colors - Matching Figma */
+.decor-icon-blue-bg {
+    background-color: #dbeafe;
+}
+
+.decor-icon-mint-bg {
+    background-color: #d1fae5;
+}
+
+.decor-icon-yellow-bg {
+    background-color: #fef3c7;
+}
+
+.decor-icon-peach-bg {
+    background-color: #fee2e2;
+}
+
+.decor-icon-purple-bg {
+    background-color: #ede9fe;
+}
+
+.decor-icon-gray-bg {
+    background-color: #f3f4f6;
+}
+
+.decor-icon-green-bg {
+    background-color: #d1fae5;
+}
+
+/* Decor Logo Text */
+.decor-logo-text {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    color: #1e3a8a;
+}
+
+/* Responsive for Decor Header */
+@media (max-width: 768px) {
+    .decor-metrics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .decor-metric-card {
+        padding: 16px;
+    }
+
+    .decor-metric-value {
+        font-size: 24px;
+    }
+
+    .decor-logo-text {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .decor-metric-value {
+        font-size: 20px;
+    }
+}

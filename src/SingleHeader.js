@@ -3,6 +3,7 @@ import ValidLaunchIcon from "./components/ValidLaunchIcon";
 import ValidSocialsIcon from "./components/ValidSocialsIcon";
 import UniqueSocialsIcon from "./components/UniqueSocialsIcon";
 import PumpDumpIcon from "./components/PumpDumpIcon";
+import PumpFunIcon from "./components/PumpFunIcon";
 import AdminComponent from "./AdminComponent";
 import InfoIcon from "./components/InfoIcon";
 import WalletIcon from "./components/WalletIcon";
@@ -87,16 +88,39 @@ const SingleHeader = ({
 
   return (
     <div className="dashboard-container">
-      {/* Header with Logo and Profile */}
       <header
         className="dashboard-header-top"
-        style={{ justifyContent: "flex-end" }}
+        style={{
+          justifyContent: "flex-end",
+          position: "relative",
+          overflow: "visible",
+          height: "30px",
+        }}
       >
         <img
+          id="token-image"
           src={image}
-          alt="onchainrank logo"
+          alt="mint logo"
           className="logo"
-          style={{ width: "50px", height: "50px" }}
+          style={{
+            width: "50px",
+            height: "50px",
+            position: "absolute",
+            top: "0",
+            right: "0",
+            zIndex: 10,
+            borderRadius: "50%",
+            objectFit: "cover",
+            transition: "transform 0.3s ease",
+            cursor: "pointer",
+            transformOrigin: "top right",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "scale(3)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "scale(1)";
+          }}
         />
       </header>
 
@@ -313,7 +337,7 @@ const SingleHeader = ({
                 </div>
               </div>
             )}
-            <div className="metric-item">
+            {/* <div className="metric-item">
               <div className="icon-wrapper icon-bg-green-2">
                 <img
                   src="/dashboard-icons/status.svg"
@@ -338,30 +362,30 @@ const SingleHeader = ({
                   )}
                 </span>
               </div>
-            </div>
+            </div> */}
             <div
               className="metric-item social-item"
               id="icons"
-              style={{ width: "auto", flex: "0 1 auto" }}
+              style={{ width: "auto", flex: "0 0 auto", marginLeft: "auto" }}
             >
               <div className="social-icons">
-                {!valid_socials && (
+                {(true || !valid_socials) && (
                   <div className="social-icon-wrapper social-bg-red">
                     <div className="social-icon-inner social-inner-red">
                       <ValidSocialsIcon size="small" />
                     </div>
                   </div>
                 )}
-                {!unique_socials && (
+                {(!unique_socials || true) && (
                   <div className="social-icon-group">
-                    <div className="social-icon-wrapper social-bg-green-3">
-                      <div className="social-icon-inner social-inner-green">
+                    <div className="social-icon-wrapper social-bg-red">
+                      <div className="social-icon-inner social-inner-red">
                         <UniqueSocialsIcon size="small" />
                       </div>
                     </div>
-                    <span className="social-count">99</span>
                   </div>
                 )}
+
                 {valid_launch === false && (
                   <div className="social-icon-wrapper social-bg-red">
                     <div className="social-icon-inner social-inner-red">
@@ -381,6 +405,9 @@ const SingleHeader = ({
                   creator={creator}
                   size="small"
                 />
+                {(total_comments > 0 || true) && (
+                  <PumpFunIcon count={22} size="small" />
+                )}
               </div>
             </div>
           </div>
