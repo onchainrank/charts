@@ -194,7 +194,9 @@ const DecorHeader = ({
         <div className="decor-metric-card">
           <div className="decor-metric-content">
             <div className="decor-metric-info">
-              <span className="decor-metric-label">VOL</span>
+              <span className="decor-metric-label">
+                VOL <InfoIcon text="Total Volume in Solana" />
+              </span>
               <span
                 id="recentCSolVal"
                 className={`decor-metric-value ${isGray ? "" : volumeColor}`}
@@ -314,7 +316,9 @@ const DecorHeader = ({
           <div className="decor-metric-card">
             <div className="decor-metric-content">
               <div className="decor-metric-info">
-                <span className="decor-metric-label">HV Wallets</span>
+                <span className="decor-metric-label">
+                  HV Wallets <InfoIcon text="High Value Wallets: Count / Total Holdings %" />
+                </span>
                 <span
                   id="hv_wallets_count"
                   className="decor-metric-value"

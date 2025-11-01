@@ -360,7 +360,7 @@ function Chart({
           lineStyle: 0,
         });
       }
-      const data = candles
+      const data = (candles || [])
         .filter(
           (candle) =>
             candle.unrealized_profit != null && !isNaN(candle.unrealized_profit)
@@ -387,7 +387,7 @@ function Chart({
           lineStyle: 0,
         });
       }
-      const data = candles
+      const data = (candles || [])
         .filter(
           (candle) =>
             candle.unrealized_loss != null && !isNaN(candle.unrealized_loss)
@@ -414,7 +414,7 @@ function Chart({
           lineStyle: 2,
         });
       }
-      const data = candles
+      const data = (candles || [])
         .filter(
           (candle) =>
             candle.realized_loss != null && !isNaN(candle.realized_loss)
@@ -441,7 +441,7 @@ function Chart({
           lineStyle: 2,
         });
       }
-      const data = candles
+      const data = (candles || [])
         .filter(
           (candle) =>
             candle.realized_profit != null && !isNaN(candle.realized_profit)
@@ -472,7 +472,8 @@ function Chart({
           scaleMargins: { top: 0.2, bottom: 0.2 },
         });
       }
-      const data = candles
+
+      const data = (candles || [])
         .filter(
           (candle) => candle.actor_rank != null && !isNaN(candle.actor_rank)
         )
@@ -503,7 +504,7 @@ function Chart({
           autoScale: true,
         });
       }
-      const data = candles
+      const data = (candles || [])
         .filter(
           (candle) => candle.last10secVol != null && !isNaN(candle.last10secVol)
         )
@@ -534,7 +535,7 @@ function Chart({
           autoScale: true,
         });
       }
-      const data = candles
+      const data = (candles || [])
         .filter(
           (candle) => candle.last5secVol != null && !isNaN(candle.last5secVol)
         )
@@ -565,7 +566,7 @@ function Chart({
           autoScale: true,
         });
       }
-      const data = candles
+      const data = (candles || [])
         .filter(
           (candle) => candle.buy_volume != null && !isNaN(candle.buy_volume)
         )
@@ -596,7 +597,7 @@ function Chart({
           autoScale: true,
         });
       }
-      const data = candles
+      const data = (candles || [])
         .filter(
           (candle) => candle.sell_volume != null && !isNaN(candle.sell_volume)
         )
@@ -627,7 +628,7 @@ function Chart({
           autoScale: true,
         });
       }
-      const data = candles
+      const data = (candles || [])
         .filter((candle) => candle.ht != null && !isNaN(candle.ht))
         .map((candle) => ({
           time: candle.time,
@@ -656,7 +657,7 @@ function Chart({
           autoScale: true,
         });
       }
-      const data = candles
+      const data = (candles || [])
         .filter((candle) => candle.cSolVal != null && !isNaN(candle.cSolVal))
         .map((candle) => ({
           time: candle.time,

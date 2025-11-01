@@ -3,12 +3,14 @@ import { useParams } from "react-router-dom";
 import Chart from "./Chart";
 import SingleHeader from "./SingleHeader";
 import Unauthorized from "./components/Unauthorized";
+import DataUnavailable from "./components/DataUnavailable";
 import io from "socket.io-client";
 
 const SingleChartPage = () => {
   const { id, token } = useParams();
   const [chartData, setChartData] = useState(null);
   const [isUnauthorized, setIsUnauthorized] = useState(false);
+  const [isDataUnavailable, setIsDataUnavailable] = useState(false);
 
   // Fetch initial data for the selected chart.
   useEffect(() => {
@@ -25,7 +27,12 @@ const SingleChartPage = () => {
       })
       .then((data) => {
         if (data) {
-          setChartData(data);
+          // Check if candles data is missing or empty
+          if (!data.data || data.data.length === 0) {
+            setIsDataUnavailable(true);
+          } else {
+            setChartData(data);
+          }
         }
       })
       .catch((err) => {
@@ -164,26 +171,38 @@ const SingleChartPage = () => {
 
   // Merge incoming candles into the existing array.
   const mergeCandles = (existing, incoming) => {
-    let merged = [...existing];
+    let merged = [...(existing || [])];
+    const incomingArray = incoming || [];
+
     if (
       merged.length > 0 &&
-      incoming.length > 0 &&
-      merged[merged.length - 1].time === incoming[0].time
+      incomingArray.length > 0 &&
+      merged[merged.length - 1].time === incomingArray[0].time
     ) {
-      merged[merged.length - 1] = incoming[0];
-      incoming = incoming.slice(1);
+      merged[merged.length - 1] = incomingArray[0];
+      incomingArray.forEach((candle, index) => {
+        if (index > 0 && (merged.length === 0 || candle.time > merged[merged.length - 1].time)) {
+          merged.push(candle);
+        }
+      });
+    } else {
+      incomingArray.forEach((candle) => {
+        if (merged.length === 0 || candle.time > merged[merged.length - 1].time) {
+          merged.push(candle);
+        }
+      });
     }
-    incoming.forEach((candle) => {
-      if (merged.length === 0 || candle.time > merged[merged.length - 1].time) {
-        merged.push(candle);
-      }
-    });
     return merged;
   };
 
   // Show unauthorized component if authentication fails
   if (isUnauthorized) {
     return <Unauthorized />;
+  }
+
+  // Show data unavailable component if no candles data
+  if (isDataUnavailable) {
+    return <DataUnavailable />;
   }
 
   if (!chartData) {
@@ -224,16 +243,23 @@ const SingleChartPage = () => {
           const nowInSeconds = Math.floor(Date.now() / 1000); // Current time in seconds
           const diffInSeconds = nowInSeconds - firstTime;
 
-          // If 1 hour or more, show "X hr+"
-          if (diffInSeconds >= 3600) {
-            const hours = Math.floor(diffInSeconds / 3600);
-            return `${hours} hr+`;
+          // If 1 day or more, show "X days"
+          if (diffInSeconds >= 86400) {
+            const days = Math.floor(diffInSeconds / 86400);
+            return `${days}d`;
           }
 
-          // Otherwise show minutes:seconds
+          // If 1 hour or more, show "X hr"
+          if (diffInSeconds >= 3600) {
+            const hours = Math.floor(diffInSeconds / 3600);
+            const minutes = Math.floor((diffInSeconds % 3600) / 60);
+            return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+          }
+
+          // Otherwise show minutes and seconds
           const minutes = Math.floor(diffInSeconds / 60);
           const seconds = diffInSeconds % 60;
-          return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+          return `${minutes}m ${seconds}s`;
         })()
       : "";
 

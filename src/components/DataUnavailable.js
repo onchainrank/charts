@@ -1,6 +1,6 @@
 import React from "react";
 
-const Unauthorized = () => {
+const DataUnavailable = () => {
   return (
     <div
       style={{
@@ -28,7 +28,7 @@ const Unauthorized = () => {
             width: "80px",
             height: "80px",
             margin: "0 auto 24px",
-            backgroundColor: "rgba(237, 62, 53, 0.08)",
+            backgroundColor: "rgba(251, 191, 36, 0.08)",
             borderRadius: "50%",
             display: "flex",
             alignItems: "center",
@@ -44,7 +44,7 @@ const Unauthorized = () => {
           >
             <path
               d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z"
-              fill="#ED3E35"
+              fill="#F59E0B"
             />
           </svg>
         </div>
@@ -58,7 +58,7 @@ const Unauthorized = () => {
             marginBottom: "16px",
           }}
         >
-          Unauthorized Access
+          Data Unavailable
         </h1>
 
         <p
@@ -71,16 +71,12 @@ const Unauthorized = () => {
             lineHeight: "1.6",
           }}
         >
-          Your API keys are invalid or missing. Please visit OnchainRank to
-          generate valid keys and access your dashboard.
+          Chart data is currently unavailable. This token may not exist or data has not been collected yet.
         </p>
 
-        <a
-          href="https://onchainrank.com"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          onClick={() => window.location.reload()}
           style={{
-            display: "inline-block",
             fontFamily: "'Poppins', sans-serif",
             fontSize: "16px",
             fontWeight: "600",
@@ -88,7 +84,8 @@ const Unauthorized = () => {
             backgroundColor: "#1e3a8a",
             padding: "12px 32px",
             borderRadius: "8px",
-            textDecoration: "none",
+            border: "none",
+            cursor: "pointer",
             transition: "background-color 0.2s ease",
           }}
           onMouseOver={(e) => {
@@ -98,8 +95,8 @@ const Unauthorized = () => {
             e.currentTarget.style.backgroundColor = "#1e3a8a";
           }}
         >
-          Generate API Keys
-        </a>
+          Reload Page
+        </button>
 
         <div
           style={{
@@ -139,4 +136,4 @@ const Unauthorized = () => {
   );
 };
 
-export default Unauthorized;
+export default DataUnavailable;

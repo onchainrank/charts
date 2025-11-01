@@ -139,7 +139,9 @@ const SingleHeader = ({
                 />
               </div>
               <div className="metric-text">
-                <span className="metric-label">VOL</span>
+                <span className="metric-label">
+                  VOL <InfoIcon text="Total Volume in Solana" />
+                </span>
                 <span className={`metric-value ${volumeColor}`}>
                   {recentCSolVal}
                 </span>
@@ -242,7 +244,10 @@ const SingleHeader = ({
                   />
                 </div>
                 <div className="metric-text">
-                  <span className="metric-label">HV Wallets</span>
+                  <span className="metric-label">
+                    HV Wallets{" "}
+                    <InfoIcon text="High Value Wallets: Count / Total Holdings %" />
+                  </span>
                   <span className="metric-value">
                     {Number(hv_wallets_count).toFixed(0)}{" "}
                     <span class="gr">({formatHvHoldings(hv_holdings)})</span>
@@ -406,7 +411,7 @@ const SingleHeader = ({
                   size="small"
                 />
                 {(total_comments > 0 || true) && (
-                  <PumpFunIcon count={22} size="small" />
+                  <PumpFunIcon count={total_comments} size="small" />
                 )}
               </div>
             </div>

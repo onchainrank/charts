@@ -1,0 +1,9 @@
+[debug] [2025-10-31T16:12:00.927Z] ----------------------------------------------------------------------
+[debug] [2025-10-31T16:12:00.928Z] Command:       /opt/homebrew/Cellar/node/23.11.0/bin/node /opt/homebrew/bin/firebase deploy
+[debug] [2025-10-31T16:12:00.928Z] CLI Version:   14.2.0
+[debug] [2025-10-31T16:12:00.928Z] Platform:      darwin
+[debug] [2025-10-31T16:12:00.928Z] Node Version:  v23.11.0
+[debug] [2025-10-31T16:12:00.929Z] Time:          Fri Oct 31 2025 23:12:00 GMT+0700 (Indochina Time)
+[debug] [2025-10-31T16:12:00.929Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-10-31T16:12:00.930Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
