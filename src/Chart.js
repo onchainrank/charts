@@ -46,6 +46,7 @@ function Chart({
   onRemove,
   hideHeader,
   probaPrice,
+  signalData,
 }) {
   const chartContainerRef = useRef(null);
   const chartRef = useRef(null);
@@ -688,6 +689,28 @@ function Chart({
       }
     };
   }, [probaPrice]);
+
+  // Create markers for signal data
+  useEffect(() => {
+    if (signalData && signalData.bot_signal && candleSeriesRef.current) {
+      const { blockTime } = signalData.bot_signal;
+      console.log("signal dataaaaa");
+      // Create marker at the signal location
+      const marker = {
+        time: blockTime,
+        position: "aboveBar",
+        color: "#00C853",
+        shape: "circle",
+        text: "🤖",
+        size: 2,
+      };
+
+      candleSeriesRef.current.setMarkers([marker]);
+    } else if (candleSeriesRef.current) {
+      // Clear markers if no signal data
+      candleSeriesRef.current.setMarkers([]);
+    }
+  }, [signalData]);
 
   // Compute the most recent cSolVal and total_fee.
   const recentCSolVal =

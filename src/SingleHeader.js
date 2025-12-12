@@ -4,6 +4,7 @@ import ValidSocialsIcon from "./components/ValidSocialsIcon";
 import UniqueSocialsIcon from "./components/UniqueSocialsIcon";
 import PumpDumpIcon from "./components/PumpDumpIcon";
 import PumpFunIcon from "./components/PumpFunIcon";
+import SignalIcon from "./components/SignalIcon";
 import AdminComponent from "./AdminComponent";
 import InfoIcon from "./components/InfoIcon";
 import WalletIcon from "./components/WalletIcon";
@@ -35,7 +36,9 @@ const SingleHeader = ({
   recentClose,
   timeDuration,
   image,
+  signalData,
 }) => {
+  console.log("--------------", signalData);
   // Volume color
   const volume = Number(recentCSolVal);
   let volumeColor = "green";
@@ -180,8 +183,7 @@ const SingleHeader = ({
                         : ""
                     }`}
                   >
-                    {recentHt}
-                    <PriceWarningIcon closePrice={recentClose} size="small" />
+                    {Number(recentHt).toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -314,8 +316,8 @@ const SingleHeader = ({
               <div className="metric-item">
                 <div className="icon-wrapper icon-bg-blue-2">
                   <img
-                    src="/dashboard-icons/last_update.svg"
-                    alt="Last Update icon"
+                    src="/dashboard-icons/status.svg"
+                    alt="Status icon"
                     className="metric-icon"
                   />
                 </div>
@@ -342,46 +344,20 @@ const SingleHeader = ({
                 </div>
               </div>
             )}
-            {/* <div className="metric-item">
-              <div className="icon-wrapper icon-bg-green-2">
-                <img
-                  src="/dashboard-icons/status.svg"
-                  alt="Status icon"
-                  className="metric-icon"
-                />
-              </div>
-              <div className="metric-text">
-                <span className="metric-label">Status</span>
-                <span className="metric-value">
-                  {dex_paid ? "Active" : "Pending"}
-                  {total_comments > 0 && (
-                    <img
-                      src="/pflogo.png"
-                      alt="pump.fun"
-                      style={{
-                        height: "12px",
-                        width: "auto",
-                        marginLeft: "4px",
-                      }}
-                    />
-                  )}
-                </span>
-              </div>
-            </div> */}
             <div
               className="metric-item social-item"
               id="icons"
               style={{ width: "auto", flex: "0 0 auto", marginLeft: "auto" }}
             >
               <div className="social-icons">
-                {(true || !valid_socials) && (
+                {!valid_socials && (
                   <div className="social-icon-wrapper social-bg-red">
                     <div className="social-icon-inner social-inner-red">
                       <ValidSocialsIcon size="small" />
                     </div>
                   </div>
                 )}
-                {(!unique_socials || true) && (
+                {!unique_socials && (
                   <div className="social-icon-group">
                     <div className="social-icon-wrapper social-bg-red">
                       <div className="social-icon-inner social-inner-red">
@@ -398,6 +374,13 @@ const SingleHeader = ({
                     </div>
                   </div>
                 )}
+                {signalData && signalData.bot_signal && (
+                  <div className="social-icon-wrapper social-bg-green">
+                    <div className="social-icon-inner social-inner-green">
+                      <SignalIcon size="small" botSignal={signalData} />
+                    </div>
+                  </div>
+                )}
                 {pump_dump_risk === true && (
                   <div className="social-icon-wrapper social-bg-red">
                     <div className="social-icon-inner social-inner-red">
@@ -410,7 +393,7 @@ const SingleHeader = ({
                   creator={creator}
                   size="small"
                 />
-                {(total_comments > 0 || true) && (
+                {total_comments > 0 && (
                   <PumpFunIcon count={total_comments} size="small" />
                 )}
               </div>

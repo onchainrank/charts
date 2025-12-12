@@ -32,6 +32,7 @@ const DecorChart = () => {
   const [notFound, setNotFound] = useState(false);
   const [isUnauthorized, setIsUnauthorized] = useState(false);
   const [isDataUnavailable, setIsDataUnavailable] = useState(false);
+  const [signalData, setSignalData] = useState(null);
 
   // 1) Fetch the on-chain ID for the given address, then load the chart data
   useEffect(() => {
@@ -127,6 +128,11 @@ const DecorChart = () => {
     });
 
     socket.on("single", (incomingData) => {
+      // Handle signal_data if present
+      if (incomingData.signal_data) {
+        setSignalData(incomingData.signal_data);
+      }
+
       setChartData((prevData) => {
         if (!prevData) return prevData;
 
@@ -353,6 +359,7 @@ const DecorChart = () => {
         onRemove={() => {}}
         hideHeader={true}
         probaPrice={chartData.probaPrice}
+        signalData={signalData}
       />
     </div>
   );

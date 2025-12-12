@@ -11,6 +11,7 @@ const SingleChartPage = () => {
   const [chartData, setChartData] = useState(null);
   const [isUnauthorized, setIsUnauthorized] = useState(false);
   const [isDataUnavailable, setIsDataUnavailable] = useState(false);
+  const [signalData, setSignalData] = useState(null);
 
   // Fetch initial data for the selected chart.
   useEffect(() => {
@@ -87,6 +88,12 @@ const SingleChartPage = () => {
 
     socket.on("single", (incomingData) => {
       console.log("data came");
+
+      // Handle signal_data if present
+      if (incomingData.signal_data) {
+        setSignalData(incomingData.signal_data);
+      }
+
       setChartData((prevData) => {
         if (prevData) {
           const mergedData = mergeCandles(prevData.data, incomingData.data);
@@ -181,13 +188,19 @@ const SingleChartPage = () => {
     ) {
       merged[merged.length - 1] = incomingArray[0];
       incomingArray.forEach((candle, index) => {
-        if (index > 0 && (merged.length === 0 || candle.time > merged[merged.length - 1].time)) {
+        if (
+          index > 0 &&
+          (merged.length === 0 || candle.time > merged[merged.length - 1].time)
+        ) {
           merged.push(candle);
         }
       });
     } else {
       incomingArray.forEach((candle) => {
-        if (merged.length === 0 || candle.time > merged[merged.length - 1].time) {
+        if (
+          merged.length === 0 ||
+          candle.time > merged[merged.length - 1].time
+        ) {
           merged.push(candle);
         }
       });
@@ -291,6 +304,7 @@ const SingleChartPage = () => {
         recentClose={recentClose}
         timeDuration={timeDuration}
         image={chartData.image}
+        signalData={chartData.signal_data}
       />
       <Chart
         chartId={chartData.id}
@@ -301,6 +315,7 @@ const SingleChartPage = () => {
         onRemove={() => {}}
         hideHeader={true}
         probaPrice={chartData.probaPrice}
+        signalData={signalData}
       />
     </div>
   );
